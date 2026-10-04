@@ -1,0 +1,54 @@
+{
+  "id": "doppia-chela",
+  "name": "Doppia chela",
+  "parent": "paguro-angelico-v1",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "Deleuze & Guattari, A Thousand Plateaus: God is a lobster, a double pincer, a double articulation. Host and guest are two articulations of one body; the fluo stratum is where they touch.",
+  "refs": [
+    "A Thousand Plateaus, ch.3 'The Geology of Morals'"
+  ],
+  "seed": 8,
+  "expression": "ira",
+  "pose": {
+    "float": 0,
+    "sway": 0.3,
+    "scale": 0.72
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "knobs": 0,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 3,
+    "scale": 0.62
+  },
+  "parts": [
+    {
+      "type": "double",
+      "gap": 2.1,
+      "strata": 7,
+      "scale": 0.62
+    },
+    {
+      "type": "halo",
+      "r": 0.55,
+      "y": 2.6,
+      "z": -0.8,
+      "punch": 30
+    }
+  ]
+}

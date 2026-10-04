@@ -1,0 +1,55 @@
+{
+  "id": "ofanino",
+  "name": "Ofanino",
+  "parent": "paguro-angelico-v1",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "The ophan of Ezekiel 1: wheels within wheels, rims full of eyes. The crab is the hub that does not turn.",
+  "refs": [
+    "Ezekiel 1:16-18"
+  ],
+  "seed": 5,
+  "expression": "stupore",
+  "pose": {
+    "float": 0.05,
+    "sway": 0.15,
+    "scale": 0.95
+  },
+  "host": {
+    "shell": {
+      "turns": 5,
+      "growth": 0.09,
+      "knobs": 0.25,
+      "ribs": 0.6,
+      "tilt": -0.38
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 3,
+    "scale": 0.6
+  },
+  "parts": [
+    {
+      "type": "rings",
+      "count": 3,
+      "r0": 1.45,
+      "step": 0.3,
+      "eyes": 7,
+      "speed": 1
+    },
+    {
+      "type": "halo",
+      "r": 0.4,
+      "y": 0.62,
+      "z": -0.35,
+      "punch": 24
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "id": "mandragora",
+  "name": "Mandragora",
+  "parent": "serafino",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "The herbal page come alive: the spire of the shell germinates into a mandrake, the legs become roots. The guest is planted in a borrowed house. Spring.",
+  "refs": [
+    "mascot.pdf p.256-257 (Hortus sanitatis mandrakes)",
+    "Spring Draw seeds"
+  ],
+  "seed": 21,
+  "expression": "pieta",
+  "pose": {
+    "float": 0,
+    "sway": 0.25,
+    "scale": 0.82,
+    "lift": -0.1
+  },
+  "host": {
+    "shell": {
+      "turns": 4,
+      "growth": 0.11,
+      "knobs": 0,
+      "ribs": 0.8,
+      "tilt": -0.2
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 0,
+    "scale": 0.85
+  },
+  "parts": [
+    {
+      "type": "mandrake",
+      "leaves": 5,
+      "len": 1.15,
+      "buds": 2
+    },
+    {
+      "type": "roots",
+      "count": 7,
+      "len": 1.0,
+      "curl": 0.45
+    },
+    {
+      "type": "seeds",
+      "count": 5,
+      "h": 2.2,
+      "spread": 1.7
+    }
+  ]
+}

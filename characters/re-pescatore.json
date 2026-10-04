@@ -1,0 +1,50 @@
+{
+  "id": "re-pescatore",
+  "name": "Re Pescatore",
+  "parent": "ofanino",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "The Fisher King of the Grail, wounded, crowned, too many legs. The crown sits on the spire, not the head: sovereignty belongs to the house, not the guest.",
+  "refs": [
+    "mascot.pdf p.252 (crowned spider king)",
+    "Chrétien de Troyes, Perceval"
+  ],
+  "seed": 34,
+  "expression": "ira",
+  "pose": {
+    "float": 0,
+    "sway": 0.35,
+    "scale": 0.9
+  },
+  "host": {
+    "shell": {
+      "turns": 5.5,
+      "growth": 0.085,
+      "knobs": 0.55,
+      "ribs": 0.2,
+      "tilt": -0.45
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.7,
+      "count": 3,
+      "size": 0.9
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 5,
+    "scale": 0.95
+  },
+  "parts": [
+    {
+      "type": "crown",
+      "on": "apex",
+      "points": 7,
+      "r": 0.4,
+      "h": 0.5,
+      "arches": 2
+    }
+  ]
+}

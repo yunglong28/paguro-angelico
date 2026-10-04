@@ -1,0 +1,58 @@
+{
+  "id": "mandorla",
+  "name": "Mandorla",
+  "parent": "paguro-angelico-v1",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "Romanesque Maiestas: the crab enthroned in an almond of glory, four eyes at the cardinal points for the tetramorph.",
+  "refs": [
+    "Romanesque apse Maiestas Domini",
+    "tetramorph"
+  ],
+  "seed": 11,
+  "expression": "quiete",
+  "pose": {
+    "float": 0.06,
+    "sway": 0.08,
+    "scale": 0.72
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "knobs": 0,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 3,
+    "scale": 0.78
+  },
+  "parts": [
+    {
+      "type": "mandorla",
+      "r": 1.25,
+      "aspect": 1.65,
+      "rays": 64,
+      "eyes": 4,
+      "stars": 22
+    },
+    {
+      "type": "halo",
+      "r": 0.5,
+      "y": 0.6,
+      "z": -0.7,
+      "punch": 30,
+      "rays": 0
+    }
+  ]
+}

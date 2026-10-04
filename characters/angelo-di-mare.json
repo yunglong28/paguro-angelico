@@ -1,0 +1,60 @@
+{
+  "id": "angelo-di-mare",
+  "name": "Angelo di mare",
+  "parent": "serafino",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "Clione limacina is called the sea angel. The guest has left the borrowed shell, which floats behind it, empty; it swims on two lobes, haloed.",
+  "refs": [
+    "Clione limacina",
+    "mascot.pdf p.442-444 (nudibranchs)"
+  ],
+  "seed": 55,
+  "expression": "estasi",
+  "pose": {
+    "float": 0.18,
+    "sway": 0.3,
+    "scale": 0.95,
+    "lift": 0.1
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "knobs": 0.15,
+      "ribs": 0.5,
+      "tilt": -0.5,
+      "detached": [
+        1.15,
+        0.75,
+        -0.9
+      ]
+    },
+    "body": {
+      "ink": "blu",
+      "base": 0.18,
+      "shade": 0.55
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": false,
+    "legs": 0,
+    "scale": 0.9
+  },
+  "parts": [
+    {
+      "type": "parapodia",
+      "size": 1.0,
+      "y": -0.25
+    },
+    {
+      "type": "halo",
+      "r": 0.5,
+      "y": 1.0,
+      "z": -0.5,
+      "punch": 28,
+      "rays": 24
+    }
+  ]
+}

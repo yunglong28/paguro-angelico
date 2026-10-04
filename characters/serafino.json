@@ -1,0 +1,61 @@
+{
+  "id": "serafino",
+  "name": "Serafino",
+  "parent": "paguro-angelico-v1",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "Isaiah's six-winged seraph: two wings veil the face, two the feet, two fly. Every wing carries an eye; in ecstasy they all look up.",
+  "refs": [
+    "Isaiah 6:2",
+    "mascot.pdf p.452 (winged figure)",
+    "mascot.pdf p.139: expression and rig over polycount"
+  ],
+  "seed": 3,
+  "expression": "estasi",
+  "pose": {
+    "float": 0.12,
+    "sway": 0.2,
+    "scale": 0.92
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "knobs": 0,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 3,
+    "scale": 0.72
+  },
+  "parts": [
+    {
+      "type": "halo",
+      "r": 0.62,
+      "y": 0.85,
+      "z": -0.85,
+      "punch": 40,
+      "rays": 0,
+      "rings": 2
+    },
+    {
+      "type": "wings",
+      "pairs": 3,
+      "feathers": 9,
+      "len": 1.35,
+      "eyes": 3,
+      "ink": "toner",
+      "spread": 1.05
+    }
+  ]
+}

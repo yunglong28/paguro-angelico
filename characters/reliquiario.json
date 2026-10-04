@@ -1,0 +1,49 @@
+{
+  "id": "reliquiario",
+  "name": "Reliquiario",
+  "parent": "mandorla",
+  "brief": "briefs/paguro-angelico.md",
+  "concept": "The mascot as devotional object: the crab displayed in a monstrance on an altar, like a figure on a base. Merch as relic.",
+  "refs": [
+    "mascot.pdf: figures on white, keychains, plushes",
+    "Gothic sunburst monstrance"
+  ],
+  "seed": 89,
+  "expression": "sonno",
+  "pose": {
+    "float": 0,
+    "sway": 0.35,
+    "scale": 0.68,
+    "lift": 0.35
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "knobs": 0,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "seed"
+    },
+    "legs": 3,
+    "scale": 1.0
+  },
+  "parts": [
+    {
+      "type": "monstrance",
+      "r": 1.55,
+      "rays": 40,
+      "stem": 1.3
+    }
+  ]
+}

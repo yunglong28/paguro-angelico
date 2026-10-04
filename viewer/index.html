@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Paguro angelico</title>
+<style>
+:root{--bg:#e9e9e5;--ink:#141410;--muted:#5d5d56;--line:#c9c9c2;--paper:#f4f4f2;--blu:#001ef7;--fluo:#e8ff00}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1b1b18;--ink:#f4f4f2;--muted:#a3a39b;--line:#3a3a35;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1b1b18;--ink:#f4f4f2;--muted:#a3a39b;--line:#3a3a35;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.plate{position:relative;flex:1;min-height:0;margin:16px 16px 0;background:var(--paper);overflow:hidden}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+svg#tree{position:absolute;inset:0;width:100%;height:100%;display:none;background:var(--paper)}
+svg#tree text{font:13px 'Helvetica Neue',Helvetica,Arial,sans-serif;fill:#141410}
+svg#tree .node{cursor:pointer}
+svg#tree .node:hover rect{fill:#e8ff00}
+.bar{display:flex;gap:.25rem;padding:10px 16px 0;overflow-x:auto}
+.bar:last-of-type{padding-bottom:16px}
+.bar button{font:inherit;font-size:.95rem;background:none;border:1px solid var(--line);color:var(--ink);padding:.55rem .9rem;cursor:pointer;white-space:nowrap}
+.bar button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.bar button:focus-visible{outline:2px solid var(--blu);outline-offset:2px}
+.bar .sep{flex:1}
+#pick{position:absolute;left:12px;bottom:12px;right:12px;max-width:520px;background:var(--paper);color:#141410;border:1px solid #141410;padding:10px 12px;font-size:.85rem;display:none}
+#pick code{display:block;font:12px ui-monospace,Menlo,monospace;background:#e8ff00;padding:6px 8px;margin:6px 0;overflow-x:auto;white-space:nowrap}
+#pick button{font:inherit;font-size:.85rem;background:#141410;color:#f4f4f2;border:0;padding:.4rem .7rem;cursor:pointer;margin-right:.3rem}
+body.export .bar{display:none}
+body.export .plate{margin:0}
+</style>
+</head>
+<body>
+<div class="plate" id="plate">
+  <canvas id="c" aria-label="Personaggio 3D reso come stampa a retino in toner, blu e fluo"></canvas>
+  <svg id="tree" aria-label="Genealogia dei personaggi"></svg>
+  <div id="pick" role="dialog" aria-label="Variante selezionata"></div>
+</div>
+<nav class="bar" id="chars" aria-label="Personaggi"></nav>
+<nav class="bar" id="modes" aria-label="Modalità"></nav>
+<script type="module" src="./app.js"></script>
+</body>
+</html>
