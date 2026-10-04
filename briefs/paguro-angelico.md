@@ -34,3 +34,8 @@ medieval angel**: seraphim, ophanim, mandorlas, herbals, reliquaries. And Deleuz
 
 ## Fixed elements (identity)
 Blu body · toner spiral shell · stalk eyes · fluo seed held in the right claw (the draw).
+
+## Second reference channel (`mascot2-pdf.pdf`, Are.na "90s CG mascots/avatars", 266 pp.)
+Y2K Aesthetic Institute material: pre-rendered CGI box art, virtual idols (Kyoko Date, Yuki Terai),
+PlayStation-era mascots, chrome and candy plastic on gradient skies. This became the **Y2K** look:
+toner renders as chrome, blu as candy plastic, the spot inks as glossy gel.

@@ -65,9 +65,10 @@ void main(){
 // Lit, full-colour stand-in for an ink material: the same coverage, as a real 3D surface colour.
 const colorCache = new Map();
 const srgb = (a) => new THREE.Color().setRGB(a[0], a[1], a[2], THREE.SRGBColorSpace);
-export function colorOf(m) {
+export function colorOf(m, look = 'color') {
   const k = m.userData.ink; if (!k) return m;
-  const key = `${k.name}|${k.base}|${k.shade}`;
+  const key = `${look}|${k.name}|${k.base}|${k.shade}`;
+  if (look === 'y2k' && !colorCache.has(key)) colorCache.set(key, y2kOf(k));
   if (colorCache.has(key)) return colorCache.get(key);
   const paper = srgb(PALETTE.paper);
   const spot = k.name === 'fluo' || k.name === 'rosso';
@@ -79,14 +80,25 @@ export function colorOf(m) {
   mat.name = k.name;
   colorCache.set(key, mat); return mat;
 }
+// Y2K pre-rendered CGI (mascot2.pdf, "90s CG mascots/avatars"): toner turns to chrome,
+// blu to candy plastic, spot inks to glossy translucent-looking gel.
+function y2kOf(k) {
+  const spot = k.name === 'fluo' || k.name === 'rosso';
+  if (k.name === 'toner') return new THREE.MeshPhysicalMaterial({ color: srgb([0.78, 0.8, 0.86]), metalness: 1, roughness: 0.16, side: THREE.DoubleSide, envMapIntensity: 1.2 });
+  if (k.name === 'paper') return new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.05, clearcoat: 1, side: THREE.DoubleSide });
+  const c = spot ? srgb(PALETTE[k.name]) : srgb(PALETTE.blu).lerp(srgb([0.35, 0.55, 1]), 0.18);
+  return new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05, sheen: 0.6, sheenColor: srgb([0.7, 0.85, 1]),
+    iridescence: spot ? 0 : 0.35, emissive: spot ? c.clone().multiplyScalar(0.22) : 0x000000, side: THREE.DoubleSide, envMapIntensity: 1.1 });
+}
+
 // Swap every ink material in a subtree to colour (or back).
 export function setLook(obj, look) {
   obj.traverse(o => {
-    if (o.userData.ground) { o.visible = look === 'color'; return; }
+    if (o.userData.ground) { o.visible = look !== 'print'; return; }
     if (!o.isMesh) return;
-    o.castShadow = o.receiveShadow = look === 'color';
+    o.castShadow = o.receiveShadow = look !== 'print';
     o.userData.inkMat ||= o.material;
-    o.material = look === 'color' ? colorOf(o.userData.inkMat) : o.userData.inkMat;
+    o.material = look === 'print' ? o.userData.inkMat : colorOf(o.userData.inkMat, look);
   });
 }
 
@@ -133,6 +145,12 @@ export function createStage(canvas, opts = {}) {
 
   // views: [{x,y,w,h (0..1, origin bottom-left), yaw, tilt, dist, before()}]
   const paperColor = srgb(PALETTE.paper);
+  // Y2K box-art backdrop: a cold vertical gradient
+  const grad = (() => { const c = document.createElement('canvas'); c.width = 2; c.height = 256; const g = c.getContext('2d'), L = g.createLinearGradient(0, 0, 0, 256);
+    L.addColorStop(0, '#9fc4ff'); L.addColorStop(0.55, '#eef4ff'); L.addColorStop(1, '#ffffff'); g.fillStyle = L; g.fillRect(0, 0, 2, 256);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  const bgQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: grad, depthTest: false, depthWrite: false }));
+  bgQuad.position.z = -0.5; const bgScene = new THREE.Scene(); bgScene.add(bgQuad);
   function place(v, vw, vh) {
     camera.aspect = vw / vh;
     const d = v.dist * (v.fit && camera.aspect < 0.8 ? 0.8 / Math.max(camera.aspect, 0.45) : 1);
@@ -141,10 +159,11 @@ export function createStage(canvas, opts = {}) {
   }
   // look: 'print' (halftone press) or 'color' (lit 3D straight to screen)
   function render(views, look = 'print') {
-    scene.environment = look === 'color' ? env : null;
-    if (look === 'color') {
+    scene.environment = look === 'print' ? null : env;
+    if (look !== 'print') {
       renderer.setRenderTarget(null); renderer.setScissorTest(false);
       renderer.setClearColor(paperColor, 1); renderer.clear();
+      if (look === 'y2k') { renderer.render(bgScene, quadCam); renderer.clearDepth(); }
       renderer.setScissorTest(true);
       for (const v of views) {
         const vx = v.x * size.w, vy = v.y * size.h, vw = v.w * size.w, vh = v.h * size.h;

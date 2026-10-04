@@ -12,7 +12,7 @@ briefs/   characters/  npm run new   viewer/    npm run export → out/<id>/{pla
                                                 npm run glb    → models/<id>.glb
 ```
 
-Drag to rotate, scroll to zoom. *3D* / *Stampa* switches between the lit model and the halftone print. *Scarica .glb* downloads the animated model.
+Drag to rotate, scroll to zoom. Three looks of the same model: *3D* (lit), *Y2K* (90s pre-rendered CGI: chrome, candy plastic, sky gradient) and *Stampa* (the halftone print). *Scarica .glb* downloads the animated model.
 
 Two series:
 - **Angeli**: Serafino, Ofanino, Doppia chela, Mandorla, Mandragora, Re Pescatore, Angelo di mare, Reliquiario. Brief: [`briefs/paguro-angelico.md`](briefs/paguro-angelico.md).

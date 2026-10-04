@@ -41,7 +41,7 @@ function solo(ch) { actors.forEach(a => { a.obj.visible = a === ch; }); }
 function addGround(ch) {
   ch.still(true); ch.up(2.5);
   const b = new stage.THREE.Box3().setFromObject(ch.obj);
-  const g = new stage.THREE.Mesh(new stage.THREE.CircleGeometry(3.2, 64), new stage.THREE.ShadowMaterial({ opacity: 0.22 }));
+  const g = new stage.THREE.Mesh(new stage.THREE.CircleGeometry(9, 64), new stage.THREE.ShadowMaterial({ opacity: 0.22 }));
   g.rotation.x = -Math.PI / 2; g.position.y = b.min.y - 0.01; g.userData.ground = true; g.receiveShadow = true;
   ch.obj.add(g); ch.still(EXPORT);
 }
@@ -136,7 +136,7 @@ SERIES.forEach(x => { const b = document.createElement('button'); b.textContent 
 MAIN.forEach(id => { const b = document.createElement('button'); b.textContent = specs[id].name; b.dataset.k = id; b.dataset.s = seriesOf(id); b.onclick = () => setChar(id); chars.appendChild(b); });
 MODES.forEach(m => { const b = document.createElement('button'); b.textContent = m.t; b.dataset.k = m.k; b.onclick = () => setMode(m.k); modes.appendChild(b); });
 const sep = document.createElement('span'); sep.className = 'sep'; modes.appendChild(sep);
-const LOOKS = [{ k: 'print', t: 'Stampa' }, { k: 'color', t: '3D' }];
+const LOOKS = [{ k: 'color', t: '3D' }, { k: 'y2k', t: 'Y2K' }, { k: 'print', t: 'Stampa' }];
 LOOKS.forEach(l => { const b = document.createElement('button'); b.textContent = l.t; b.dataset.look = l.k; b.onclick = () => { state.look = l.k; actors.forEach(a => setLook(a.obj, l.k)); sync(); }; modes.appendChild(b); });
 const glb = document.createElement('button'); glb.textContent = 'Scarica .glb'; glb.onclick = downloadGLB; modes.appendChild(glb);
 
