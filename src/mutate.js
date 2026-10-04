@@ -13,9 +13,9 @@ export const RANGES = {
   pairs: [1, 4], feathers: [4, 11], len: [0.8, 1.8], spread: [0.8, 1.4], flap: [0.05, 0.3],
   r: [0.4, 1.8], punch: [16, 64], rays: [0, 64], r0: [1.2, 1.8], step: [0.2, 0.45], speed: [0.4, 1.8],
   aspect: [1.3, 1.9], points: [4, 9], arches: [0, 4], leaves: [2, 9], buds: [0, 3], curl: [0, 0.8],
-  gap: [1.7, 2.5], strata: [3, 11], size: [0.7, 1.4], float: [0, 0.2], sway: [0, 0.5],
+  gap: [1.7, 2.5], lean: [0.2, 0.6], tenants: [3, 9], n: [3, 8], beam: [1.8, 3.2], post: [0.5, 1.2], period: [2, 5], globe: [0.4, 0.8], ang: [0.6, 1.0], strata: [3, 11], size: [0.7, 1.4], float: [0, 0.2], sway: [0, 0.5],
 };
-const INTS = new Set(['count', 'legs', 'pairs', 'feathers', 'punch', 'rays', 'points', 'arches', 'leaves', 'buds', 'strata', 'eyes', 'rings']);
+const INTS = new Set(['tenants', 'n', 'count', 'legs', 'pairs', 'feathers', 'punch', 'rays', 'points', 'arches', 'leaves', 'buds', 'strata', 'eyes', 'rings']);
 const EXPRESSIONS = ['quiete', 'estasi', 'stupore', 'ira', 'pieta', 'sonno'];
 
 // Attributes that can be grafted onto a character during mutation.

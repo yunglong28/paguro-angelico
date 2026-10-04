@@ -1,4 +1,4 @@
-// Export every character (or the ids given) as a real 3D model: models/<id>.glb
+// Export every character (or the ids given) as a real 3D model with its idle animation: models/<id>.glb
 // Runs three.js + GLTFExporter in Node; no browser needed.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,15 +13,17 @@ globalThis.FileReader = class {
 const { build } = await import('../src/build.js');
 const { setLook } = await import('../src/press.js');
 const { GLTFExporter } = await import('../vendor/GLTFExporter.js');
+const { bakeIdle } = await import('../src/bake.js');
 
 const index = JSON.parse(fs.readFileSync(path.join(ROOT, 'characters/index.json')));
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : index;
 fs.mkdirSync(path.join(ROOT, 'models'), { recursive: true });
 for (const id of ids) {
   const spec = JSON.parse(fs.readFileSync(path.join(ROOT, 'characters', `${id}.json`)));
-  const ch = build(spec); ch.still(true); ch.up(2.5); ch.obj.children[0].rotation.y = 0;
+  const ch = build(spec); ch.still(true);
   setLook(ch.obj, 'color'); ch.obj.name = spec.name;
-  const buf = await new GLTFExporter().parseAsync(ch.obj, { binary: true });
+  const clip = bakeIdle(ch);   // the idle loop travels with the model
+  const buf = await new GLTFExporter().parseAsync(ch.obj, { binary: true, animations: [clip] });
   fs.writeFileSync(path.join(ROOT, 'models', `${id}.glb`), Buffer.from(buf));
-  console.log(`models/${id}.glb  ${(buf.byteLength / 1024).toFixed(0)} KB`);
+  console.log(`models/${id}.glb  ${(buf.byteLength / 1024).toFixed(0)} KB, ${clip.tracks.length} animated tracks`);
 }

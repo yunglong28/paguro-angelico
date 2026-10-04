@@ -2,6 +2,8 @@
 // ctx: { rng, eyes: [], anchors: {}, buildHost(params) }
 import * as THREE from '../vendor/three.module.js';
 import { ink } from './press.js';
+import { sculpt, blend, sphere, ellipsoid, cone, rbox, carve } from './sdf.js';
+import { rng } from './mutate.js';
 
 const UP = new THREE.Vector3(0, 1, 0);
 const Z = new THREE.Vector3(0, 0, 1);
@@ -125,7 +127,7 @@ export function spiralShell(p) {
   const A = pts[n].clone().applyAxisAngle(UP, -yaw);
   g.position.copy(A).negate();
   const apex = pts[0].clone().applyAxisAngle(UP, -yaw).sub(A);
-  return { obj: inner, apex };
+  return { obj: inner, apex, g, pts, radii };
 }
 
 export function host(P = {}, ctx) {
@@ -147,10 +149,23 @@ export function host(P = {}, ctx) {
       ups.push(t => { shellRoot.rotation.y = t * 0.25; shellRoot.position.y = sp.detached[1] + Math.sin(t * 0.8) * 0.12; });
     }
   }
-  // body
+  // body: one sculpted carapace (blob + rostrum + eye sockets + tubercles + abdomen into the shell)
   const bs = P.body?.size ?? 1;
   const body = new THREE.Group(); w.add(body);
-  body.add(sph(0.55 * bs, bodyM, 0, -0.35, 0.25, 1.15, 0.85, 1, 36));
+  const bumps = P.body?.bumps ?? 9;
+  body.add(new THREE.Mesh(sculpt(`body|${bs}|${bumps}`, () => {
+    const R = rng(7), parts = [
+      ellipsoid([0, -0.35, 0.25], [0.63 * bs, 0.46 * bs, 0.55 * bs]),
+      ellipsoid([0, -0.22, 0.25 + 0.5 * bs], [0.26 * bs, 0.16 * bs, 0.12 * bs]),
+      cone([0, -0.3, 0.05], [0, -0.1, -0.35], 0.34 * bs, 0.2 * bs),
+      sphere([-0.18 * bs, 0.0, 0.42], 0.1), sphere([0.18 * bs, 0.0, 0.42], 0.1),
+    ];
+    for (let i = 0; i < bumps; i++) {
+      const a = R.range(-1.1, 1.1), b = R.range(0.25, 0.95);
+      parts.push(sphere([Math.sin(a) * 0.5 * bs * Math.cos(b * 0.6), -0.35 + Math.sin(b) * 0.42 * bs, 0.25 + Math.cos(a) * 0.42 * bs * Math.cos(b)], 0.05 * bs));
+    }
+    return blend(parts, 0.1);
+  }, 0.028), bodyM));
   const mouth = mouthSet(body, 0, -0.32, 0.25 + 0.53 * bs, 1.05 * bs, ink('toner', 0.92, 0.08));
   [-1, 1].forEach(k => body.add(sph(0.06, ink('fluo', 1, 0), k * 0.36 * bs, -0.42, 0.25 + 0.42 * bs, 1, 0.7, 0.3)));
   // stalk eyes
@@ -160,28 +175,39 @@ export function host(P = {}, ctx) {
     const k = ne === 1 ? 0 : lerp(-1, 1, i / (ne - 1));
     const g = new THREE.Group(); g.position.set(k * 0.18 * bs, 0.02, 0.42);
     const top = [k * 0.1, sl, 0];
-    g.add(limb([0, 0, 0], top, 0.04, bodyM, 0.03));
+    g.add(new THREE.Mesh(sculpt(`stalk|${k}|${sl}`, () => blend([cone([0, -0.02, 0], top, 0.055, 0.032), sphere([0, 0.06, 0], 0.06)], 0.05), 0.012), bodyM));
     const e = eye(1.12 * es, bodyM, Math.sign(k)); e.position.set(top[0], top[1] + 0.12 * es, 0.02);
     g.add(e); body.add(g); ctx.eyes.push(e); stalks.push(g);
   }
-  // claws
-  const claws = [];
+  // chelipeds: hermit crabs carry one big claw (right) and one small; the finger is hinged
+  const claws = [], tips = {};
   if (P.claws !== false) [-1, 1].forEach(k => {
-    const cs = P.claws?.size ?? 1;
+    const cs = (P.claws?.size ?? 1) * (k > 0 ? 1.25 : 0.85);
     const c = new THREE.Group(); c.position.set(k * 0.62 * bs, -0.4, 0.5);
-    c.add(limb([0, 0, 0], [k * 0.25, 0.05, 0.15], 0.07, bodyM));
-    const jaw = new THREE.Group(); jaw.position.set(k * 0.3 * cs, 0.06, 0.22); c.add(jaw);
-    const up = sph(0.19 * cs, bodyM, k * 0.08, 0.06, 0.04, 1.15, 0.5, 0.75), lo = sph(0.15 * cs, bodyM, k * 0.08, -0.06, 0.04, 1.1, 0.45, 0.75);
-    jaw.add(up, lo);
-    if (k > 0 && (P.claws?.hold ?? 'seed') === 'seed') jaw.add(sph(0.1, ink('fluo', 1, 0), k * 0.2, 0, 0.08));
-    body.add(c); claws.push({ c, up, k });
+    const Pm = [k * 0.36 * cs, 0.06, 0.22];
+    c.add(new THREE.Mesh(sculpt(`claw|${k}|${cs}`, () => blend([
+      cone([0, 0, 0], [k * 0.22, 0.04, 0.12], 0.08, 0.065),
+      sphere([k * 0.22, 0.04, 0.12], 0.075),
+      ellipsoid(Pm, [0.16 * cs, 0.11 * cs, 0.12 * cs]),
+      cone([Pm[0] + k * 0.1 * cs, Pm[1] - 0.03 * cs, Pm[2] + 0.04], [Pm[0] + k * 0.3 * cs, Pm[1] - 0.02 * cs, Pm[2] + 0.1], 0.07 * cs, 0.022),
+    ], 0.07), 0.02), bodyM));
+    const finger = new THREE.Group(); finger.position.set(Pm[0] + k * 0.1 * cs, Pm[1] + 0.05 * cs, Pm[2] + 0.03); c.add(finger);
+    finger.add(new THREE.Mesh(sculpt(`finger|${k}|${cs}`, () => cone([0, 0, 0], [k * 0.22 * cs, 0.0, 0.07], 0.055 * cs, 0.02), 0.012), bodyM));
+    const hold = P.claws?.hold ?? 'seed';
+    if (k > 0 && (hold === 'seed' || hold === 'rosso')) c.add(sph(0.09, ink(hold === 'rosso' ? 'rosso' : 'fluo', 1, 0), Pm[0] + k * 0.3 * cs, Pm[1] + 0.02, Pm[2] + 0.12));
+    if (P.claws?.raise) c.rotation.z = k * P.claws.raise;
+    tips[k > 0 ? 'clawR' : 'clawL'] = new THREE.Vector3(Pm[0] + k * 0.32 * cs, Pm[1], Pm[2] + 0.1).applyEuler(c.rotation).add(c.position);
+    body.add(c); claws.push({ c, finger, k });
   });
-  // legs
+  // walking legs: coxa, femur, knee, dactyl as one sculpted limb
   const legs = [], nl = P.legs ?? 3;
   for (let i = 0; i < nl; i++) [-1, 1].forEach(k => {
     const g = new THREE.Group(); g.position.set(k * 0.42 * bs, -0.6, 0.12 - i * 0.2);
-    const knee = [k * 0.32, 0.12, 0.04], foot = [k * 0.5, -0.45, 0.1 - i * 0.06];
-    g.add(limb([0, 0, 0], knee, 0.045, T), limb(knee, foot, 0.04, T, 0.012));
+    const knee = [k * 0.32, 0.14, 0.04], ankle = [k * 0.46, -0.22, 0.08 - i * 0.03], foot = [k * 0.52, -0.45, 0.1 - i * 0.06];
+    g.add(new THREE.Mesh(sculpt(`leg|${k}|${i}`, () => blend([
+      sphere([0, 0, 0], 0.06), cone([0, 0, 0], knee, 0.058, 0.045), sphere(knee, 0.05),
+      cone(knee, ankle, 0.045, 0.034), sphere(ankle, 0.036), cone(ankle, foot, 0.032, 0.008),
+    ], 0.04), 0.014), T));
     w.add(g); legs.push({ g, i, k });
   });
 
@@ -189,6 +215,7 @@ export function host(P = {}, ctx) {
     head: new THREE.Vector3(0, 0.85, 0.3),
     back: new THREE.Vector3(0, 0.2, -0.6),
     feet: new THREE.Vector3(0, -1.05, 0.1),
+    ...tips,
     apex: shell ? shell.apex.clone().applyEuler(shellRoot.rotation).add(shellRoot.position) : new THREE.Vector3(0, 0.6, -0.4),
   };
   return {
@@ -196,7 +223,7 @@ export function host(P = {}, ctx) {
     up(t) {
       body.position.y = Math.abs(Math.sin(t * 3)) * 0.05;
       stalks.forEach((s, i) => { s.rotation.z = Math.sin(t * 1.7 + i * 2) * 0.12; });
-      claws.forEach(({ up, k }, i) => { const o = Math.max(0, Math.sin(t * 2.2 + i * 1.5)) * 0.35; up.rotation.z = -k * o; });
+      claws.forEach(({ finger, k }, i) => { const o = Math.max(0, Math.sin(t * 2.2 + i * 1.5)) * 0.45; finger.rotation.z = k * o; });
       legs.forEach(({ g, i, k }) => { g.rotation.y = Math.sin(t * 3 + i * 1.3 + (k > 0 ? Math.PI : 0)) * 0.18; });
       ups.forEach(f => f(t));
     },

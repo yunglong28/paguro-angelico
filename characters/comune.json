@@ -1,0 +1,46 @@
+{
+  "id": "comune",
+  "name": "Casa comune",
+  "parent": "reliquiario",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "Narkomfin, the commune house: one enormous shell, many tenants, one red flag on the spire. Nobody owns the house; everybody lives in it.",
+  "refs": [
+    "Moisei Ginzburg & Ignaty Milinis, Narkomfin Building, Moscow 1928-30"
+  ],
+  "seed": 113,
+  "expression": "quiete",
+  "pose": {
+    "float": 0,
+    "sway": 0.3,
+    "scale": 0.66,
+    "lift": -0.3
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "rosso"
+    },
+    "legs": 3
+  },
+  "parts": [
+    {
+      "type": "commune",
+      "tenants": 6,
+      "size": 2.1
+    }
+  ]
+}

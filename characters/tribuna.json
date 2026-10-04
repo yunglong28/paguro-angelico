@@ -1,0 +1,55 @@
+{
+  "id": "tribuna",
+  "name": "Tribuna",
+  "parent": "serafino",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "El Lissitzky's Lenin Tribune: a leaning girder, a platform, a blank red screen. The seraph's voice becomes a megaphone; the crab speaks from the top of the structure.",
+  "refs": [
+    "El Lissitzky, Lenin Tribune, 1920-24",
+    "Mayakovsky, 'At the Top of My Voice'"
+  ],
+  "seed": 107,
+  "expression": "stupore",
+  "pose": {
+    "float": 0,
+    "sway": 0.25,
+    "scale": 0.58,
+    "lift": -0.55
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "none",
+      "raise": 0.9
+    },
+    "legs": 3
+  },
+  "parts": [
+    {
+      "type": "tribune",
+      "len": 3.2,
+      "ang": 0.85
+    },
+    {
+      "type": "banner",
+      "at": "apex",
+      "w": 0.8,
+      "h": 0.45,
+      "pole": 0.9
+    }
+  ]
+}

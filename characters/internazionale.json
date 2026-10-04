@@ -1,0 +1,50 @@
+{
+  "id": "internazionale",
+  "name": "Internazionale",
+  "parent": "ofanino",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "The ophan's wheels become a round dance: crabs claw to claw around the earth, like Matisse's La Danse. Solidarity as a rotation that nobody leads.",
+  "refs": [
+    "Henri Matisse, La Danse, 1910",
+    "Ezekiel's wheels (Ofanino)"
+  ],
+  "seed": 131,
+  "expression": "estasi",
+  "pose": {
+    "float": 0,
+    "sway": 0,
+    "scale": 0.6,
+    "lift": 0.25
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "rosso"
+    },
+    "legs": 3
+  },
+  "parts": [
+    {
+      "type": "ring",
+      "n": 6,
+      "r": 1.95,
+      "globe": 0.55,
+      "speed": 0.35,
+      "scale": 0.44
+    }
+  ]
+}

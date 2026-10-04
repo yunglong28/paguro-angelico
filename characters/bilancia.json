@@ -1,0 +1,46 @@
+{
+  "id": "bilancia",
+  "name": "Bilancia",
+  "parent": "mandorla",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "Justice: the shell carries the scales. On one pan a red seed (life, the draw), on the other an empty shell (property). They stay balanced, and that is the point.",
+  "refs": [
+    "Ambrogio Lorenzetti, Allegory of Good Government, Siena 1338-39"
+  ],
+  "seed": 127,
+  "expression": "pieta",
+  "pose": {
+    "float": 0,
+    "sway": 0.2,
+    "scale": 0.78,
+    "lift": -0.2
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "none"
+    },
+    "legs": 3
+  },
+  "parts": [
+    {
+      "type": "scales",
+      "beam": 2.6,
+      "post": 0.8
+    }
+  ]
+}

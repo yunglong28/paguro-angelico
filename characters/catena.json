@@ -1,0 +1,48 @@
+{
+  "id": "catena",
+  "name": "Catena di vacanza",
+  "parent": "doppia-chela",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "Vacancy chains: when a bigger shell turns up, hermit crabs line up by size and all move up one house at once. Redistribution without property, the oldest commons on the beach.",
+  "refs": [
+    "Lewis & Rotjan, 'Vacancy chains provide aggregate benefits to Coenobita clypeatus', Animal Behaviour 2009"
+  ],
+  "seed": 109,
+  "expression": "quiete",
+  "pose": {
+    "float": 0,
+    "sway": 0.15,
+    "scale": 0.62
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "rosso"
+    },
+    "legs": 3
+  },
+  "parts": [
+    {
+      "type": "chain",
+      "n": 5,
+      "period": 3.2,
+      "s0": 0.32,
+      "s1": 0.78,
+      "gap": 1.1
+    }
+  ]
+}

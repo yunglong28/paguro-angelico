@@ -1,0 +1,43 @@
+{
+  "id": "torre",
+  "name": "Torre",
+  "parent": "re-pescatore",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "Tatlin's Monument to the Third International. The crab gives up the borrowed shell and lives in a public monument: two leaning spirals, three halls turning at the speed of the year, the month and the day. The king's crown becomes a house for everyone.",
+  "refs": [
+    "Vladimir Tatlin, Monument to the Third International, 1919-20"
+  ],
+  "seed": 101,
+  "expression": "stupore",
+  "pose": {
+    "float": 0,
+    "sway": 0.25,
+    "scale": 0.78,
+    "lift": -0.15
+  },
+  "host": {
+    "shell": false,
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "rosso"
+    },
+    "legs": 3,
+    "scale": 0.62
+  },
+  "parts": [
+    {
+      "type": "tatlin",
+      "h": 3.4,
+      "turns": 2.4,
+      "lean": 0.42,
+      "r0": 1.25
+    }
+  ]
+}

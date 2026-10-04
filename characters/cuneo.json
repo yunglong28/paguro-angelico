@@ -1,0 +1,47 @@
+{
+  "id": "cuneo",
+  "name": "Cuneo rosso",
+  "parent": "angelo-di-mare",
+  "series": "collettivo",
+  "brief": "briefs/collettivo.md",
+  "concept": "El Lissitzky, Beat the Whites with the Red Wedge. The crab rides the red wedge into the closed circle, which breaks into debris.",
+  "refs": [
+    "El Lissitzky, Beat the Whites with the Red Wedge, 1919"
+  ],
+  "seed": 103,
+  "expression": "ira",
+  "pose": {
+    "float": 0.04,
+    "sway": 0.3,
+    "scale": 0.82
+  },
+  "host": {
+    "shell": {
+      "turns": 4.5,
+      "growth": 0.1,
+      "ribs": 0.4,
+      "tilt": -0.38,
+      "ink": "toner"
+    },
+    "body": {
+      "ink": "blu"
+    },
+    "eyes": {
+      "stalk": 0.55,
+      "count": 2
+    },
+    "claws": {
+      "hold": "none",
+      "raise": 0.5
+    },
+    "legs": 3,
+    "scale": 0.7
+  },
+  "parts": [
+    {
+      "type": "wedge",
+      "len": 2.6,
+      "disc": 1.05
+    }
+  ]
+}

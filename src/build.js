@@ -1,9 +1,13 @@
 // spec (JSON) -> rigged three.js character: { obj, up(t), setExpression(name), still(bool) }
 import * as THREE from '../vendor/three.module.js';
-import { host, setEye, EXPRESSIONS, PARTS } from './parts.js';
+import { host, setEye, EXPRESSIONS, PARTS as ANGELI } from './parts.js';
+import { COLLETTIVO } from './collettivo.js';
+
+const PARTS = { ...ANGELI, ...COLLETTIVO };
+const merge = (a, b) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' ? merge(a[k], v) : v; return o; };
 import { rng } from './mutate.js';
 
-const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia']);
+const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia', 'banner', 'scales']);
 
 export function build(spec) {
   const R = rng(spec.seed ?? 1);
@@ -12,9 +16,10 @@ export function build(spec) {
   const stage = new THREE.Group(); root.add(stage);
 
   const hostSpec = spec.host || {};
-  ctx.buildHost = () => host(hostSpec, { ...ctx, eyes: ctx.eyes });
+  // extra crabs for collective parts: the character's own host, with overrides
+  ctx.buildHost = (o = {}) => host(merge(hostSpec, o), ctx);
   const h = host(hostSpec, ctx);
-  const faceEyes = ctx.eyes.slice();
+  const hostEyes = ctx.eyes.slice();
   ctx.anchors = h.anchors;
   const hostWrap = new THREE.Group(); hostWrap.add(h.obj);
   hostWrap.scale.setScalar(hostSpec.scale ?? 1);
@@ -30,9 +35,15 @@ export function build(spec) {
     }
     // parts placed from host anchors live in host space so they follow its scale
     (ANCHORED.has(p.type) || p.attach === 'host' ? hostWrap : stage).add(part.obj);
+    if (part.hideHost) hostWrap.visible = false;
+    if (part.hostAt) hostWrap.position.copy(part.hostAt);
+    if (part.hostScale) hostWrap.scale.setScalar(part.hostScale);
+    if (part.after) part.after(hostWrap, ctx.anchors);
     if (part.up) ups.push(part.up);
   }
 
+  // frame close-ups on a visible crab: the main host, or the first crab a collective part made
+  let faceEyes = hostWrap.visible ? hostEyes : ctx.eyes.slice(hostEyes.length, hostEyes.length + 2);
   const pose = spec.pose || {};
   stage.scale.setScalar(pose.scale ?? 1);
   stage.position.y = pose.lift ?? 0;

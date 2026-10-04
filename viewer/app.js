@@ -1,5 +1,6 @@
 import { createStage, setLook } from '../src/press.js';
 import { GLTFExporter } from '../vendor/GLTFExporter.js';
+import { bakeIdle } from '../src/bake.js';
 import { build } from '../src/build.js';
 import { mutate } from '../src/mutate.js';
 
@@ -11,7 +12,7 @@ if (EXPORT) document.body.classList.add('export');
 const canvas = document.getElementById('c'), plate = document.getElementById('plate');
 const tree = document.getElementById('tree'), pick = document.getElementById('pick');
 let stage;
-try { stage = createStage(canvas, { preserve: EXPORT }); }
+try { stage = createStage(canvas, { preserve: EXPORT, noEnv: Q.has('noenv'), noShadow: Q.has('noshadow') }); }
 catch (e) { plate.textContent = 'WebGL non disponibile su questo dispositivo.'; throw e; }
 
 const getJSON = (p) => fetch(new URL(p, ROOT)).then(r => r.json());
@@ -23,7 +24,7 @@ const lineage = await getJSON('lineage.json').catch(() => ({ history: [] }));
 const MAIN = index.filter(id => !specs[id].seed_of);
 
 const MODES = [{ k: 'plate', t: 'Tavola' }, { k: 'sheet', t: 'Foglio' }, { k: 'variants', t: 'Varianti' }, { k: 'tree', t: 'Genealogia' }];
-const state = { id: Q.get('c') || MAIN[0], mode: Q.get('mode') || 'plate', look: Q.get('look') || (location.hash === '#3d' ? 'color' : 'print'), yaw: +(Q.get('yaw') || 0), tilt: 0.06, zoom: 1 };
+const state = { id: Q.get('c') || MAIN[0], mode: Q.get('mode') || 'plate', look: Q.get('look') || (location.hash === '#stampa' ? 'print' : 'color'), yaw: +(Q.get('yaw') || 0), tilt: 0.06, zoom: 1 };
 try { if (!Q.has('c')) state.id = localStorage.getItem('pa-id') || state.id; if (!Q.has('mode')) state.mode = localStorage.getItem('pa-mode') || state.mode; if (!Q.has('look') && !location.hash) state.look = localStorage.getItem('pa-look') || state.look; } catch (e) {}
 if (!specs[state.id]) state.id = MAIN[0];
 
@@ -33,8 +34,17 @@ function clear() {
   actors.forEach(a => { stage.scene.remove(a.obj); a.obj.traverse(o => o.geometry && o.geometry.dispose()); });
   actors = [];
 }
-function add(spec) { const ch = build(spec); setLook(ch.obj, state.look); stage.scene.add(ch.obj); actors.push(ch); return ch; }
+function add(spec) { const ch = build(spec); addGround(ch); setLook(ch.obj, state.look); stage.scene.add(ch.obj); actors.push(ch); return ch; }
 function solo(ch) { actors.forEach(a => { a.obj.visible = a === ch; }); }
+
+// soft contact shadow under the figure; only shown in the 3D look
+function addGround(ch) {
+  ch.still(true); ch.up(2.5);
+  const b = new stage.THREE.Box3().setFromObject(ch.obj);
+  const g = new stage.THREE.Mesh(new stage.THREE.CircleGeometry(3.2, 64), new stage.THREE.ShadowMaterial({ opacity: 0.22 }));
+  g.rotation.x = -Math.PI / 2; g.position.y = b.min.y - 0.01; g.userData.ground = true; g.receiveShadow = true;
+  ch.obj.add(g); ch.still(EXPORT);
+}
 
 let variantSeeds = [];
 function load() {
@@ -119,7 +129,11 @@ canvas.addEventListener('click', e => {
 
 // ---------- UI ----------
 const chars = document.getElementById('chars'), modes = document.getElementById('modes');
-MAIN.forEach(id => { const b = document.createElement('button'); b.textContent = specs[id].name; b.dataset.k = id; b.onclick = () => setChar(id); chars.appendChild(b); });
+const SERIES = [{ k: 'angeli', t: 'Angeli' }, { k: 'collettivo', t: 'Collettivo' }];
+const seriesOf = (id) => specs[id].series || 'angeli';
+const series = document.createElement('div'); series.className = 'series'; chars.appendChild(series);
+SERIES.forEach(x => { const b = document.createElement('button'); b.textContent = x.t; b.dataset.series = x.k; b.onclick = () => { if (seriesOf(state.id) !== x.k) setChar(MAIN.find(id => seriesOf(id) === x.k)); }; series.appendChild(b); });
+MAIN.forEach(id => { const b = document.createElement('button'); b.textContent = specs[id].name; b.dataset.k = id; b.dataset.s = seriesOf(id); b.onclick = () => setChar(id); chars.appendChild(b); });
 MODES.forEach(m => { const b = document.createElement('button'); b.textContent = m.t; b.dataset.k = m.k; b.onclick = () => setMode(m.k); modes.appendChild(b); });
 const sep = document.createElement('span'); sep.className = 'sep'; modes.appendChild(sep);
 const LOOKS = [{ k: 'print', t: 'Stampa' }, { k: 'color', t: '3D' }];
@@ -128,15 +142,17 @@ const glb = document.createElement('button'); glb.textContent = 'Scarica .glb'; 
 
 // The model as a real 3D file: built fresh, posed at rest, in the lit colour materials.
 function downloadGLB() {
-  const ch = build(specs[state.id]); ch.still(true); ch.up(2.5); ch.obj.children[0].rotation.y = 0; setLook(ch.obj, 'color');
+  const ch = build(specs[state.id]); ch.still(true); setLook(ch.obj, 'color');
+  const clip = bakeIdle(ch);
   new GLTFExporter().parse(ch.obj, (buf) => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([buf], { type: 'model/gltf-binary' })); a.download = `${state.id}.glb`; a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  }, (e) => console.error(e), { binary: true });
+  }, (e) => console.error(e), { binary: true, animations: [clip] });
 }
 function sync() {
-  chars.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === state.id));
+  chars.querySelectorAll('button[data-k]').forEach(b => { b.setAttribute('aria-pressed', b.dataset.k === state.id); b.hidden = b.dataset.s !== seriesOf(state.id); });
+  chars.querySelectorAll('button[data-series]').forEach(b => b.setAttribute('aria-pressed', b.dataset.series === seriesOf(state.id)));
   modes.querySelectorAll('button[data-k]').forEach(b => b.setAttribute('aria-pressed', b.dataset.k === state.mode));
   modes.querySelectorAll('button[data-look]').forEach(b => b.setAttribute('aria-pressed', b.dataset.look === state.look));
   try { localStorage.setItem('pa-id', state.id); localStorage.setItem('pa-mode', state.mode); localStorage.setItem('pa-look', state.look); } catch (e) {}
@@ -163,7 +179,8 @@ const T0 = +(Q.get('t') || 2.5), start = performance.now();
 let frames = 0;
 function frame(now) {
   const t = still ? T0 : (now - start) / 1000;
-  if (state.mode !== 'tree') {
+  // export: draw a few frames, then idle (loop stays alive so the compositor keeps presenting the still)
+  if (!(EXPORT && frames >= 6) && state.mode !== 'tree') {
     if (state.mode !== 'sheet') actors.forEach(ch => ch.up(t));
     stage.render(views(t), state.look);
   }

@@ -1,5 +1,7 @@
 # paguro-angelico
 
+**Live:** https://yunglong28.github.io/paguro-angelico/
+
 Character pipeline for the **Spring Draw** mascot: a hermit crab as a medieval angel, rendered in
 3D and printed in toner / blu / fluo halftone. Characters are **JSON specs** composed from a part
 library, so new ones can be written, mutated, previewed and exported without touching the renderer.
@@ -10,13 +12,24 @@ briefs/   characters/  npm run new   viewer/    npm run export → out/<id>/{pla
                                                 npm run glb    → models/<id>.glb
 ```
 
-**Live:** https://yunglong28.github.io/paguro-angelico/ (drag to rotate; *Stampa* / *3D* switches between the halftone print and the lit 3D model; *Scarica .glb* downloads the model)
+Drag to rotate, scroll to zoom. *3D* / *Stampa* switches between the lit model and the halftone print. *Scarica .glb* downloads the animated model.
+
+Two series:
+- **Angeli**: Serafino, Ofanino, Doppia chela, Mandorla, Mandragora, Re Pescatore, Angelo di mare, Reliquiario. Brief: [`briefs/paguro-angelico.md`](briefs/paguro-angelico.md).
+- **Collettivo** (justice, solidarity, the commons, Soviet constructivism): Torre (Tatlin), Cuneo rosso (Lissitzky), Tribuna (Lenin Tribune), Catena di vacanza (real hermit-crab vacancy chains), Casa comune (Narkomfin), Bilancia, Internazionale. Brief: [`briefs/collettivo.md`](briefs/collettivo.md).
+
+![Collettivo](docs/collettivo.png)
 
 | Stampa (print) | 3D |
 |---|---|
 | ![print](docs/print.png) | ![3d](docs/3d.png) |
 
-3D models of every character are in [`models/`](models/) as `.glb` (open in Blender, or drag into https://gltf-viewer.donmccurdy.com).
+Every character downloads as a `.glb` **with its idle animation baked in**: press *Scarica .glb* on the live site, or run `npm run glb` to write all of them to `models/`. Open them in Blender, or drag them into https://gltf-viewer.donmccurdy.com.
+
+## How the 3D is made
+- **Sculpted, not stacked.** Bodies, claws, legs and eye stalks are signed-distance fields (ellipsoids, tapered capsules, rounded boxes) blended with smooth unions and polygonised with surface nets into single watertight meshes with gradient normals (`src/sdf.js`). The hermit crab has real anatomy: tubercled carapace, rostrum, an asymmetric big right claw with a hinged finger, and jointed walking legs.
+- **Rigged.** Every moving part is its own node in a hierarchy (stalks, eyelids, claw fingers, legs, wings, rings), driven by `up(t)`. `src/bake.js` samples that motion into glTF keyframe tracks.
+- **Two looks from one model.** *3D*: physical materials, an image-based room environment, soft shadow-mapped contact shadows. *Stampa*: the same scene rendered to a separation buffer and screened as toner 15° / blu 75° halftone with flat fluo and rosso spot inks.
 
 ## Run
 
@@ -26,7 +39,8 @@ npm run export                      # every character: plate.png + sheet.png  (h
 npm run export -- serafino --loop   # + 4 s turntable loop.mp4 (ffmpeg)
 npm run export -- --variants        # + 3×3 variant grid
 npm run export -- --plate           # plates only, fast
-npm run glb                         # models/<id>.glb, real 3D files (no browser needed)
+npm run glb                         # models/<id>.glb with baked idle animation (no browser needed)
+node pipeline/shot.mjs out/x.png "c=torre&look=color" "c=torre&look=print"   # any viewer state to PNG
 node pipeline/turn.mjs drafts/x.json out/x-turn.png   # 4-angle strip of a draft spec
 ```
 
@@ -63,15 +77,19 @@ No npm install is needed. three.js is vendored and the scripts only use Node bui
 }
 ```
 
-**Parts** (`src/parts.js`): `halo` · `wings` · `rings` (ophanim) · `mandorla` · `eyecloud` ·
+**Parts**. In `src/parts.js` (Angeli): `halo` · `wings` · `rings` (ophanim) · `mandorla` · `eyecloud` ·
 `double` (the Deleuze lobster) · `crown` · `mandrake` · `roots` · `parapodia` · `monstrance` ·
-`plinth` · `seeds`. To add a part, write `(params, ctx) => { obj, up(t) }`, register it in
+`plinth` · `seeds`. In `src/collettivo.js`: `tatlin` · `wedge` · `tribune` · `chain` · `commune` · `scales` · `ring` · `banner`.
+Collective parts can spawn extra crabs with `ctx.buildHost(overrides)`, hide the main one (`hideHost`) or re-seat it (`hostAt`). To add a part, write `(params, ctx) => { obj, up(t) }`, register it in
 `PARTS`, and give its numeric params ranges in `src/mutate.js` so variants can explore them.
 
 ## Files
 | | |
 |---|---|
-| `src/press.js` | render → separation buffer (R toner, G fluo, B blu) → halftone press pass |
+| `src/press.js` | two looks: lit PBR 3D, or separation buffer (R toner, G spot fluo/rosso, B blu) → halftone press |
+| `src/sdf.js` | SDF primitives, smooth blend, surface-nets mesher, geometry cache |
+| `src/collettivo.js` | parts of the Collettivo series |
+| `src/bake.js` | procedural motion → glTF animation clip |
 | `src/parts.js` | host crab with rigged eyes, expressions, all parts |
 | `src/build.js` | spec → rigged character (`up(t)`, `setExpression`, `face()`) |
 | `src/mutate.js` | seeded RNG, param ranges, grafts, `mutate(spec, seed)`. Pure JS, shared with Node |
