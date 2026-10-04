@@ -1,8 +1,9 @@
-import { createStage, setLook } from '../src/press.js';
+import { createStage, setLook, setStyle } from '../engine/press.js';
 import { GLTFExporter } from '../vendor/GLTFExporter.js';
-import { bakeIdle } from '../src/bake.js';
-import { build } from '../src/build.js';
-import { mutate } from '../src/mutate.js';
+import { bakeIdle } from '../engine/bake.js';
+import { build } from '../engine/build.js';
+import { mutate } from '../engine/mutate.js';
+import { applyStyle } from '../engine/style.js';
 
 const ROOT = new URL('../', import.meta.url);
 const Q = new URLSearchParams(location.search);
@@ -16,11 +17,15 @@ try { stage = createStage(canvas, { preserve: EXPORT, noEnv: Q.has('noenv'), noS
 catch (e) { plate.textContent = 'WebGL non disponibile su questo dispositivo.'; throw e; }
 
 const getJSON = (p) => fetch(new URL(p, ROOT)).then(r => r.json());
-const index = await getJSON('characters/index.json');
-const specs = Object.fromEntries(await Promise.all(index.map(async id => [id, await getJSON(`characters/${id}.json`)])));
+const entries = await getJSON('characters/index.json'); // "<series>/<id>"
+const index = entries.map(e => e.split('/').pop());
+const specs = Object.fromEntries(await Promise.all(entries.map(async e => [e.split('/').pop(), await getJSON(`characters/${e}.json`)])));
 // ?spec=path/to/draft.json previews a spec that is not in the index yet
 if (Q.get('spec')) { const d = await getJSON(Q.get('spec')); specs[d.id] = d; index.push(d.id); Q.set('c', d.id); }
-const lineage = await getJSON('lineage.json').catch(() => ({ history: [] }));
+// brand tokens: brand/tokens.json, or ?tokens=<json> from the style sheet's "open in viewer"
+const tokens = Q.get('tokens') ? JSON.parse(Q.get('tokens')) : await getJSON('brand/tokens.json').catch(() => ({}));
+setStyle(tokens);
+const lineage = await getJSON('characters/lineage.json').catch(() => ({ history: [] }));
 const MAIN = index.filter(id => !specs[id].seed_of);
 
 const MODES = [{ k: 'plate', t: 'Tavola' }, { k: 'sheet', t: 'Foglio' }, { k: 'variants', t: 'Varianti' }, { k: 'tree', t: 'Genealogia' }];
@@ -34,7 +39,7 @@ function clear() {
   actors.forEach(a => { stage.scene.remove(a.obj); a.obj.traverse(o => o.geometry && o.geometry.dispose()); });
   actors = [];
 }
-function add(spec) { const ch = build(spec); addGround(ch); setLook(ch.obj, state.look); stage.scene.add(ch.obj); actors.push(ch); return ch; }
+function add(spec) { const ch = build(applyStyle(spec, tokens)); addGround(ch); setLook(ch.obj, state.look); stage.scene.add(ch.obj); actors.push(ch); return ch; }
 function solo(ch) { actors.forEach(a => { a.obj.visible = a === ch; }); }
 
 // soft contact shadow under the figure; only shown in the 3D look
@@ -142,7 +147,7 @@ const glb = document.createElement('button'); glb.textContent = 'Scarica .glb'; 
 
 // The model as a real 3D file: built fresh, posed at rest, in the lit colour materials.
 function downloadGLB() {
-  const ch = build(specs[state.id]); ch.still(true); setLook(ch.obj, 'color');
+  const ch = build(applyStyle(specs[state.id], tokens)); ch.still(true); setLook(ch.obj, 'color');
   const clip = bakeIdle(ch);
   new GLTFExporter().parse(ch.obj, (buf) => {
     const a = document.createElement('a');

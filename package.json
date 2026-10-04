@@ -1,13 +1,13 @@
 {
-  "name": "paguro-angelico",
+  "name": "time-bank-spirit",
   "private": true,
   "type": "module",
   "description": "Character pipeline for the Spring Draw mascots: brief -> spec -> mutate -> render -> export.",
   "scripts": {
-    "dev": "node pipeline/serve.mjs",
-    "manifest": "node pipeline/manifest.mjs",
-    "new": "node pipeline/new.mjs",
-    "export": "node pipeline/export.mjs",
-    "glb": "node pipeline/glb.mjs"
+    "dev": "node scripts/serve.mjs",
+    "manifest": "node scripts/manifest.mjs",
+    "new": "node scripts/new.mjs",
+    "export": "node scripts/export.mjs",
+    "glb": "node scripts/glb.mjs"
   }
 }

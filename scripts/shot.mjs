@@ -1,5 +1,5 @@
 // Screenshot any viewer state(s) to PNG; several queries are stacked side by side.
-//   node pipeline/shot.mjs out/x.png "c=serafino&look=color" "c=torre&mode=sheet" [--size=600x750]
+//   node scripts/shot.mjs output/renders/x.png "c=serafino&look=color" "c=torre&mode=sheet" [--size=600x750]
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';

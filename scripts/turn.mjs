@@ -1,5 +1,5 @@
 // Quick turnaround of one spec file (draft or character) into a single strip, for iterating on a design.
-//   node pipeline/turn.mjs drafts/test.json out/_turn.png [color|print]
+//   node scripts/turn.mjs characters/drafts/test.json output/renders/_turn.png [color|print]
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -7,7 +7,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { serve, ROOT } from './serve.mjs';
 
-const [spec, outFile = 'out/_turn.png', look = 'color'] = process.argv.slice(2);
+const [spec, outFile = 'output/renders/_turn.png', look = 'color'] = process.argv.slice(2);
 const run = promisify(execFile);
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PORT = +(process.env.PORT || 5198);

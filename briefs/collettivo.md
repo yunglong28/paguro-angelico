@@ -20,7 +20,7 @@ of weird Soviet-avant-garde references rather than propaganda iconography.
 | Matisse, *La Danse*; the ophan's wheels | **Internazionale** |
 
 ## Rules
-- Same as `paguro-angelico.md`: real characters, 3D, no captions, no text on banners or screens.
+- Same as `angeli.md`: real characters, 3D, no captions, no text on banners or screens.
   The colour is the slogan.
 - **Rosso** (#E3211A) joins as a second flat spot ink beside fluo, for this series only. In the
   print look it is a flat separation like fluo; in 3D it is a glossy red.

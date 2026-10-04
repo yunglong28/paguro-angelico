@@ -1,5 +1,5 @@
 {
-  "note": "Steps of the original chat that came before the spec pipeline. Characters in characters/*.json hang off these by 'parent'.",
+  "note": "Steps of the original chat that came before the spec pipeline. Characters in characters/<series>/*.json hang off these by 'parent'.",
   "history": [
     { "id": "spring-draw-plate", "name": "Spring Draw plate (2D)", "parent": null },
     { "id": "spring-draw-3d", "name": "Spring Draw 3D", "parent": "spring-draw-plate", "url": "https://claude.ai/artifact/2Ge3wDLuspG8xgZkpsL8bB" },

@@ -9,6 +9,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import os from 'node:os';
 import { serve, ROOT } from './serve.mjs';
+import { ids as allIds } from './manifest.mjs';
 
 const CHROME = process.env.CHROME || [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
@@ -19,8 +20,7 @@ if (!CHROME) { console.error('Chrome not found; set CHROME=/path/to/chrome'); pr
 
 const argv = process.argv.slice(2);
 const flags = new Set(argv.filter(a => a.startsWith('--')));
-const index = JSON.parse(fs.readFileSync(path.join(ROOT, 'characters/index.json')));
-const ids = argv.filter(a => !a.startsWith('--')).length ? argv.filter(a => !a.startsWith('--')) : index;
+const ids = argv.filter(a => !a.startsWith('--')).length ? argv.filter(a => !a.startsWith('--')) : allIds();
 const port = 5199;
 const JOBS = +(process.env.JOBS || 4);
 const server = await serve(port);
@@ -36,7 +36,7 @@ async function shot(url, file, w, h) {
 const U = (q) => `http://127.0.0.1:${port}/viewer/?export&${q}`;
 
 async function one(id) {
-  const dir = path.join(ROOT, 'out', id);
+  const dir = path.join(ROOT, 'output', 'renders', id);
   await shot(U(`c=${id}&mode=plate`), path.join(dir, 'plate.png'), 1200, 1500);
   if (!flags.has('--plate')) await shot(U(`c=${id}&mode=sheet`), path.join(dir, 'sheet.png'), 1800, 1100);
   if (flags.has('--variants')) await shot(U(`c=${id}&mode=variants`), path.join(dir, 'variants.png'), 1500, 1500);
@@ -47,7 +47,7 @@ async function one(id) {
     await run('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '12', '-i', path.join(tmp, 'f%03d.png'), '-pix_fmt', 'yuv420p', '-vf', 'scale=800:-2', path.join(dir, 'loop.mp4')]);
     fs.rmSync(tmp, { recursive: true });
   }
-  console.log(`out/${id}/`);
+  console.log(`output/renders/${id}/`);
 }
 
 const queue = [...ids];

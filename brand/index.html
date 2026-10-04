@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Time Bank Spirit — Style Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* the five inks; the page is printed in them too */
+:root{
+  --paper:#f4f4f2; --toner:#141410; --blu:#001ef7; --fluo:#e8ff00; --rosso:#e3211a;
+  --bg:var(--paper); --ink:var(--toner); --muted:#5d5d56; --line:#cfcfc8; --card:#fbfbf9; --dot:rgba(0,30,247,.07);
+  --display:'Unbounded',ui-rounded,'Arial Black',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace; --body:'Instrument Sans','Helvetica Neue',Helvetica,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121210;--ink:#f4f4f2;--muted:#a3a39b;--line:#34342f;--card:#1b1b18;--dot:rgba(90,120,255,.10);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121210;--ink:#f4f4f2;--muted:#a3a39b;--line:#34342f;--card:#1b1b18;--dot:rgba(90,120,255,.10);color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--body);
+  background-image:radial-gradient(var(--dot) 1.1px,transparent 1.3px);background-size:7px 7px;background-position:0 0}
+.wrap{max-width:1360px;margin:0 auto;padding:0 16px}
+@media (min-width:720px){.wrap{padding:0 32px}}
+
+/* masthead: a blu band, like the spine of a PS1 manual */
+.mast{background:var(--blu);color:var(--paper);position:relative;overflow:hidden}
+.mast .wrap{display:grid;grid-template-columns:1fr auto;gap:12px 24px;align-items:end;padding-top:28px;padding-bottom:22px}
+.mast h1{font:900 clamp(2.3rem,8.5vw,6.6rem)/.86 var(--display);letter-spacing:-.035em;text-transform:uppercase}
+.mast h1 span{color:var(--fluo);display:block}
+.mast .meta{font:400 .78rem/1.5 var(--mono);text-align:right;opacity:.92}
+.mast .meta b{display:block;font-weight:600;color:var(--fluo)}
+.mast .lede{grid-column:1/-1;max-width:68ch;font-size:1rem;opacity:.95;border-top:1px solid rgba(244,244,242,.35);padding-top:14px;margin-top:8px}
+.mast nav{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap}
+.mast nav a{font:600 .75rem var(--mono);color:var(--paper);text-decoration:none;border:1px solid rgba(244,244,242,.5);padding:.35rem .6rem;border-radius:99px}
+.mast nav a:hover{background:var(--fluo);color:var(--toner);border-color:var(--fluo)}
+@media (max-width:640px){.mast .wrap{grid-template-columns:1fr}.mast .meta{text-align:left}}
+
+section{padding:56px 0 8px}
+.head{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:10px;margin-bottom:22px}
+.head .n{font:900 2.4rem/1 var(--display);color:var(--blu);letter-spacing:-.04em}
+.head h2{font:700 1.35rem/1.1 var(--display);text-transform:uppercase;letter-spacing:-.01em}
+.head p{margin-left:auto;font:400 .8rem var(--mono);color:var(--muted);text-align:right;max-width:46ch}
+@media (max-width:640px){.head{flex-wrap:wrap}.head p{margin-left:0;text-align:left}}
+
+/* 01 — studio: live plate + dials */
+.studio{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.75fr);gap:24px;align-items:start}
+@media (max-width:900px){.studio{grid-template-columns:1fr}}
+.plate{position:sticky;top:16px}
+@media (max-width:900px){.plate{position:static}}
+.frame{position:relative;aspect-ratio:4/5;background:var(--paper);border:2px solid var(--ink);overflow:hidden}
+@media (min-width:900px){.frame{aspect-ratio:auto;height:min(78vh,820px)}}
+.frame canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.frame canvas:active{cursor:grabbing}
+.frame .tag{position:absolute;left:10px;top:10px;font:600 .7rem var(--mono);background:var(--toner);color:var(--paper);padding:.25rem .5rem;pointer-events:none}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.chip{font:600 .78rem var(--mono);background:var(--card);color:var(--ink);border:1px solid var(--line);padding:.5rem .75rem;border-radius:99px;cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.look[aria-pressed="true"]{background:var(--blu);border-color:var(--blu);color:var(--paper)}
+.chip:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--blu);outline-offset:2px}
+.chars{max-height:none}
+
+.panel{background:var(--card);border:2px solid var(--ink);padding:18px}
+.panel h3{font:700 .8rem var(--display);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px}
+.dial{padding:14px 0 16px;border-top:1px solid var(--line)}
+.dial:first-of-type{border-top:0;padding-top:0}
+.dial .top{display:flex;justify-content:space-between;align-items:baseline}
+.dial label{font:900 1.5rem/1 var(--display);letter-spacing:-.02em;text-transform:uppercase}
+.dial output{font:600 .9rem var(--mono);background:var(--fluo);color:var(--toner);padding:.1rem .4rem}
+.dial .note{font-size:.86rem;color:var(--muted);margin:6px 0 10px}
+.dial .ends{display:flex;justify-content:space-between;font:400 .72rem var(--mono);color:var(--muted);margin-top:4px;text-transform:uppercase}
+
+/* sliders: a gel pill on a printed track */
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:28px;background:transparent;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:6px;background:linear-gradient(90deg,var(--ink) 0 var(--p,50%),var(--line) var(--p,50%));border-radius:3px}
+input[type=range]::-moz-range-track{height:6px;background:linear-gradient(90deg,var(--ink) 0 var(--p,50%),var(--line) var(--p,50%));border-radius:3px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:22px;margin-top:-8px;border-radius:11px;border:0;
+  background:radial-gradient(ellipse 60% 40% at 38% 28%,rgba(255,255,255,.95),rgba(255,255,255,0) 70%),radial-gradient(circle at 50% 70%,#4f6dff,var(--blu) 70%);box-shadow:0 2px 0 var(--toner),0 4px 10px rgba(0,30,247,.35)}
+input[type=range]::-moz-range-thumb{width:34px;height:22px;border-radius:11px;border:0;
+  background:radial-gradient(ellipse 60% 40% at 38% 28%,rgba(255,255,255,.95),rgba(255,255,255,0) 70%),radial-gradient(circle at 50% 70%,#4f6dff,var(--blu) 70%);box-shadow:0 2px 0 var(--toner),0 4px 10px rgba(0,30,247,.35)}
+.fine input[type=range]{height:22px}
+.fine input[type=range]::-webkit-slider-thumb{width:22px;height:16px;margin-top:-5px}
+.fine input[type=range]::-moz-range-thumb{width:22px;height:16px}
+
+details.fine{border-top:2px solid var(--ink);margin-top:6px;padding-top:12px}
+details.fine summary{font:700 .8rem var(--display);text-transform:uppercase;letter-spacing:.04em;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+details.fine summary::after{content:'+';font-family:var(--mono)}
+details.fine[open] summary::after{content:'–'}
+.group{margin-top:14px}
+.group h4{font:600 .72rem var(--mono);text-transform:uppercase;color:var(--blu);margin-bottom:4px;letter-spacing:.05em}
+.tok{display:grid;grid-template-columns:7.5rem 1fr 3.4rem;gap:8px;align-items:center;font:400 .78rem var(--mono)}
+.tok output{text-align:right}
+.tok input[type=color]{width:100%;height:24px;border:1px solid var(--line);background:none;padding:0;cursor:pointer}
+
+.export{margin-top:16px;border-top:2px solid var(--ink);padding-top:14px}
+.export pre{font:400 .72rem/1.45 var(--mono);background:var(--toner);color:var(--paper);padding:12px;max-height:220px;overflow:auto;white-space:pre}
+.btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.btn{font:600 .78rem var(--mono);background:var(--ink);color:var(--bg);border:2px solid var(--ink);padding:.5rem .8rem;cursor:pointer;text-decoration:none}
+.btn.alt{background:transparent;color:var(--ink)}
+.btn.hot{background:var(--fluo);color:var(--toner);border-color:var(--toner)}
+.btn:hover{transform:translateY(-1px)}
+.hint{font:400 .74rem var(--mono);color:var(--muted);margin-top:8px}
+
+/* 02 — model sheet */
+.sheet .frame{aspect-ratio:18/11;height:auto}
+.labels{display:grid;font:600 .7rem var(--mono);text-transform:uppercase;color:var(--muted);margin:6px 0;text-align:center}
+.labels.turn{grid-template-columns:repeat(4,1fr)}
+.labels.ex{grid-template-columns:repeat(6,1fr)}
+@media (max-width:640px){.sheet .frame{aspect-ratio:3/4}}
+
+/* 03 — inks × looks */
+.matrix{display:grid;grid-template-columns:7rem repeat(5,1fr);border:2px solid var(--ink);background:var(--card)}
+.matrix > *{border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.matrix .ink{padding:10px;font:600 .74rem var(--mono);text-transform:uppercase;display:flex;flex-direction:column;gap:6px}
+.matrix .ink i{display:block;height:22px;border:1px solid var(--muted)}
+.matrix .look{padding:10px;font:700 .78rem var(--display);text-transform:uppercase;display:flex;align-items:center}
+.matrix .look small{display:block;font:400 .68rem var(--mono);text-transform:none;color:var(--muted)}
+.matrix canvas{grid-column:2/-1;display:block;width:100%;height:170px}
+@media (max-width:720px){.matrix canvas{height:84px}}
+.matrix .corner{padding:10px;font:400 .68rem var(--mono);color:var(--muted)}
+.matrix .roles{grid-column:1/-1;display:grid;grid-template-columns:7rem repeat(5,1fr)}
+.matrix .roles > div{padding:8px 10px;font:400 .74rem/1.4 var(--body);border-right:1px solid var(--line)}
+.matrix .roles > div:first-child{font:600 .68rem var(--mono);text-transform:uppercase;color:var(--muted)}
+@media (max-width:720px){.matrix,.matrix .roles{grid-template-columns:4.6rem repeat(5,1fr)}.matrix .ink{font-size:.6rem;padding:6px}.matrix .roles > div{font-size:.62rem;padding:6px}.matrix .look{font-size:.62rem;padding:6px}}
+
+/* 04 — rules */
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;counter-reset:r}
+.rule{background:var(--card);border:2px solid var(--ink);padding:16px;position:relative;counter-increment:r}
+.rule::before{content:counter(r,decimal-leading-zero);font:900 2.6rem/1 var(--display);color:var(--blu);display:block;margin-bottom:8px;letter-spacing:-.05em}
+.rule h3{font:700 1rem/1.15 var(--display);text-transform:uppercase;margin-bottom:6px}
+.rule p{font-size:.92rem;color:var(--muted)}
+.rule em{font-style:normal;font:600 .72rem var(--mono);color:var(--ink);background:var(--fluo);padding:0 .25rem}
+
+/* 05 — lineage */
+.lineage{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));border-top:2px solid var(--ink)}
+.lineage div{padding:14px 12px 14px 0;border-bottom:1px solid var(--line)}
+.lineage b{font:700 .95rem var(--display);display:block}
+.lineage span{font:400 .72rem var(--mono);color:var(--muted);display:block}
+.lineage p{font-size:.88rem;margin-top:4px}
+footer{padding:48px 0 40px;font:400 .74rem var(--mono);color:var(--muted)}
+footer a{color:inherit}
+
+/* load: the page "prints" in, plate first */
+@media (prefers-reduced-motion:no-preference){
+  .mast h1,.mast .lede,.studio > *,section .head{animation:in .7s cubic-bezier(.2,.8,.2,1) both}
+  .mast h1{animation-delay:.05s}.mast .lede{animation-delay:.18s}.studio > :nth-child(1){animation-delay:.25s}.studio > :nth-child(2){animation-delay:.38s}
+  @keyframes in{from{opacity:0;transform:translateY(14px)}}
+}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header class="mast">
+  <div class="wrap">
+    <h1>Time Bank<span>Spirit</span></h1>
+    <div class="meta"><b>Character style sheet</b>v<span id="ver">0.1</span> · tokens: brand/tokens.json<br>brief: briefs/y2k-style.md</div>
+    <p class="lede">One cast, one model, three looks. Distilled from <i>90s CG mascots/avatars</i>, 266 plates of pre-rendered mascots from PS1 and N64 box art, virtual idols and Y2K flyers. Turn the dials to modulate the whole cast, then export the tokens to make it the brand.</p>
+    <nav aria-label="Sections"><a href="#studio">01 Dials</a><a href="#sheet">02 Model sheet</a><a href="#inks">03 Inks × looks</a><a href="#rules">04 Rules</a><a href="#lineage">05 Lineage</a><a href="../viewer/">Viewer →</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="studio">
+    <div class="head"><span class="n">01</span><h2>Dials</h2><p>Drag the plate to rotate, scroll to zoom. 0.5 on every dial is the cast as specified.</p></div>
+    <div class="studio">
+      <div class="plate">
+        <div class="frame"><canvas id="hero" aria-label="The selected character, rendered live with the current tokens"></canvas><span class="tag" id="heroTag">Y2K</span></div>
+        <div class="row" id="looks" role="group" aria-label="Look"></div>
+        <div class="row chars" id="chars" role="group" aria-label="Character"></div>
+      </div>
+      <div class="panel">
+        <div id="dials"></div>
+        <details class="fine" id="fine"><summary>Fine tokens</summary><div id="tokens"></div></details>
+        <div class="export">
+          <h3>Export</h3>
+          <pre id="json" aria-label="Current tokens as JSON"></pre>
+          <div class="btns">
+            <button class="btn hot" id="dl">Download tokens.json</button>
+            <button class="btn" id="copy">Copy JSON</button>
+            <a class="btn alt" id="open" href="../viewer/">Open in viewer</a>
+            <button class="btn alt" id="reset">Reset</button>
+          </div>
+          <p class="hint">Replace <b>brand/tokens.json</b> with the download to apply it to the viewer, the site and <b>npm run glb</b>. The link in the address bar keeps this state.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="sheet" class="sheet">
+    <div class="head"><span class="n">02</span><h2>Model sheet</h2><p>Turnaround and the six expressions, with the same tokens and look as above.</p></div>
+    <div class="labels turn"><span>Front</span><span>¾</span><span>Side</span><span>Back</span></div>
+    <div class="frame"><canvas id="sheetc" aria-label="Turnaround and expressions of the selected character"></canvas></div>
+    <div class="labels ex" id="exLabels"></div>
+  </section>
+
+  <section id="inks">
+    <div class="head"><span class="n">03</span><h2>Inks × looks</h2><p>Five inks, never more. Each look reinterprets them; the Y2K row follows the Gloss dial.</p></div>
+    <div class="matrix" id="matrix"></div>
+  </section>
+
+  <section id="rules">
+    <div class="head"><span class="n">04</span><h2>Rules</h2><p>What the board has in common, and how Time Bank Spirit takes it.</p></div>
+    <div class="rules">
+      <div class="rule"><h3>The eyes are the logo</h3><p>Two glossy eyes, one hard highlight each, set wide. They must read at 32 px. Mouths stay small. <em>Chao · Toro · Pipo-kun</em></p></div>
+      <div class="rule"><h3>Primitives, sculpted</h3><p>Spheres, capsules and rounded boxes blended as one SDF surface. Never stacked balls, never painted detail. <em>Bomberman 64 · Hokkun</em></p></div>
+      <div class="rule"><h3>One light, one highlight</h3><p>A key light, a hard specular dot and a soft contact shadow, with no outlines. It is a pre-rendered object, not an illustration. <em>N64 box art · Lightscape</em></p></div>
+      <div class="rule"><h3>Five inks only</h3><p>Toner, blu, fluo, rosso and paper. Print screens them, 3D paints them, Y2K turns them into chrome, candy and gel. Don't add new colours.</p></div>
+      <div class="rule"><h3>Silhouette first</h3><p>Claws, shell and apparatus must read filled solid black. If the shape needs its colour to be legible, it isn't finished.</p></div>
+      <div class="rule"><h3>No text on the image</h3><p>No captions, crop marks or logos inside the render. Names live outside the plate, as they do on this page.</p></div>
+      <div class="rule"><h3>The crab is the host</h3><p>The hermit crab lives in a borrowed house. The apparatus (wings, halos, towers, chains) makes each one a character.</p></div>
+      <div class="rule"><h3>One model, every look</h3><p>The print, the 3D and the Y2K box art are the same object with the same proportions. Never redraw it for one medium.</p></div>
+    </div>
+  </section>
+
+  <section id="lineage">
+    <div class="head"><span class="n">05</span><h2>Lineage</h2><p>From the board (briefs/references/mascot2-pdf.pdf). What each one gives the brand.</p></div>
+    <div class="lineage">
+      <div><b>Chao</b><span>Sonic Adventure · 1998</span><p>A head-sized body, a floating halo, gel colours.</p></div>
+      <div><b>Bomberman 64</b><span>Hudson · 1997</span><p>Pure primitives, one antenna, perfect at any size.</p></div>
+      <div><b>Toro</b><span>Doko Demo Issho · 1999</span><p>Eyes and nothing else; the blank face as the brand.</p></div>
+      <div><b>Pipo-kun</b><span>Tokyo Metropolitan Police</span><p>The civic mascot: friendly authority, one antenna.</p></div>
+      <div><b>Klonoa</b><span>Namco · 1997–2001</span><p>Long ears as apparatus; flat colour on a 3D body.</p></div>
+      <div><b>Tanukichi 2000</b><span>Framegraphics of Japan</span><p>Goggles and huge eyes: the millennium as a toy.</p></div>
+      <div><b>Wetrix+</b><span>Dreamcast · 2000</span><p>Water, chrome and candy blue, a cold sky.</p></div>
+      <div><b>Kyoko Date · Yuki Terai</b><span>Virtual idols · 1996–2001</span><p>The character as a pop star and not a drawing.</p></div>
+      <div><b>Faiyaz Jafri</b><span>Neo-Archetypes</span><p>Myth in hyper-real plastic. Our angels in chrome.</p></div>
+      <div><b>Y2K Aesthetic Institute</b><span>Archive</span><p>Most of the board: box art, flyers, CD covers.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="wrap">Time Bank Spirit · character style sheet · rendered live by <a href="../README.md">engine/</a> from <a href="../characters/index.json">characters/</a></footer>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

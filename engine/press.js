@@ -3,6 +3,7 @@
 // screens it as toner at 15° and blu at 75° slightly off register on cold paper.
 import * as THREE from '../vendor/three.module.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
+import { DEFAULT_TOKENS, withDefaults } from './style.js';
 
 export const PALETTE = {
   paper: [0.957, 0.957, 0.949],
@@ -80,15 +81,21 @@ export function colorOf(m, look = 'color') {
   mat.name = k.name;
   colorCache.set(key, mat); return mat;
 }
-// Y2K pre-rendered CGI (mascot2.pdf, "90s CG mascots/avatars"): toner turns to chrome,
-// blu to candy plastic, spot inks to glossy translucent-looking gel.
+// Y2K pre-rendered CGI (briefs/y2k-style.md, "90s CG mascots/avatars"): toner turns to chrome,
+// blu to candy plastic, spot inks to glossy translucent-looking gel. Tuned by brand tokens (engine/style.js).
+let Y2K = DEFAULT_TOKENS.y2k, styleRev = 0;
+// setStyle(tokens): later setLook(obj, 'y2k') calls and the backdrop use the new values
+export function setStyle(tokens) {
+  Y2K = withDefaults(tokens).y2k; styleRev++;
+  for (const key of colorCache.keys()) if (key.startsWith('y2k|')) colorCache.delete(key);
+}
 function y2kOf(k) {
-  const spot = k.name === 'fluo' || k.name === 'rosso';
-  if (k.name === 'toner') return new THREE.MeshPhysicalMaterial({ color: srgb([0.78, 0.8, 0.86]), metalness: 1, roughness: 0.16, side: THREE.DoubleSide, envMapIntensity: 1.2 });
+  const spot = k.name === 'fluo' || k.name === 'rosso', { chrome, plastic, gel } = Y2K;
+  if (k.name === 'toner') return new THREE.MeshPhysicalMaterial({ color: srgb([0.78, 0.8, 0.86]), metalness: 1, roughness: chrome.roughness, side: THREE.DoubleSide, envMapIntensity: chrome.env });
   if (k.name === 'paper') return new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.05, clearcoat: 1, side: THREE.DoubleSide });
   const c = spot ? srgb(PALETTE[k.name]) : srgb(PALETTE.blu).lerp(srgb([0.35, 0.55, 1]), 0.18);
-  return new THREE.MeshPhysicalMaterial({ color: c, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05, sheen: 0.6, sheenColor: srgb([0.7, 0.85, 1]),
-    iridescence: spot ? 0 : 0.35, emissive: spot ? c.clone().multiplyScalar(0.22) : 0x000000, side: THREE.DoubleSide, envMapIntensity: 1.1 });
+  return new THREE.MeshPhysicalMaterial({ color: c, roughness: plastic.roughness, clearcoat: plastic.clearcoat, clearcoatRoughness: 0.05, sheen: plastic.sheen, sheenColor: srgb([0.7, 0.85, 1]),
+    iridescence: spot ? 0 : plastic.iridescence, emissive: spot ? c.clone().multiplyScalar(gel.glow) : 0x000000, side: THREE.DoubleSide, envMapIntensity: 1.1 });
 }
 
 // Swap every ink material in a subtree to colour (or back).
@@ -145,10 +152,15 @@ export function createStage(canvas, opts = {}) {
 
   // views: [{x,y,w,h (0..1, origin bottom-left), yaw, tilt, dist, before()}]
   const paperColor = srgb(PALETTE.paper);
-  // Y2K box-art backdrop: a cold vertical gradient
-  const grad = (() => { const c = document.createElement('canvas'); c.width = 2; c.height = 256; const g = c.getContext('2d'), L = g.createLinearGradient(0, 0, 0, 256);
-    L.addColorStop(0, '#9fc4ff'); L.addColorStop(0.55, '#eef4ff'); L.addColorStop(1, '#ffffff'); g.fillStyle = L; g.fillRect(0, 0, 2, 256);
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t; })();
+  // Y2K box-art backdrop: a cold vertical gradient, repainted when the style changes
+  const skyCanvas = document.createElement('canvas'); skyCanvas.width = 2; skyCanvas.height = 256;
+  const grad = new THREE.CanvasTexture(skyCanvas); grad.colorSpace = THREE.SRGBColorSpace;
+  let skyRev = -1;
+  function paintSky() {
+    const g = skyCanvas.getContext('2d'), L = g.createLinearGradient(0, 0, 0, 256), k = Y2K.sky;
+    L.addColorStop(0, k.top); L.addColorStop(k.horizon, k.mid); L.addColorStop(1, k.bottom); g.fillStyle = L; g.fillRect(0, 0, 2, 256);
+    grad.needsUpdate = true; skyRev = styleRev;
+  }
   const bgQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: grad, depthTest: false, depthWrite: false }));
   bgQuad.position.z = -0.5; const bgScene = new THREE.Scene(); bgScene.add(bgQuad);
   function place(v, vw, vh) {
@@ -163,7 +175,7 @@ export function createStage(canvas, opts = {}) {
     if (look !== 'print') {
       renderer.setRenderTarget(null); renderer.setScissorTest(false);
       renderer.setClearColor(paperColor, 1); renderer.clear();
-      if (look === 'y2k') { renderer.render(bgScene, quadCam); renderer.clearDepth(); }
+      if (look === 'y2k') { if (skyRev !== styleRev) paintSky(); renderer.render(bgScene, quadCam); renderer.clearDepth(); }
       renderer.setScissorTest(true);
       for (const v of views) {
         const vx = v.x * size.w, vy = v.y * size.h, vw = v.w * size.w, vh = v.h * size.h;
