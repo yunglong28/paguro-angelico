@@ -1,6 +1,6 @@
 // Inspector panels of the generating workspaces: Breed, Blend, Describe (+ Sheet and Lineage info).
 import * as S from '../../engine/schema.js';
-import { state, data, change, adopt, specOf, mainCast, ROOT, clone, emit } from '../core/store.js';
+import { state, data, change, adopt, specOf, mainCast, setMode, ROOT, clone, emit } from '../core/store.js';
 import { later, blended } from '../core/viewport.js';
 import { fill } from '../core/thumbs.js';
 import { $, $$, esc, icon, toast, menu } from './dom.js';
@@ -80,7 +80,7 @@ function blend(el) {
     e.preventDefault(); state.blend.at = state.blend.at.map((v, i) => Math.max(0, v + (i === k ? 0.05 : -0.025))); const s = state.blend.at.reduce((a, c) => a + c, 0); state.blend.at = state.blend.at.map(v => v / s); place(); later(90);
   });
   $('#bEven', el).onclick = () => { state.blend.at = [1 / 3, 1 / 3, 1 / 3]; place(); later(0); };
-  $('#bKeep', el).onclick = () => { const b = blended(); if (!b) return; const s = clone(b); s.id = S.validate(s).id; adopt(s); toast(`Kept ${s.name} as a new character`); };
+  $('#bKeep', el).onclick = () => { const b = blended(); if (!b) return; const s = clone(b); s.id = S.validate(s).id; adopt(s); setMode('edit'); toast(`Kept ${s.name} as a new character`); };
   place();
 }
 

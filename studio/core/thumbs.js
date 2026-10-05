@@ -24,6 +24,7 @@ function draw(spec, look) {
   st.render([{ x: 0, y: 0, w: 1, h: 1, yaw: 0.45, tilt: 0.1, dist: Math.max(size.y, size.x * 0.9) / (2 * Math.tan(Math.PI / 12)) * 1.06 + size.z / 2, lift: mid.y }], look);
   const url = st.renderer.domElement.toDataURL('image/png');
   st.scene.remove(ch.obj);
+  ch.obj.traverse(o => { if (o.geometry && !o.geometry.userData.sculpted) o.geometry.dispose(); });
   return url;
 }
 const idle = (fn) => (window.requestIdleCallback ? requestIdleCallback(fn, { timeout: 400 }) : setTimeout(fn, 30));
@@ -51,8 +52,9 @@ export function thumb(spec, look = 'y2k', { priority = false } = {}) {
   });
 }
 // fill an <img data-thumb> as soon as its picture is ready
+const asked = new WeakMap(); let ticket = 0;
 export function fill(img, spec, look, opts) {
   img.classList.add('loading');
-  const want = JSON.stringify(spec); img.dataset.want = want;
-  thumb(spec, look, opts).then(url => { if (img.dataset.want !== want || !url) return; img.src = url; img.classList.remove('loading'); });
+  const t = ++ticket; asked.set(img, t);
+  thumb(spec, look, opts).then(url => { if (asked.get(img) !== t || !url) return; img.src = url; img.classList.remove('loading'); });
 }

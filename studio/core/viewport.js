@@ -50,7 +50,7 @@ function frameOf(c) {
 }
 function actor(spec) { const c = build(spec); frameOf(c); setLook(c.obj, state.look); stage.scene.add(c.obj); actors.push(c); return c; }
 function clearActors() {
-  actors.forEach(a => { stage.scene.remove(a.obj); a.obj.traverse(o => o.geometry && o.geometry.dispose()); });
+  actors.forEach(a => { stage.scene.remove(a.obj); a.obj.traverse(o => { if (o.geometry && !o.geometry.userData.sculpted) o.geometry.dispose(); }); });
   actors = []; kids = []; ch = null;
 }
 const solo = (a) => actors.forEach(x => { x.obj.visible = x === a; });
@@ -183,7 +183,7 @@ function wirePointer() {
     canvas.classList.add('moving');
   });
   canvas.addEventListener('pointermove', e => {
-    if (!drag) { if (state.mode === 'edit' && e.pointerType === 'mouse') hover(e); return; }
+    if (!drag) { if (state.mode === 'edit' && e.pointerType === 'mouse') hover(e); if (state.mode === 'breed') hoverCell(cellAt(e)); return; }
     if (Math.abs(e.clientX - drag.x) + Math.abs(e.clientY - drag.y) > 4) drag.moved = true;
     if (drag.part) {
       const R = ray(); R.setFromCamera(ndc(e), stage.camera);
@@ -204,8 +204,9 @@ function wirePointer() {
       return;
     }
     if (!d.moved && state.mode === 'edit') { const hit = pick(e); select(hit ? hit.sel : state.sel); }
+    if (!d.moved && state.mode === 'breed') { const k = cellAt(e); if (k >= 0 && kids[k]) onAdopt(clone(kids[k].spec)); }
   });
-  canvas.addEventListener('pointerleave', () => { canvas.style.cursor = ''; });
+  canvas.addEventListener('pointerleave', () => { canvas.style.cursor = ''; hoverCell(-1); });
   canvas.addEventListener('wheel', e => {
     if (!['edit', 'blend', 'describe'].includes(state.mode)) return;
     e.preventDefault(); state.zoom = Math.max(0.35, Math.min(2.2, state.zoom * (1 + e.deltaY * 0.001)));
@@ -220,14 +221,24 @@ function hover(e) {
 }
 
 // ---------- overlays: labels on top of the canvas (breed cells, sheet captions) ----------
+// breed grid: cell under the pointer -> child index (-1 for the current one or outside)
+const CELL_KID = [0, 1, 2, 3, -1, 4, 5, 6, 7];
+function cellAt(e) {
+  const r = canvas.getBoundingClientRect();
+  const col = Math.floor((e.clientX - r.left) / r.width * 3), row = Math.floor((e.clientY - r.top) / r.height * 3);
+  return col < 0 || col > 2 || row < 0 || row > 2 ? -1 : CELL_KID[row * 3 + col];
+}
+function hoverCell(k) {
+  overlay?.querySelectorAll('[data-kid]').forEach(c => c.classList.toggle('hover', +c.dataset.kid === k));
+  canvas.style.cursor = k >= 0 ? 'pointer' : '';
+}
 let onAdopt = () => {};
 export function onAdoptChild(fn) { onAdopt = fn; }
 function layoutOverlay() {
   if (!overlay) return;
   if (state.mode === 'breed') {
-    const order = [0, 1, 2, 3, -1, 4, 5, 6, 7];
     overlay.className = 'overlay breed';
-    overlay.innerHTML = order.map((k, i) => k < 0
+    overlay.innerHTML = CELL_KID.map((k) => k < 0
       ? `<div class="cell current"><span class="tag">Current</span></div>`
       : `<button class="cell" data-kid="${k}" aria-label="Adopt child ${k + 1}"><span class="tag">seed ${esc(kids[k]?.spec.seed ?? '')}</span><span class="adopt">Adopt</span></button>`).join('');
     overlay.querySelectorAll('[data-kid]').forEach(b => b.onclick = () => { const k = kids[+b.dataset.kid]; if (k) onAdopt(clone(k.spec)); });

@@ -98,12 +98,12 @@ export function open(key) {
   if (state.key === key) return;
   state.key = key; state.spec = clone(edits[key] || data.cast[key]);
   past.length = 0; future.length = 0; state.sel = 'body';
-  if (state.mode === 'lineage') state.mode = 'edit';
   remember(); emit('open', key); emit('change', { kind: 'shape' });
 }
 // a new character from a generator joins the cast as an unsaved draft and becomes current
 export function adopt(spec) {
-  let key = spec.id; while (data.cast[key] && !edits[key]) key += '-2';
+  // never overwrite another character, saved or not: a, a-2, a-3…
+  let key = spec.id, n = 1; while (data.cast[key]) key = `${spec.id}-${++n}`;
   spec.id = key; data.cast[key] ||= spec; data.seriesOf[key] ||= 'drafts';
   if (!data.order.includes(key)) data.order.push(key);
   const before = snap();

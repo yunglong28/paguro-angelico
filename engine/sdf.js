@@ -98,6 +98,7 @@ export function mesh(f, cell = 0.03) {
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('normal', new THREE.BufferAttribute(nor, 3));
   g.setIndex(idx);
+  g.userData.sculpted = true; // shared through the cache below; only the cache disposes it
   return g;
 }
 

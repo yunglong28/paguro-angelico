@@ -24,7 +24,7 @@ $$('[data-icon]').forEach(el => { el.innerHTML = icon(el.dataset.icon, el.classL
 const inspectorEl = $('#inspector');
 initViewport();
 onAdoptChild(adoptChild);
-onOpenFromTree(k => { open(k); setMode('edit'); });
+onOpenFromTree(k => { setMode('edit'); open(k); });
 if (!EXPORT) { initTopbar(); initLeft($('#rail'), $('#leftPanel')); initInspector(inspectorEl); }
 
 function renderRight() { if (EXPORT) return; state.mode === 'edit' ? renderInspector() : renderGenerator(inspectorEl); }
