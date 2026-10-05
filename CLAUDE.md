@@ -15,5 +15,7 @@ rules come from the user: no crop marks, no captions on images, real characters,
   `fluo` accent, `rosso` secondary, `paper` light). Colours live in the character's `palette`, never in parts.
 - Preview a draft: `node scripts/turn.mjs characters/drafts/<id>.json` and **look at the PNG**; any studio state:
   `node scripts/shot.mjs output/renders/x.png "c=<id>&look=y2k" "c=<id>&mode=sheet"`.
+- Studio code: `studio/core` (state, viewport, thumbnails) and `studio/ui` (panels); every edit goes through
+  `change()` / `live()`+`end()` in `core/store.js` so undo and the viewport stay in sync. Styles only via the tokens in `studio.css`.
 - Headless WebGL is slow (SwiftShader): the studio's `window.tbs` exposes state for automated checks.
 - `output/` and `node_modules/` are gitignored; the Anthropic SDK is an optional dependency used only by Describe.

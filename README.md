@@ -36,6 +36,13 @@ project and Describe; there you download the JSON instead).
 | **Sheet** | Turnaround (front, ¾, side, back) and the six expressions. | Model sheets |
 | **Lineage** | The family tree: every saved child keeps its `parent`. | |
 
+**Interface.** Top bar: the character, the six workspaces (keys 1–6), undo/redo, Randomize, Save (split menu:
+draft, publish to a series, JSON, .glb). Left rail: **Cast** (thumbnails, search, series filters, New from any
+archetype), **Layers** (the character's structure), **Brand**. Right: the **inspector**, generated from the schema;
+each row shows a dot when it differs from the default, resets on double-click, and has reset, randomize and lock on
+hover. The viewport has a floating toolbar (looks, camera views, play, frame). Press <kbd>?</kbd> for every shortcut.
+Under 1040 px the panels become drawers; on a phone the rail moves to the bottom.
+
 **Looks** (same model, any palette): *Studio* (physical materials, paper backdrop), *Y2K* (glossier, box-art sky),
 *Toon* (cel-shaded), *Print* (halftone toner/blu with fluo/rosso spot inks; each palette role says which press ink it prints with).
 
@@ -68,7 +75,11 @@ which also need credentials (`ANTHROPIC_API_KEY`, or `ant auth login`). The mode
 ```
 time-bank-spirit/
 ├── index.html        GitHub Pages entry, redirects to studio/
-├── studio/           the app: editor + generators (index.html, studio.css, app.js)
+├── studio/           the app: editor + generators
+│   ├── app.js        wiring: events, keyboard, render loop
+│   ├── core/         store.js (cast, history, events) · viewport.js (3D, picking, overlays) · thumbs.js (previews)
+│   ├── ui/           topbar · left (Cast / Layers / Brand) · inspector · generators · dom (icons, menus, toasts)
+│   └── studio.css    the design system (tokens, components, responsive)
 ├── engine/           genome → rigged 3D character; runs in the browser and in Node
 ├── characters/       the genomes
 │   ├── angeli/  collettivo/  banca/   one JSON per character, by series

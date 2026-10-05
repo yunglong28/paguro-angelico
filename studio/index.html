@@ -6,49 +6,62 @@
 <title>Time Bank Spirit Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Unbounded:wght@800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./studio.css">
 </head>
 <body>
 <header class="top">
-  <a class="logo" href="./" title="Time Bank Spirit Studio">TBS<span>studio</span></a>
-  <nav class="modes" id="modes" role="tablist" aria-label="Mode"></nav>
-  <div class="spacer"></div>
-  <div class="seg" id="looks" role="group" aria-label="Look"></div>
+  <button class="ib only-narrow" id="toggleLeft" data-icon="panel" aria-label="Show panels"></button>
+  <a class="logo" href="./" aria-label="Time Bank Spirit Studio">TBS<span>Studio</span></a>
+  <div class="doc">
+    <div class="doc-name"><b id="docName"></b><i class="dirty" id="docDirty" title="Unsaved changes" hidden></i></div>
+    <small id="docMeta"></small>
+  </div>
+  <nav class="modes" id="modes" role="tablist" aria-label="Workspace"></nav>
   <div class="tools">
-    <button class="icon" id="undo" title="Undo (⌘Z)" aria-label="Undo">↶</button>
-    <button class="icon" id="redo" title="Redo (⇧⌘Z)" aria-label="Redo">↷</button>
-    <button class="btn" id="random" title="A whole new character (locked genes stay)">Randomize</button>
-    <div class="menu-wrap">
-      <button class="btn hot" id="saveBtn" aria-haspopup="menu" aria-expanded="false">Save</button>
-      <div class="menu" id="saveMenu" role="menu" hidden></div>
+    <button class="ib" id="undo" data-icon="undo" title="Undo (⌘Z)" aria-label="Undo"></button>
+    <button class="ib" id="redo" data-icon="redo" title="Redo (⇧⌘Z)" aria-label="Redo"></button>
+    <span class="vsep"></span>
+    <button class="btn" id="random" data-icon="dice" data-label="Randomize" title="Randomize the character; locked genes stay (R)"></button>
+    <div class="split">
+      <button class="btn primary" id="saveBtn"></button>
+      <button class="btn primary only-icon" id="saveMore" data-icon="down" aria-label="More save and export options" aria-haspopup="menu" aria-expanded="false"></button>
     </div>
+    <button class="ib" id="help" data-icon="help" title="Keyboard shortcuts (?)" aria-label="Keyboard shortcuts"></button>
+    <button class="ib only-narrow" id="toggleRight" data-icon="inspector" aria-label="Show inspector"></button>
   </div>
 </header>
 
-<aside class="left" aria-label="Cast and outliner">
-  <section class="block">
-    <div class="bh"><h2>Cast</h2><button class="mini" id="newChar" title="Start from a random character">+ New</button></div>
-    <div id="cast" class="cast"></div>
-  </section>
-  <section class="block grow">
-    <div class="bh"><h2 id="outTitle">Character</h2></div>
-    <div id="outliner" class="outliner"></div>
-  </section>
-</aside>
+<nav class="rail" id="rail" aria-label="Panels"></nav>
+<aside class="left" id="leftPanel" aria-label="Cast, layers and brand"></aside>
 
 <main class="view" id="view">
-  <canvas id="c" aria-label="The character, rendered live. Drag to orbit, click a part to select it."></canvas>
+  <canvas id="c" aria-label="The character, live. Drag to orbit, scroll to zoom, click a part to select it."></canvas>
   <svg id="tree" aria-label="Lineage of the cast" style="display:none"></svg>
-  <div class="hud tl"><b id="hudName"></b><span id="hudId"></span></div>
-  <div class="hud bl" id="hint"></div>
-  <div class="hud br"><button class="mini ghost" id="pause" aria-pressed="false">Pause</button><button class="mini ghost" id="frame">Frame</button></div>
+  <div class="overlay" id="overlay"></div>
+  <div class="sel-chip" id="selChip" hidden></div>
+  <div class="vtool" id="vtool" role="toolbar" aria-label="View">
+    <div class="seg" id="looks" role="group" aria-label="Look"></div>
+    <span class="vsep"></span>
+    <div class="seg" id="cams" role="group" aria-label="Camera"></div>
+    <span class="vsep"></span>
+    <button class="ib" id="play" aria-label="Play or pause"></button>
+    <button class="ib" id="frameBtn" data-icon="frame" title="Frame the character (F)" aria-label="Frame"></button>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </main>
 
-<aside class="right" aria-label="Inspector">
-  <div id="inspector"></div>
-</aside>
+<aside class="right" id="inspector" aria-label="Inspector"></aside>
+
+<dialog id="keys" aria-labelledby="keysTitle">
+  <header><h2 id="keysTitle">Keyboard shortcuts</h2><button class="ib" id="keysClose" data-icon="x" aria-label="Close"></button></header>
+  <div class="keys">
+    <section><h3>Workspaces</h3><dl><dt><kbd>1</kbd>–<kbd>6</kbd></dt><dd>Edit, Breed, Blend, Describe, Sheet, Lineage</dd><dt><kbd>C</kbd> <kbd>L</kbd> <kbd>B</kbd></dt><dd>Cast, Layers, Brand panels</dd></dl></section>
+    <section><h3>Character</h3><dl><dt><kbd>R</kbd></dt><dd>Randomize (locked genes stay)</dd><dt><kbd>N</kbd></dt><dd>New random character</dd><dt><kbd>⌘</kbd><kbd>Z</kbd></dt><dd>Undo</dd><dt><kbd>⇧</kbd><kbd>⌘</kbd><kbd>Z</kbd></dt><dd>Redo</dd><dt><kbd>⌘</kbd><kbd>S</kbd></dt><dd>Save draft / download</dd><dt><kbd>⌫</kbd></dt><dd>Remove the selected part</dd></dl></section>
+    <section><h3>View</h3><dl><dt><kbd>Space</kbd></dt><dd>Play / pause</dd><dt><kbd>F</kbd></dt><dd>Frame</dd><dt><kbd>[</kbd> <kbd>]</kbd></dt><dd>Previous / next look</dd><dt>Drag · scroll</dt><dd>Orbit · zoom</dd></dl></section>
+    <section><h3>Inspector</h3><dl><dt>Double-click a label</dt><dd>Reset to default</dd><dt><kbd>↑</kbd> <kbd>↓</kbd> in a value</dt><dd>Nudge (<kbd>⇧</kbd> ×10)</dd><dt>Drag a selected part</dt><dd>Move it</dd></dl></section>
+  </div>
+</dialog>
 <script type="module" src="./app.js"></script>
 </body>
 </html>
