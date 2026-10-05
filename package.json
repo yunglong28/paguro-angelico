@@ -9,7 +9,8 @@
     "new": "node scripts/new.mjs",
     "generate": "node scripts/generate.mjs",
     "export": "node scripts/export.mjs",
-    "glb": "node scripts/glb.mjs"
+    "glb": "node scripts/glb.mjs",
+    "refs": "node scripts/refs.mjs"
   },
   "optionalDependencies": {
     "@anthropic-ai/sdk": "^0.131.0"
