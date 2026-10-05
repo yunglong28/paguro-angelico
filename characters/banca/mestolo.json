@@ -1,0 +1,106 @@
+{
+  "id": "mestolo",
+  "name": "Mestolo",
+  "concept": "Cooks for the neighbourhood dinner every Thursday: four hours given, four hours of plumbing received. Chibi with bunny ears and a ladle.",
+  "refs": [
+    "Gacha chibi proportions"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "capsule",
+      "w": 0.9,
+      "h": 0.8,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.5,
+      "ink": "blu"
+    },
+    "ears": {
+      "kind": "bunny",
+      "size": 1.2,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.1,
+      "gap": 1,
+      "y": 0
+    },
+    "arms": {
+      "kind": "long",
+      "len": 0.8,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "belly": {
+      "kind": "heart"
+    },
+    "scale": 1,
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "ladle",
+      "at": "clawR"
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#f9aea2",
+      "finish": "pearl",
+      "print": "fluo"
+    },
+    "dark": {
+      "color": "#886964",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#1a0e0c",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#fea0c5",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#f9c59c",
+      "finish": "pearl",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#fcf3f1",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.03,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

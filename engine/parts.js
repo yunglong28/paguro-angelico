@@ -82,7 +82,7 @@ export const EXPRESSIONS = {
   sonno:   { lid: 1,    low: 0.1,  slant: 0,    pupil: 1,    gaze: [0, 0],     mouth: 'flat' },
 };
 
-function mouthSet(par, x, y, z, s, m) {
+export function mouthSet(par, x, y, z, s, m) {
   const mk = {};
   const arc = (flip) => { const o = new THREE.Mesh(new THREE.TorusGeometry(0.1 * s, 0.024 * s, 8, 24, Math.PI), m); o.rotation.z = flip ? Math.PI : 0; o.position.set(x, y + (flip ? 0.03 : -0.06) * s, z); return o; };
   mk.smile = arc(true); mk.frown = arc(false);

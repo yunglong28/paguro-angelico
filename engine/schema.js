@@ -55,6 +55,69 @@ export const ANATOMY = [
   ] },
 ];
 
+// ---------- anatomy: the modular figure (spirits, Y2K blobs, chibi, object-spirits) ----------
+const POSE = ANATOMY.find(a => a.id === 'pose');
+export const FIGURE = [
+  { id: 'body', label: 'Body', genes: [
+    e('figure.body.shape', 'Shape', ['egg', 'capsule', 'box', 'bell', 'drop', 'coin', 'hourglass', 'house'], 'egg'),
+    f('figure.body.w', 'Width', 0.5, 1.8, 1), f('figure.body.h', 'Height', 0.4, 2.2, 1),
+    f('figure.scale', 'Scale', 0.45, 1.3, 1),
+    e('figure.body.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
+    e('figure.belly.kind', 'Belly mark', ['none', 'clock', 'spiral', 'buttons', 'heart'], 'none'),
+  ] },
+  { id: 'head', label: 'Head', genes: [
+    e('figure.head.shape', 'Shape', ['none', 'sphere', 'egg', 'box', 'cat'], 'sphere'),
+    f('figure.head.size', 'Size', 0.5, 2, 1),
+    e('figure.head.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
+  ] },
+  { id: 'face', label: 'Face', genes: [
+    e('figure.eyes.style', 'Eyes', ['round', 'button', 'void', 'visor'], 'round'),
+    i('figure.eyes.count', 'Count', 1, 6, 2), f('figure.eyes.size', 'Eye size', 0.4, 2, 1),
+    f('figure.eyes.gap', 'Spacing', 0.5, 1.8, 1), f('figure.eyes.y', 'Height', -0.6, 0.5, 0),
+    e('figure.mouth.style', 'Mouth', ['normal', 'fangs', 'none'], 'normal'), f('figure.mouth.size', 'Mouth size', 0.4, 1.8, 1),
+  ] },
+  { id: 'ears', label: 'Ears & horns', genes: [
+    e('figure.ears.kind', 'Kind', ['none', 'cat', 'bunny', 'horns', 'antenna', 'fins'], 'none'),
+    f('figure.ears.size', 'Size', 0.5, 1.8, 1), e('figure.ears.ink', 'Colour role', INKS, 'blu', { bias: 0.6 }),
+  ] },
+  { id: 'arms', label: 'Arms', genes: [
+    e('figure.arms.kind', 'Kind', ['none', 'stub', 'noodle', 'long'], 'stub'),
+    f('figure.arms.len', 'Length', 0.5, 1.6, 1), e('figure.arms.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
+  ] },
+  { id: 'legs', label: 'Legs', genes: [
+    e('figure.legs.kind', 'Kind', ['none', 'stub', 'legs', 'long', 'tentacles', 'wisp'], 'stub'),
+    f('figure.legs.len', 'Length', 0.5, 1.6, 1), i('figure.legs.count', 'Tentacles', 3, 9, 6),
+    e('figure.legs.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
+  ] },
+  { id: 'house', label: 'House', genes: [
+    e('figure.house.kind', 'Kind', ['none', 'shell', 'clock', 'cottage', 'lantern'], 'none'),
+    f('figure.house.size', 'Size', 0.5, 1.6, 1), e('figure.house.ink', 'Colour role', INKS, 'toner', { bias: 0.7 }),
+  ] },
+  POSE,
+];
+export const SPECIES = { id: 'species', label: 'Species', genes: [e('plan', 'Body plan', ['crab', 'figure'], 'crab', { fixed: true })] };
+export const anatomyOf = (spec) => [SPECIES, ...(spec?.plan === 'figure' ? FIGURE : ANATOMY)];
+const ALL_GENES = [SPECIES, ...ANATOMY, ...FIGURE].flatMap(a => a.genes);
+
+// Starting points. Randomize picks one and varies it, so random characters stay coherent.
+export const ARCHETYPES = {
+  crab: { label: 'Hermit crab', note: 'The original host: a crab in a borrowed shell', spec: { plan: 'crab' } },
+  blob: { label: 'Y2K blob', note: 'All head, tiny limbs, huge glossy eyes (Chao, Toro, Pipo-kun)', spec: { plan: 'figure', figure: { body: { shape: 'egg', w: 1.25, h: 0.85 }, head: { shape: 'none' }, eyes: { style: 'round', count: 2, size: 1.5, gap: 1.25, y: 0.15 }, mouth: { style: 'normal' }, ears: { kind: 'antenna' }, arms: { kind: 'stub' }, legs: { kind: 'stub', len: 0.8 } } } },
+  chibi: { label: 'Chibi', note: 'Two and a half heads tall, a person of the time bank', spec: { plan: 'figure', figure: { body: { shape: 'capsule', w: 0.75, h: 0.85 }, head: { shape: 'sphere', size: 1.45 }, eyes: { style: 'round', count: 2, size: 1.05, gap: 1.1, y: -0.1 }, ears: { kind: 'none' }, arms: { kind: 'long', len: 0.85 }, legs: { kind: 'legs', len: 0.9 } } } },
+  spirit: { label: 'Spirit', note: 'A floating ghost with a wisp for legs and dark eyes', spec: { plan: 'figure', figure: { body: { shape: 'drop', w: 0.9, h: 1.3 }, head: { shape: 'none' }, eyes: { style: 'void', count: 2, size: 1.1, y: 0.1 }, mouth: { style: 'none' }, arms: { kind: 'noodle', len: 1.2 }, legs: { kind: 'wisp', len: 1.1 } } } },
+  object: { label: 'Object spirit', note: 'A thing that came alive: an hourglass, a coin, a little house', spec: { plan: 'figure', figure: { body: { shape: 'hourglass', w: 0.9, h: 1.2 }, head: { shape: 'none' }, eyes: { style: 'button', count: 2, size: 1.3, y: 0.35 }, arms: { kind: 'noodle', len: 0.8 }, legs: { kind: 'stub' } } } },
+  uncanny: { label: 'Uncanny', note: 'Not cute: many eyes, horns, tentacles, a long silhouette', spec: { plan: 'figure', figure: { body: { shape: 'bell', w: 0.85, h: 1.45 }, head: { shape: 'egg', size: 0.85 }, eyes: { style: 'void', count: 4, size: 0.75, gap: 0.85 }, mouth: { style: 'fangs' }, ears: { kind: 'horns', size: 1.2 }, arms: { kind: 'long', len: 1.4 }, legs: { kind: 'tentacles', count: 7, len: 1.2 } } } },
+};
+export function applyArchetype(spec, key) {
+  const out = clone(spec), A = ARCHETYPES[key].spec;
+  out.plan = A.plan;
+  if (A.figure) out.figure = clone(A.figure);
+  if (A.plan === 'figure') out.parts = (out.parts || []).filter(p => !PARTS[p.type]?.wraps);
+  return out;
+}
+
+const ITEMS = ['hourglass', 'clock', 'book', 'wrench', 'ladle', 'can', 'key', 'lantern', 'scissors', 'coin', 'broom'];
+
 // ---------- apparatus: the part library (keys inside each part object) ----------
 const MOVE = [f('move.0', 'Move x', -2, 2, 0, { common: true }), f('move.1', 'Move y', -2, 2, 0, { common: true }), f('move.2', 'Move z', -2, 2, 0, { common: true }), f('size', 'Size', 0.4, 1.8, 1, { common: true })];
 export const PARTS = {
@@ -78,6 +141,8 @@ export const PARTS = {
   chain: { label: 'Vacancy chain', series: 'collettivo', hides: true, note: 'Crabs queueing to swap shells by size', genes: [i('n', 'Crabs', 2, 9, 5), f('period', 'Period', 1.8, 5.5, 3.2), f('s0', 'Smallest', 0.2, 0.5, 0.32), f('s1', 'Largest', 0.5, 1, 0.78), f('gap', 'Gap', 0.8, 1.7, 1.25)] },
   commune: { label: 'House commune', series: 'collettivo', hides: true, note: 'Many crabs share one great shell', genes: [i('tenants', 'Tenants', 2, 10, 6), f('size', 'Size', 2.2, 4.2, 3.2)] },
   scales: { label: 'Scales', series: 'collettivo', anchored: true, note: 'A balance held in the claws', genes: [f('beam', 'Beam', 1.6, 3.4, 2.6), f('post', 'Post', 0.4, 1.3, 0.8)] },
+  prop: { label: 'Held item', series: 'banca', anchored: true, note: 'What this spirit offers the time bank: a tool, a clock, a key', genes: [e('item', 'Item', ITEMS, 'hourglass'), e('at', 'Where', ['clawR', 'clawL', 'head'], 'clawR')] },
+  orbit: { label: 'Orbiting hours', series: 'banca', note: 'Coins, hourglasses or keys circling the figure: time in circulation', genes: [e('item', 'Item', ITEMS, 'coin'), i('count', 'Count', 2, 12, 6), f('r', 'Radius', 1, 2.8, 1.6), f('speed', 'Speed', 0, 1.2, 0.4), f('tilt', 'Tilt', -0.8, 0.8, 0.25), f('itemSize', 'Item size', 0.4, 1.4, 0.8)] },
   ring: { label: 'Internationale', series: 'collettivo', hides: true, note: 'A ring of crabs around a globe', genes: [i('n', 'Crabs', 3, 9, 6), f('r', 'Radius', 1.3, 2.7, 1.95), f('globe', 'Globe', 0.3, 0.9, 0.55), f('speed', 'Speed', 0, 0.9, 0.35), f('scale', 'Crab scale', 0.3, 0.7, 0.48)] },
 };
 export const partGenes = (type) => [...(PARTS[type]?.genes || []), ...MOVE];
@@ -116,14 +181,14 @@ export const readPart = (p, g) => { const v = get(p, g.key); return v === undefi
 // every gene of a spec, flattened: [{ id, gene, value, part? }]
 export function genes(spec) {
   const out = [];
-  for (const grp of ANATOMY) for (const g of grp.genes) out.push({ id: g.key, gene: g, value: readGene(spec, g), group: grp.id });
+  for (const grp of anatomyOf(spec)) for (const g of grp.genes) out.push({ id: g.key, gene: g, value: readGene(spec, g), group: grp.id });
   (spec.parts || []).forEach((p, n) => partGenes(p.type).forEach(g => out.push({ id: `parts.${n}.${g.key}`, gene: g, value: readPart(p, g), group: `part:${n}`, part: n })));
   return out;
 }
 export function setGene(spec, id, v) {
   const m = id.match(/^parts\.(\d+)\.(.+)$/);
   if (m) { set(spec.parts[+m[1]], m[2], v); return spec; }
-  const g = ANATOMY.flatMap(x => x.genes).find(x => x.key === id);
+  const g = ALL_GENES.find(x => x.key === id);
   if (g) writeGene(spec, g, v); else set(spec, id, v);
   return spec;
 }
@@ -174,7 +239,7 @@ export function randomPalette(R) {
 export function mutate(spec, seed, amount = 0.5, locks) {
   const R = rng(seed * 7919 + 13), out = clone(spec);
   for (const { id, gene, value } of genes(spec)) {
-    if (locked(locks, id) || gene.common) continue;
+    if (locked(locks, id) || gene.common || gene.fixed) continue;
     if (R.next() > 0.35 + amount * 0.6) continue; // not every gene moves
     setGene(out, id, rollGene(gene, R, value, amount));
   }
@@ -192,15 +257,22 @@ export function mutate(spec, seed, amount = 0.5, locks) {
 
 // randomize(seed, locks, base) -> a whole new character (locked genes kept from base)
 export function randomize(seed, locks, base = {}) {
-  const R = rng(seed * 104729 + 7), out = clone(base);
-  for (const grp of ANATOMY) for (const g of grp.genes) {
-    if (locked(locks, g.key)) continue;
-    writeGene(out, g, rollGene(g, R));
+  const R = rng(seed * 104729 + 7);
+  // pick an archetype (unless the body plan is locked), then vary about half of its genes
+  const key = locked(locks, 'plan') ? (base.plan === 'figure' ? R.pick(['blob', 'chibi', 'spirit', 'object', 'uncanny']) : 'crab')
+    : R.pick(['blob', 'blob', 'chibi', 'chibi', 'spirit', 'spirit', 'object', 'object', 'uncanny', 'crab']);
+  const out = applyArchetype(base, key);
+  if (locked(locks, 'plan')) out.plan = base.plan || 'crab';
+  for (const grp of anatomyOf(out)) for (const g of grp.genes) {
+    if (g.fixed) continue;
+    if (locked(locks, g.key)) { writeGene(out, g, readGene(base, g)); continue; }
+    if (key === 'crab' || R.next() < 0.45) writeGene(out, g, rollGene(g, R));
   }
   if (!locked(locks, 'parts.*')) {
-    const pool = Object.keys(PARTS).filter(t => !PARTS[t].wraps);
+    const pool = Object.keys(PARTS).filter(t => !PARTS[t].wraps && (out.plan !== 'figure' || !PARTS[t].hides));
     out.parts = [];
-    const n = R.int(1, 3);
+    if (out.plan === 'figure' && R.next() < 0.65) { const p = newPart('prop'); p.item = R.pick(ITEMS); out.parts.push(p); }
+    const n = R.int(out.plan === 'figure' ? 0 : 1, 2);
     for (let k = 0; k < n; k++) {
       const t = R.pick(pool); if (out.parts.some(p => p.type === t) || (PARTS[t].hides && out.parts.some(p => PARTS[p.type].hides))) continue;
       const p = { type: t }; PARTS[t].genes.forEach(g => set(p, g.key, rollGene(g, R))); out.parts.push(p);
@@ -218,9 +290,11 @@ export function randomize(seed, locks, base = {}) {
 export function blend(specs, weights) {
   const W = weights.map(w => Math.max(0, w)), sum = W.reduce((a, c) => a + c, 0) || 1, w = W.map(x => x / sum);
   const top = w.indexOf(Math.max(...w)), out = clone(specs[top]);
-  for (const grp of ANATOMY) for (const g of grp.genes) {
+  // body genes mix only between parents of the same body plan as the strongest one
+  const plan = (s) => s.plan || 'crab', ws = specs.map((s, k) => (plan(s) === plan(specs[top]) ? w[k] : 0)), wsum = ws.reduce((a, c) => a + c, 0) || 1;
+  for (const grp of anatomyOf(specs[top])) for (const g of grp.genes) {
     const vals = specs.map(s => readGene(s, g));
-    writeGene(out, g, g.type === 'float' || g.type === 'int' ? clampGene(g, vals.reduce((a, v, k) => a + v * w[k], 0)) : vals[top]);
+    writeGene(out, g, g.type === 'float' || g.type === 'int' ? clampGene(g, vals.reduce((a, v, k) => a + v * ws[k] / wsum, 0)) : vals[top]);
   }
   out.parts = (specs[top].parts || []).map(p => {
     const q = clone(p);
@@ -248,7 +322,8 @@ export function blend(specs, weights) {
 // distance between two genomes (for spreading out a gallery of candidates)
 export function distance(a, b) {
   let d = 0, n = 0;
-  for (const grp of ANATOMY) for (const g of grp.genes) {
+  if ((a.plan || 'crab') !== (b.plan || 'crab')) { d += 8; n += 8; }
+  else for (const grp of anatomyOf(a)) for (const g of grp.genes) {
     const x = readGene(a, g), y = readGene(b, g);
     d += g.type === 'float' || g.type === 'int' ? Math.abs(x - y) / (g.max - g.min) : x === y ? 0 : 1; n++;
   }
@@ -285,7 +360,8 @@ export function validate(spec) {
   const out = clone(spec || {});
   out.id = String(out.id || 'nuovo').toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'nuovo';
   out.name = String(out.name || out.id);
-  for (const grp of ANATOMY) for (const g of grp.genes) {
+  out.plan = out.plan === 'figure' ? 'figure' : 'crab';
+  for (const grp of anatomyOf(out)) for (const g of grp.genes) {
     const v = readGene(out, g);
     writeGene(out, g, g.type === 'enum' ? (g.options.includes(v) ? v : g.def) : g.type === 'bool' ? !!v : clampGene(g, +v || g.def));
   }
@@ -311,7 +387,11 @@ export function validate(spec) {
 export function describeSchema() {
   const g = (x) => x.type === 'enum' ? `${x.key}: one of ${x.options.join('|')} (default ${x.def})` : x.type === 'bool' ? `${x.key}: boolean (default ${x.def})` : `${x.key}: ${x.type} ${x.min}..${x.max} (default ${x.def})`;
   return [
-    'ANATOMY (paths in the spec; host.shell.on=false is written as "shell": false, same for claws):',
+    'BODY PLAN: "plan": "crab" (the hermit crab, genes under "host") or "figure" (modular body under "figure": spirits, Y2K blobs, chibi humanoids, object-spirits, uncanny beings).',
+    'ARCHETYPES (good starting points): ' + Object.entries(ARCHETYPES).map(([k, a]) => `${k} = ${a.note}${a.spec.figure ? ' ' + JSON.stringify(a.spec.figure) : ''}`).join(' | '),
+    'FIGURE genes (plan "figure"):',
+    ...FIGURE.map(a => `  ${a.label}: ` + a.genes.map(g).join('; ')),
+    'CRAB genes (plan "crab"; host.shell.on=false is written as "shell": false, same for claws):',
     ...ANATOMY.map(a => `  ${a.label}: ` + a.genes.map(g).join('; ')),
     'PARTS (each part is an object {"type": ..., params}; optional "move": [x,y,z] offset and "size" multiplier):',
     ...Object.entries(PARTS).map(([t, p]) => `  ${t} — ${p.note}${p.hides ? ' (replaces the single crab with several)' : ''}: ` + p.genes.map(g).join('; ')),

@@ -1,0 +1,111 @@
+{
+  "id": "casa-del-tempo",
+  "name": "Casa del tempo",
+  "concept": "The shared house where hours are exchanged, walking on its own. A visor instead of eyes, tentacles instead of foundations, hourglasses in orbit.",
+  "refs": [
+    "Narkomfin (communal house)",
+    "Howl's moving castle"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "house",
+      "w": 1,
+      "h": 1.1,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "visor",
+      "size": 1,
+      "y": 0.2,
+      "count": 2,
+      "gap": 1
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 0.9,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "tentacles",
+      "count": 5,
+      "len": 0.9,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "orbit",
+      "item": "hourglass",
+      "count": 5,
+      "r": 1.8,
+      "speed": 0.4,
+      "tilt": 0.25,
+      "itemSize": 0.7
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#7b5cff",
+      "finish": "iridescent",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#2fd3c4",
+      "finish": "chrome",
+      "print": "blu"
+    },
+    "line": {
+      "color": "#170f2e",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ff71ce",
+      "finish": "gel",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#fffb96",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#fdf6ff",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.03,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

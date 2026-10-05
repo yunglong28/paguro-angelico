@@ -1,0 +1,107 @@
+{
+  "id": "mutuo",
+  "name": "Mutuo",
+  "concept": "A coin that refuses to be spent: in the time bank an hour is an hour, whoever gives it. Button eyes, a key to the shared tool shed.",
+  "refs": [
+    "Mutual aid societies",
+    "PS1 box art"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "coin",
+      "w": 1.1,
+      "h": 1,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "button",
+      "count": 2,
+      "size": 1.3,
+      "y": 0.2,
+      "gap": 1
+    },
+    "arms": {
+      "kind": "stub",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.8,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "key",
+      "at": "clawR"
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#19b8e6",
+      "finish": "iridescent",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#b9c6d6",
+      "finish": "chrome",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#06222e",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#b6ff3c",
+      "finish": "gel",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#2c5bff",
+      "finish": "candy",
+      "print": "blu"
+    },
+    "light": {
+      "color": "#f2fbff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.03,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

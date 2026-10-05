@@ -16,7 +16,7 @@ const yaws = [0, 0.8, 1.57, 3.14];
 const frames = await Promise.all(yaws.map(async (yaw, i) => {
   const P = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-')), f = path.join(P, `t${i}.png`);
   await run(CHROME, ['--headless=new', `--user-data-dir=${P}`, '--no-first-run', '--hide-scrollbars', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
-    '--window-size=600,750', '--virtual-time-budget=3000', `--screenshot=${f}`, `http://127.0.0.1:${PORT}/studio/?export&spec=${spec}&mode=plate&look=${look}&yaw=${yaw}`], { timeout: 90000 });
+    '--window-size=600,750', '--virtual-time-budget=20000', `--screenshot=${f}`, `http://127.0.0.1:${PORT}/studio/?export&spec=${spec}&mode=plate&look=${look}&yaw=${yaw}`], { timeout: 90000 });
   return f;
 }));
 server.close();

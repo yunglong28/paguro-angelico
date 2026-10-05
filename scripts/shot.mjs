@@ -19,7 +19,7 @@ export async function shoot(query, file, w, h, port) {
   const P = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-'));
   try {
     await run(CHROME, ['--headless=new', `--user-data-dir=${P}`, '--no-first-run', '--hide-scrollbars', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
-      `--window-size=${w},${h}`, '--virtual-time-budget=5000', `--screenshot=${file}`, `http://127.0.0.1:${port}/studio/?export&${query}`], { timeout: 120000 });
+      `--window-size=${w},${h}`, '--virtual-time-budget=20000', `--screenshot=${file}`, `http://127.0.0.1:${port}/studio/?export&${query}`], { timeout: 120000 });
   } finally { fs.rmSync(P, { recursive: true, force: true }); }
 }
 

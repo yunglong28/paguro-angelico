@@ -13,5 +13,13 @@
   "collettivo/catena",
   "collettivo/comune",
   "collettivo/bilancia",
-  "collettivo/internazionale"
+  "collettivo/internazionale",
+  "banca/casa-del-tempo",
+  "banca/clessidra",
+  "banca/custode-delle-ore",
+  "banca/fantasma-della-biblioteca",
+  "banca/mestolo",
+  "banca/mutuo",
+  "banca/ora-d-aria",
+  "banca/rammendo"
 ]

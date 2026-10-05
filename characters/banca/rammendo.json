@@ -1,0 +1,107 @@
+{
+  "id": "rammendo",
+  "name": "Rammendo",
+  "concept": "The tailor of the time bank: mends a coat, receives an hour of Italian lessons. Chibi, cat-headed, buttons down the front.",
+  "refs": [
+    "Doko Demo Issho (Toro)",
+    "Virtual idols, 1996-2001"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "capsule",
+      "w": 0.75,
+      "h": 0.85,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "cat",
+      "size": 1.45,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.05,
+      "y": -0.1,
+      "gap": 1
+    },
+    "arms": {
+      "kind": "long",
+      "len": 0.85,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.9,
+      "count": 6,
+      "ink": "blu"
+    },
+    "belly": {
+      "kind": "buttons"
+    },
+    "scale": 1,
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "scissors",
+      "at": "clawR"
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#f7f4ee",
+      "finish": "pearl",
+      "print": "paper"
+    },
+    "dark": {
+      "color": "#8a5a3c",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#1d1410",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ff8a3d",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#6fb7ff",
+      "finish": "candy",
+      "print": "blu"
+    },
+    "light": {
+      "color": "#ffffff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.03,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

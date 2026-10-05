@@ -1,0 +1,107 @@
+{
+  "id": "fantasma-della-biblioteca",
+  "name": "Fantasma della biblioteca",
+  "concept": "Reads aloud to whoever asks, at night. A ghost with a wisp for legs and a book that never closes.",
+  "refs": [
+    "Japanese yurei",
+    "Library ghosts"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "drop",
+      "w": 0.9,
+      "h": 1.3,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "void",
+      "count": 2,
+      "size": 1.1,
+      "y": 0.1,
+      "gap": 1
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 1.2,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "wisp",
+      "len": 1.1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "belly": {
+      "kind": "none"
+    },
+    "scale": 1,
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "book",
+      "at": "clawR"
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#78d6db",
+      "finish": "gel",
+      "print": "fluo"
+    },
+    "dark": {
+      "color": "#56797b",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#061415",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#6cf6fd",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#499b9f",
+      "finish": "pearl",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#eef7f8",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.1,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

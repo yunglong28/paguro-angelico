@@ -6,6 +6,8 @@ rules come from the user: no crop marks, no captions on images, real characters,
 - **One genome, one schema.** A character is a JSON file in `characters/`; `engine/schema.js` describes every gene.
   The studio (`studio/`), randomize/mutate/breed/blend, validation and the Describe prompt all read the schema.
   Never add a tool that bypasses it, and never add a second app next to the studio: extend the studio.
+- Two body plans: `plan: "crab"` (host in `engine/parts.js`) and `plan: "figure"` (modular body in `engine/figure.js`;
+  genes in `FIGURE`, archetypes in `ARCHETYPES`). The cast must stay varied, not only cute: spirits, blobs, chibi, uncanny.
 - New part = function in `engine/parts.js` (`(params, ctx) => {obj, up}`) + register in `PARTS` + its genes in
   `engine/schema.js` `PARTS`. Parts positioned from `ctx.anchors` go in `ANCHORED` (build.js) and get `anchored: true`.
 - Organic shapes: sculpt them with `engine/sdf.js` (`sculpt(key, () => blend([...]), cell)`), not stacked spheres.

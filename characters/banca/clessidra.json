@@ -1,0 +1,111 @@
+{
+  "id": "clessidra",
+  "name": "Clessidra",
+  "concept": "An hourglass that woke up. It keeps the bank's hours: every hour given is a grain that falls, every hour received a grain that rises. Its eyes are empty because time has no face.",
+  "refs": [
+    "Hourglass iconography",
+    "Faiyaz Jafri, Neo-Archetypes"
+  ],
+  "expression": "stupore",
+  "figure": {
+    "body": {
+      "shape": "hourglass",
+      "w": 0.95,
+      "h": 1.35,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "void",
+      "count": 2,
+      "size": 1.1,
+      "y": 0.35,
+      "gap": 1
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 1.1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "wisp",
+      "len": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "orbit",
+      "item": "coin",
+      "count": 7,
+      "r": 1.7,
+      "speed": 0.4,
+      "tilt": 0.25,
+      "itemSize": 0.8
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#1a1a1f",
+      "finish": "candy",
+      "print": "toner"
+    },
+    "dark": {
+      "color": "#e2b649",
+      "finish": "chrome",
+      "print": "fluo"
+    },
+    "line": {
+      "color": "#0b0b0d",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ff3b30",
+      "finish": "gel",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#f5d77a",
+      "finish": "metal",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#fffaf0",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.1,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

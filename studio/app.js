@@ -340,14 +340,24 @@ function renderCast() {
 }
 $('cast').onclick = (e) => { const b = e.target.closest('[data-k]'); if (b) openCharacter(b.dataset.k); };
 
-const ANAT = S.ANATOMY.map(a => [a.id, a.label]);
+// which archetype a character is closest to, for labels
+function speciesName(s) {
+  if (s.plan !== 'figure') return 'hermit crab';
+  const F = s.figure || {}, legs = F.legs?.kind, body = F.body?.shape, head = F.head?.shape;
+  if (F.eyes?.style === 'void' && (F.ears?.kind === 'horns' || legs === 'tentacles')) return 'uncanny';
+  if (legs === 'wisp' || body === 'drop') return 'spirit';
+  if (['hourglass', 'coin', 'house'].includes(body)) return 'object spirit';
+  if (head && head !== 'none' && (legs === 'legs' || legs === 'long')) return 'chibi';
+  return 'blob';
+}
 function renderOutliner() {
   const s = state.spec, P = withPalette(s.palette);
   const row = (sel, label, extra = '', dot = '') => `<button class="row" data-sel="${sel}" aria-selected="${state.sel === sel && ['edit', 'sheet'].includes(state.mode)}">${dot}<span class="grow">${label}</span>${extra}</button>`;
   $('outTitle').textContent = s.name || s.id;
   $('outliner').innerHTML =
     row('identity', 'Identity', `<span class="k">${esc(s.id)}</span>`) +
-    '<h3>Anatomy</h3>' + ANAT.map(([k, l]) => row(k, l, state.locks.has(`group:${k}`) ? `<span class="k">${ICON.lock}</span>` : '')).join('') +
+    row('species', 'Species', `<span class="k">${esc(speciesName(s))}</span>`) +
+    '<h3>Anatomy</h3>' + S.anatomyOf(s).filter(a => a.id !== 'species').map(a => [a.id, a.label]).map(([k, l]) => row(k, l, state.locks.has(`group:${k}`) ? `<span class="k">${ICON.lock}</span>` : '')).join('') +
     '<h3>Colour</h3>' + row('palette', 'Palette', '', `<i class="dot" style="background:conic-gradient(${ROLES.map(r => P[r].color).join(',')})"></i>`) +
     '<h3>Apparatus</h3>' + (s.parts || []).map((p, n) => row(`part:${n}`, esc(S.PARTS[p.type]?.label || p.type), `<span class="x" data-del="${n}" title="Remove" role="button" aria-label="Remove ${esc(p.type)}">✕</span>`)).join('') +
     `<button class="row add" data-sel="add">+ Add part</button>` +
@@ -425,6 +435,7 @@ function renderInspector() {
   if (sel === 'palette') return palettePanel(el);
   if (sel === 'identity') return identityPanel(el);
   if (sel === 'add') return libraryPanel(el);
+  if (sel === 'species') return speciesPanel(el);
   if (sel === 'brand') return brandPanel(el);
   if (sel.startsWith('part:')) {
     const n = +sel.split(':')[1], p = s.parts?.[n];
@@ -440,11 +451,12 @@ function renderInspector() {
     $('pDel').onclick = () => removePart(n);
     return;
   }
-  const grp = S.ANATOMY.find(a => a.id === sel) || S.ANATOMY[0];
+  const groups = S.anatomyOf(s).filter(a => a.id !== 'species');
+  const grp = groups.find(a => a.id === sel) || groups[0];
   const list = S.genes(s).filter(x => x.group === grp.id);
   const allLocked = list.every(x => state.locks.has(x.id));
   el.innerHTML = `<div class="ins"><div class="ih"><h1>${esc(grp.label)}</h1><button class="mini" id="gLock">${allLocked ? 'Unlock all' : 'Lock all'}</button><button class="mini" id="gRand">Randomize</button></div>
-    <p class="note">${grp.id === 'pose' ? 'Expression, scale and idle motion.' : 'Shared by every crab in the character, including the extra ones collective parts spawn.'}</p>${geneRows(list)}</div>`;
+    <p class="note">${grp.id === 'pose' ? 'Expression, scale and idle motion.' : s.plan === 'figure' ? 'Every module is sculpted as one smooth surface; try extreme values.' : 'Shared by every crab in the character, including the extra ones collective parts spawn.'}</p>${geneRows(list)}</div>`;
   wireGenes(el);
   $('gLock').onclick = () => { list.forEach(x => allLocked ? state.locks.delete(x.id) : state.locks.add(x.id)); allLocked ? state.locks.delete(`group:${grp.id}`) : state.locks.add(`group:${grp.id}`); renderPanels(); };
   $('gRand').onclick = () => change(sp => { list.forEach(x => { if (!state.locks.has(x.id)) S.setGene(sp, x.id, rollOne(x.gene)); }); });
@@ -464,11 +476,20 @@ function identityPanel(el) {
   bind('fRefs', (sp, v) => { sp.refs = v.split(',').map(x => x.trim()).filter(Boolean); });
 }
 
+function speciesPanel(el) {
+  const s = state.spec;
+  el.innerHTML = `<div class="ins"><div class="ih"><h1>Species</h1></div>
+    <p class="note">The body plan. Pick an archetype as a starting point: it replaces the body and keeps the name, palette and apparatus. Then edit every module (head, face, ears, arms, legs, house) from the outliner.</p>
+    <div class="lib">${Object.entries(S.ARCHETYPES).map(([k, a]) => `<button class="card" data-arch="${k}" ${speciesName(s) === (k === 'crab' ? 'hermit crab' : k === 'object' ? 'object spirit' : k) ? 'style="border-color:var(--accent)"' : ''}><b>${esc(a.label)}</b><small>${esc(a.note)}</small></button>`).join('')}</div>
+    <div class="actions"><button class="btn" id="spRand">Random species</button></div></div>`;
+  el.querySelectorAll('[data-arch]').forEach(b => b.onclick = () => { change(sp => S.applyArchetype(sp, b.dataset.arch)); state.sel = 'body'; renderPanels(); });
+  $('spRand').onclick = () => { const k = Object.keys(S.ARCHETYPES)[Math.floor(Math.random() * 6)]; change(sp => { const r = S.randomize(seed(), new Set(['palette', 'parts.*', 'id']), S.applyArchetype(sp, k)); r.id = sp.id; r.name = sp.name; return r; }); };
+}
 function libraryPanel(el) {
   const card = ([t, p]) => `<button class="card" data-t="${t}"><em>${p.series}</em><b>${esc(p.label)}</b><small>${esc(p.note)}</small></button>`;
   const by = (s) => Object.entries(S.PARTS).filter(([, p]) => p.series === s).map(card).join('');
   el.innerHTML = `<div class="ins"><div class="ih"><h1>Add part</h1></div><p class="note">The apparatus is what makes each crab a character. Parts attach where they belong; drag them to place.</p>
-    <div class="sub">Angeli</div><div class="lib">${by('angeli')}</div><div class="sub">Collettivo</div><div class="lib">${by('collettivo')}</div></div>`;
+    <div class="sub">Angeli</div><div class="lib">${by('angeli')}</div><div class="sub">Collettivo</div><div class="lib">${by('collettivo')}</div><div class="sub">Banca del tempo</div><div class="lib">${by('banca')}</div></div>`;
   el.querySelectorAll('[data-t]').forEach(b => b.onclick = () => { change(s => { (s.parts ||= []).push(S.newPart(b.dataset.t)); }); select(`part:${state.spec.parts.length - 1}`); });
 }
 

@@ -2,13 +2,14 @@
 import * as THREE from '../vendor/three.module.js';
 import { host, setEye, EXPRESSIONS, PARTS as ANGELI } from './parts.js';
 import { COLLETTIVO } from './collettivo.js';
+import { figure, TIME_PARTS } from './figure.js';
 import { withPalette } from './palette.js';
 
-const PARTS = { ...ANGELI, ...COLLETTIVO };
+const PARTS = { ...ANGELI, ...COLLETTIVO, ...TIME_PARTS };
 const merge = (a, b) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' ? merge(a[k], v) : v; return o; };
 import { rng } from './rng.js';
 
-const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia', 'banner', 'scales']);
+const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia', 'banner', 'scales', 'prop']);
 
 export function build(spec) {
   const R = rng(spec.seed ?? 1);
@@ -17,10 +18,12 @@ export function build(spec) {
   root.userData.palette = withPalette(spec.palette); // setLook(root, look) paints with it
   const stage = new THREE.Group(); root.add(stage);
 
-  const hostSpec = spec.host || {};
-  // extra crabs for collective parts: the character's own host, with overrides
-  ctx.buildHost = (o = {}) => host(merge(hostSpec, o), ctx);
-  const h = host(hostSpec, ctx);
+  // the body plan: the hermit crab (host), or the modular figure (spirits, blobs, chibi)
+  const isFigure = spec.plan === 'figure';
+  const hostSpec = (isFigure ? spec.figure : spec.host) || {};
+  // extra bodies for collective parts: the character's own, with overrides (crab only; figures repeat as they are)
+  ctx.buildHost = (o = {}) => (isFigure ? figure(hostSpec, ctx) : host(merge(hostSpec, o), ctx));
+  const h = isFigure ? figure(hostSpec, ctx) : host(hostSpec, ctx);
   const hostEyes = ctx.eyes.slice();
   ctx.anchors = h.anchors;
   const hostWrap = new THREE.Group(); hostWrap.add(h.obj);

@@ -1,0 +1,107 @@
+{
+  "id": "ora-d-aria",
+  "name": "Ora d'aria",
+  "concept": "Gives an hour a week to the shared gardens. A Y2K blob, all eyes and antenna, with a watering can.",
+  "refs": [
+    "Chao, Sonic Adventure (1998)",
+    "Pipo-kun"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "egg",
+      "w": 1.3,
+      "h": 0.85,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.35,
+      "gap": 1.25,
+      "y": 0.15
+    },
+    "ears": {
+      "kind": "antenna",
+      "size": 1,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "stub",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 0.8,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "can",
+      "at": "clawR"
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#ff6fb5",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "dark": {
+      "color": "#d9e1f2",
+      "finish": "pearl",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#2b1530",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#44e5ff",
+      "finish": "gel",
+      "print": "blu"
+    },
+    "secondary": {
+      "color": "#ffd23f",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#fff7fb",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.03,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

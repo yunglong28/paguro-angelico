@@ -1,0 +1,107 @@
+{
+  "id": "custode-delle-ore",
+  "name": "Custode delle ore",
+  "concept": "Keeps the ledger of everyone's hours. Many-eyed, horned, a clock in its chest and a lantern on its back. Not cute: it is the bank's conscience.",
+  "refs": [
+    "Ophanim, Ezekiel 1",
+    "Medieval bestiaries"
+  ],
+  "expression": "pieta",
+  "figure": {
+    "body": {
+      "shape": "bell",
+      "w": 0.85,
+      "h": 1.5,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "egg",
+      "size": 0.85,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "void",
+      "count": 4,
+      "size": 0.75,
+      "gap": 0.85,
+      "y": 0
+    },
+    "mouth": {
+      "style": "fangs",
+      "size": 1
+    },
+    "ears": {
+      "kind": "horns",
+      "size": 1.2,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1.4,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "tentacles",
+      "count": 7,
+      "len": 1.2,
+      "ink": "blu"
+    },
+    "belly": {
+      "kind": "clock"
+    },
+    "house": {
+      "kind": "lantern",
+      "size": 0.9,
+      "ink": "toner"
+    },
+    "scale": 1
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "key",
+      "at": "clawR"
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#2b2d42",
+      "finish": "candy",
+      "print": "toner"
+    },
+    "dark": {
+      "color": "#c9a227",
+      "finish": "chrome",
+      "print": "fluo"
+    },
+    "line": {
+      "color": "#0d0d12",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#9dff00",
+      "finish": "gel",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#8d0801",
+      "finish": "metal",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#f1f1e6",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "float": 0.03,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}
