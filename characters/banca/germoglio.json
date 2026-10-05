@@ -1,0 +1,119 @@
+{
+  "id": "germoglio",
+  "name": "Germoglio",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "can",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "capsule",
+      "w": 0.55,
+      "h": 0.75,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "egg",
+      "size": 1.15,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "button",
+      "count": 2,
+      "size": 1.2,
+      "gap": 1,
+      "y": 0.05
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "ears": {
+      "kind": "sprout",
+      "size": 1.3,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 0.9,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "long",
+      "len": 0.9,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "concept": "The seedling of the shared garden: one leaf, two dark eyes, a watering can bigger than itself.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot #227 #428 #452 (Pikmin), #191 (TreeSense)"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#8fd14f",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "dark": {
+      "color": "#c7ccdb",
+      "finish": "chrome",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#1b2a10",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#d9ff3c",
+      "finish": "gel",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#3c8cff",
+      "finish": "candy",
+      "print": "blu"
+    },
+    "light": {
+      "color": "#fbfff2",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "sprout"
+}

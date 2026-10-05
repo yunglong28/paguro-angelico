@@ -1,0 +1,119 @@
+{
+  "id": "debito",
+  "name": "Debito",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "coin",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "egg",
+      "w": 0.95,
+      "h": 0.85,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.35,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.15,
+      "gap": 1.05,
+      "y": 0
+    },
+    "mouth": {
+      "style": "fangs",
+      "size": 1.1
+    },
+    "ears": {
+      "kind": "horns",
+      "size": 0.8,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "stub",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 0.8,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "back": {
+      "kind": "batwings",
+      "size": 1.1,
+      "ink": "toner",
+      "count": 14
+    },
+    "tail": {
+      "kind": "devil",
+      "len": 1.1,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "ira",
+  "concept": "The little imp of debt: hours owed and not yet given. Darkness complemented by cuteness, a coin it will not let go of.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot (comment on a block: \"darkness complimented by cuteness\"), chara (Gloomy Bear, Kuromi)"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#2a2346",
+      "finish": "candy",
+      "print": "toner"
+    },
+    "dark": {
+      "color": "#3b3355",
+      "finish": "metal",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#0b0912",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ff3b6b",
+      "finish": "gel",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#8a6bff",
+      "finish": "candy",
+      "print": "blu"
+    },
+    "light": {
+      "color": "#f4f0ff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "imp"
+}

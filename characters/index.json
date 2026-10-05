@@ -21,5 +21,12 @@
   "banca/mestolo",
   "banca/mutuo",
   "banca/ora-d-aria",
-  "banca/rammendo"
+  "banca/rammendo",
+  "banca/debito",
+  "banca/germoglio",
+  "banca/lumaca-del-baratto",
+  "banca/mascotte-di-quartiere",
+  "banca/occhio-del-registro",
+  "banca/ora-solare",
+  "banca/pegno"
 ]

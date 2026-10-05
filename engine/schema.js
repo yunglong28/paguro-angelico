@@ -59,11 +59,11 @@ export const ANATOMY = [
 const POSE = ANATOMY.find(a => a.id === 'pose');
 export const FIGURE = [
   { id: 'body', label: 'Body', genes: [
-    e('figure.body.shape', 'Shape', ['egg', 'capsule', 'box', 'bell', 'drop', 'coin', 'hourglass', 'house'], 'egg'),
+    e('figure.body.shape', 'Shape', ['egg', 'capsule', 'box', 'bell', 'drop', 'coin', 'hourglass', 'house', 'slug', 'cone', 'star'], 'egg'),
     f('figure.body.w', 'Width', 0.5, 1.8, 1), f('figure.body.h', 'Height', 0.4, 2.2, 1),
     f('figure.scale', 'Scale', 0.45, 1.3, 1),
     e('figure.body.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
-    e('figure.belly.kind', 'Belly mark', ['none', 'clock', 'spiral', 'buttons', 'heart'], 'none'),
+    e('figure.belly.kind', 'Pattern', ['none', 'clock', 'spiral', 'buttons', 'heart', 'spots'], 'none'),
   ] },
   { id: 'head', label: 'Head', genes: [
     e('figure.head.shape', 'Shape', ['none', 'sphere', 'egg', 'box', 'cat'], 'sphere'),
@@ -71,13 +71,13 @@ export const FIGURE = [
     e('figure.head.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
   ] },
   { id: 'face', label: 'Face', genes: [
-    e('figure.eyes.style', 'Eyes', ['round', 'button', 'void', 'visor'], 'round'),
+    e('figure.eyes.style', 'Eyes', ['round', 'button', 'void', 'visor', 'lens'], 'round'),
     i('figure.eyes.count', 'Count', 1, 6, 2), f('figure.eyes.size', 'Eye size', 0.4, 2, 1),
     f('figure.eyes.gap', 'Spacing', 0.5, 1.8, 1), f('figure.eyes.y', 'Height', -0.6, 0.5, 0),
     e('figure.mouth.style', 'Mouth', ['normal', 'fangs', 'none'], 'normal'), f('figure.mouth.size', 'Mouth size', 0.4, 1.8, 1),
   ] },
   { id: 'ears', label: 'Ears & horns', genes: [
-    e('figure.ears.kind', 'Kind', ['none', 'cat', 'bunny', 'horns', 'antenna', 'fins'], 'none'),
+    e('figure.ears.kind', 'Kind', ['none', 'cat', 'bunny', 'floppy', 'horns', 'antenna', 'feelers', 'sprout', 'fins'], 'none'),
     f('figure.ears.size', 'Size', 0.5, 1.8, 1), e('figure.ears.ink', 'Colour role', INKS, 'blu', { bias: 0.6 }),
   ] },
   { id: 'arms', label: 'Arms', genes: [
@@ -86,8 +86,17 @@ export const FIGURE = [
   ] },
   { id: 'legs', label: 'Legs', genes: [
     e('figure.legs.kind', 'Kind', ['none', 'stub', 'legs', 'long', 'tentacles', 'wisp'], 'stub'),
-    f('figure.legs.len', 'Length', 0.5, 1.6, 1), i('figure.legs.count', 'Tentacles', 3, 9, 6),
+    f('figure.legs.len', 'Length', 0.5, 1.6, 1), f('figure.legs.foot', 'Feet', 0.6, 2.2, 1), i('figure.legs.count', 'Tentacles', 3, 9, 6),
     e('figure.legs.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
+  ] },
+  { id: 'back', label: 'Back', genes: [
+    e('figure.back.kind', 'Kind', ['none', 'frills', 'batwings', 'spines'], 'none'),
+    i('figure.back.count', 'Count', 3, 32, 14), f('figure.back.size', 'Size', 0.4, 1.8, 1),
+    e('figure.back.ink', 'Colour role', INKS, 'fluo', { bias: 0.6 }),
+  ] },
+  { id: 'tail', label: 'Tail', genes: [
+    e('figure.tail.kind', 'Kind', ['none', 'devil', 'curl', 'puff'], 'none'),
+    f('figure.tail.len', 'Length', 0.4, 1.8, 1), e('figure.tail.ink', 'Colour role', INKS, 'blu', { bias: 0.7 }),
   ] },
   { id: 'house', label: 'House', genes: [
     e('figure.house.kind', 'Kind', ['none', 'shell', 'clock', 'cottage', 'lantern'], 'none'),
@@ -106,12 +115,26 @@ export const ARCHETYPES = {
   chibi: { label: 'Chibi', note: 'Two and a half heads tall, a person of the time bank', spec: { plan: 'figure', figure: { body: { shape: 'capsule', w: 0.75, h: 0.85 }, head: { shape: 'sphere', size: 1.45 }, eyes: { style: 'round', count: 2, size: 1.05, gap: 1.1, y: -0.1 }, ears: { kind: 'none' }, arms: { kind: 'long', len: 0.85 }, legs: { kind: 'legs', len: 0.9 } } } },
   spirit: { label: 'Spirit', note: 'A floating ghost with a wisp for legs and dark eyes', spec: { plan: 'figure', figure: { body: { shape: 'drop', w: 0.9, h: 1.3 }, head: { shape: 'none' }, eyes: { style: 'void', count: 2, size: 1.1, y: 0.1 }, mouth: { style: 'none' }, arms: { kind: 'noodle', len: 1.2 }, legs: { kind: 'wisp', len: 1.1 } } } },
   object: { label: 'Object spirit', note: 'A thing that came alive: an hourglass, a coin, a little house', spec: { plan: 'figure', figure: { body: { shape: 'hourglass', w: 0.9, h: 1.2 }, head: { shape: 'none' }, eyes: { style: 'button', count: 2, size: 1.3, y: 0.35 }, arms: { kind: 'noodle', len: 0.8 }, legs: { kind: 'stub' } } } },
+  nudibranch: { label: 'Sea slug', note: 'Long and low, frilled gills, feelers, vivid spots (nudibranchs)', spec: { plan: 'figure', figure: { body: { shape: 'slug', w: 0.95, h: 0.75 }, head: { shape: 'none' }, eyes: { style: 'button', count: 2, size: 0.9, gap: 0.9, y: 0.1 }, mouth: { style: 'none' }, ears: { kind: 'feelers', size: 1.1 }, arms: { kind: 'none' }, legs: { kind: 'none' }, back: { kind: 'frills', count: 18, size: 1 }, belly: { kind: 'spots' } } } },
+  plush: { label: 'Plush', note: 'Huge soft head, tiny body, floppy ears, dot eyes, no mouth (Sanrio, Miffy)', spec: { plan: 'figure', figure: { body: { shape: 'egg', w: 0.8, h: 0.65 }, head: { shape: 'sphere', size: 1.7 }, eyes: { style: 'button', count: 2, size: 0.75, gap: 1.2, y: -0.12 }, mouth: { style: 'none' }, ears: { kind: 'floppy', size: 1.25 }, arms: { kind: 'stub', len: 0.8 }, legs: { kind: 'stub', len: 0.7 }, tail: { kind: 'puff', len: 0.8 } } } },
+  costume: { label: 'Costume mascot', note: 'A big padded suit: huge feet, gloves, a tail (Gritty, Phanatic, Kumamon)', spec: { plan: 'figure', figure: { body: { shape: 'egg', w: 1.35, h: 1.15 }, head: { shape: 'sphere', size: 1.3 }, eyes: { style: 'round', count: 2, size: 1.2, gap: 1.1 }, mouth: { style: 'normal', size: 1.4 }, ears: { kind: 'cat', size: 0.9 }, arms: { kind: 'long', len: 1.05 }, legs: { kind: 'legs', len: 0.75, foot: 2 }, tail: { kind: 'puff', len: 1.2 } } } },
+  sun: { label: 'Sun', note: 'A face in a radiant disc: suns, stars, flames', spec: { plan: 'figure', figure: { body: { shape: 'star', w: 0.85, h: 0.8 }, head: { shape: 'none' }, eyes: { style: 'round', count: 2, size: 1.1, gap: 1.2 }, mouth: { style: 'normal', size: 1.5 }, arms: { kind: 'stub', len: 0.9 }, legs: { kind: 'stub', len: 0.8 } } } },
+  cyclops: { label: 'Olympic cyclops', note: 'An abstract geometric body and one camera eye (Wenlock, Izzy, Duke)', spec: { plan: 'figure', figure: { body: { shape: 'cone', w: 0.95, h: 1.5 }, head: { shape: 'none' }, eyes: { style: 'lens', count: 1, size: 2.1, y: 0.15 }, mouth: { style: 'none' }, ears: { kind: 'antenna', size: 0.9 }, arms: { kind: 'noodle', len: 1 }, legs: { kind: 'long', len: 0.8, foot: 1.3 } } } },
+  sprout: { label: 'Sprout', note: 'A head that grows a leaf (Pikmin, mandrakes)', spec: { plan: 'figure', figure: { body: { shape: 'capsule', w: 0.55, h: 0.75 }, head: { shape: 'egg', size: 1.15 }, eyes: { style: 'button', count: 2, size: 1.2, gap: 1, y: 0.05 }, mouth: { style: 'none' }, ears: { kind: 'sprout', size: 1.3 }, arms: { kind: 'noodle', len: 0.9 }, legs: { kind: 'long', len: 0.9 } } } },
+  imp: { label: 'Imp', note: 'Darkness complemented by cuteness: bat wings, horns, fangs, a devil tail', spec: { plan: 'figure', figure: { body: { shape: 'egg', w: 0.95, h: 0.85 }, head: { shape: 'sphere', size: 1.35 }, eyes: { style: 'round', count: 2, size: 1.15, gap: 1.05 }, mouth: { style: 'fangs', size: 1.1 }, ears: { kind: 'horns', size: 0.8 }, arms: { kind: 'stub' }, legs: { kind: 'stub', len: 0.8 }, back: { kind: 'batwings', size: 1.1, ink: 'toner' }, tail: { kind: 'devil', len: 1.1 } } } },
   uncanny: { label: 'Uncanny', note: 'Not cute: many eyes, horns, tentacles, a long silhouette', spec: { plan: 'figure', figure: { body: { shape: 'bell', w: 0.85, h: 1.45 }, head: { shape: 'egg', size: 0.85 }, eyes: { style: 'void', count: 4, size: 0.75, gap: 0.85 }, mouth: { style: 'fangs' }, ears: { kind: 'horns', size: 1.2 }, arms: { kind: 'long', len: 1.4 }, legs: { kind: 'tentacles', count: 7, len: 1.2 } } } },
 };
 // the archetype a genome is closest to (for labels and the species picker)
 export function speciesOf(spec) {
   if (spec?.plan !== 'figure') return 'crab';
   const F = spec.figure || {}, legs = F.legs?.kind, body = F.body?.shape, head = F.head?.shape;
+  if (body === 'slug') return 'nudibranch';
+  if (body === 'star') return 'sun';
+  if (body === 'cone' || F.eyes?.style === 'lens') return 'cyclops';
+  if (F.ears?.kind === 'sprout') return 'sprout';
+  if (F.back?.kind === 'batwings' || F.tail?.kind === 'devil') return 'imp';
+  if (F.ears?.kind === 'floppy') return 'plush';
+  if ((F.legs?.foot ?? 1) >= 1.6) return 'costume';
   if (F.eyes?.style === 'void' && (F.ears?.kind === 'horns' || legs === 'tentacles')) return 'uncanny';
   if (legs === 'wisp' || body === 'drop') return 'spirit';
   if (['hourglass', 'coin', 'house'].includes(body)) return 'object';
@@ -270,8 +293,8 @@ export function mutate(spec, seed, amount = 0.5, locks) {
 export function randomize(seed, locks, base = {}) {
   const R = rng(seed * 104729 + 7);
   // pick an archetype (unless the body plan is locked), then vary about half of its genes
-  const key = locked(locks, 'plan') ? (base.plan === 'figure' ? R.pick(['blob', 'chibi', 'spirit', 'object', 'uncanny']) : 'crab')
-    : R.pick(['blob', 'blob', 'chibi', 'chibi', 'spirit', 'spirit', 'object', 'object', 'uncanny', 'crab']);
+  const key = locked(locks, 'plan') ? (base.plan === 'figure' ? R.pick(Object.keys(ARCHETYPES).filter(k => k !== 'crab')) : 'crab')
+    : R.pick(Object.keys(ARCHETYPES));
   const out = applyArchetype(base, key);
   if (locked(locks, 'plan')) out.plan = base.plan || 'crab';
   for (const grp of anatomyOf(out)) for (const g of grp.genes) {

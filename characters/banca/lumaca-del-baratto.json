@@ -1,0 +1,119 @@
+{
+  "id": "lumaca-del-baratto",
+  "name": "Lumaca del baratto",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "coin",
+      "at": "head"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "slug",
+      "w": 1.25,
+      "h": 0.85,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "button",
+      "count": 2,
+      "size": 0.9,
+      "gap": 0.9,
+      "y": 0.1
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "ears": {
+      "kind": "feelers",
+      "size": 1.1,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "none",
+      "len": 1,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "back": {
+      "kind": "frills",
+      "count": 18,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "belly": {
+      "kind": "spots"
+    },
+    "scale": 1,
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "concept": "Carries what is exchanged, slowly, from door to door. A nudibranch: two rows of gills, feelers, spots, and the coin of the bank floating over it.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot #233 #237 #240 #303 (nudibranchs, Jorunna parva)"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#7a5cff",
+      "finish": "candy",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#c7ccdb",
+      "finish": "chrome",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#1a1030",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ff8a2a",
+      "finish": "gel",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#ffd23f",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#ffffff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "nudibranch"
+}

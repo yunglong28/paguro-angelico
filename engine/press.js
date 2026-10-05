@@ -93,6 +93,8 @@ export function finishMaterial(hex, finish, look = 'studio') {
     case 'gel': return M({ roughness: 0.1 * gl, clearcoat: 1, clearcoatRoughness: 0.05, emissive: c.clone().multiplyScalar(0.22) });
     case 'iridescent': return M({ roughness: 0.16 * gl, clearcoat: 1, iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [200, 600] });
     case 'pearl': return M({ roughness: 0.3 * gl, clearcoat: 0.7, sheen: 1, sheenColor: srgb('#ffffff'), iridescence: 0.3 });
+    // velvet / felt: no gloss even in Y2K, a soft bright rim (plush toys, costume mascots)
+    case 'plush': return M({ roughness: 1, sheen: 1, sheenRoughness: 0.45, sheenColor: c.clone().lerp(srgb('#ffffff'), 0.55), envMapIntensity: 0.6 });
     default: return M({ roughness: 0.38 * gl, clearcoat: 0.35, clearcoatRoughness: 0.4 }); // plastic
   }
 }

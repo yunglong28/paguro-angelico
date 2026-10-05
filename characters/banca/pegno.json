@@ -1,0 +1,119 @@
+{
+  "id": "pegno",
+  "name": "Pegno",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "key",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "egg",
+      "w": 0.8,
+      "h": 0.65,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.7,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "button",
+      "count": 2,
+      "size": 0.75,
+      "gap": 1.2,
+      "y": -0.12
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "ears": {
+      "kind": "floppy",
+      "size": 1.25,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "stub",
+      "len": 0.8,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 0.7,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "tail": {
+      "kind": "puff",
+      "len": 0.8,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "concept": "The pledge: the soft thing you leave when you promise an hour. A plush with floppy ears, dot eyes and no mouth, holding the key of trust.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot chara #272 #273 (Cinnamoroll), chara (Miffy, Sanrio)"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#cfeeff",
+      "finish": "plush",
+      "print": "paper"
+    },
+    "dark": {
+      "color": "#9fb7d6",
+      "finish": "plush",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#2a2f45",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ff9ec7",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "secondary": {
+      "color": "#ffd6e7",
+      "finish": "plush",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#ffffff",
+      "finish": "plush",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "plush"
+}

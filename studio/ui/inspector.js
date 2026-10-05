@@ -7,11 +7,12 @@ import { fill } from '../core/thumbs.js';
 import { $, $$, esc, icon, fmtNum, toast } from './dom.js';
 
 const ROLE_OF_INK = { blu: 'primary', toner: 'dark', fluo: 'accent', rosso: 'secondary', paper: 'light' };
-const GROUP_ICON = { species: 'species', body: 'body', head: 'head', face: 'face', ears: 'ears', arms: 'arms', legs: 'legs', house: 'house', pose: 'pose', shell: 'shell', eyes: 'face', claws: 'claws' };
+const GROUP_ICON = { species: 'species', body: 'body', head: 'head', face: 'face', ears: 'ears', arms: 'arms', legs: 'legs', house: 'house', back: 'back', tail: 'tail', pose: 'pose', shell: 'shell', eyes: 'face', claws: 'claws' };
 const GROUP_NOTE = {
   body: 'Shape and size of the torso. Everything else attaches to it.', head: 'Choose none to wear the face on the body (blobs, spirits).',
   face: 'Eyes are the logo: style, count, size and spacing.', ears: 'Ears, horns, antennae or fins.', arms: 'Arms and hands; held items ride on the hands.',
   legs: 'Legs, tentacles, or a wisp that makes it float.', house: 'Something on its back it did not build (optional).', pose: 'Expression, scale and idle motion.',
+  back: 'What grows from the back: gills and frills (sea slugs), bat wings, spines.', tail: 'Devil, curl or pom-pom.',
   shell: 'The borrowed shell of the hermit crab.', eyes: 'Eyes on stalks.', claws: 'One big claw, one small.',
 };
 

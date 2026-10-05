@@ -1,0 +1,119 @@
+{
+  "id": "occhio-del-registro",
+  "name": "Occhio del registro",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "book",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "cone",
+      "w": 0.95,
+      "h": 1.5,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "lens",
+      "count": 1,
+      "size": 2,
+      "y": 0.15,
+      "gap": 1
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "ears": {
+      "kind": "antenna",
+      "size": 0.9,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "long",
+      "len": 0.8,
+      "foot": 1.3,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "concept": "The eye of the ledger: it sees every hour given and received and writes it down. One camera eye on an Olympic cone, a book under its arm.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot #358 #359 (Tokyo 2020), abstract-mascots (Wenlock, Izzy, Duke)"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#0f6b73",
+      "finish": "metal",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#c7ccdb",
+      "finish": "chrome",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#081a1c",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#6af2ff",
+      "finish": "gel",
+      "print": "blu"
+    },
+    "secondary": {
+      "color": "#ff5a4f",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#f2fbff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "cyclops"
+}

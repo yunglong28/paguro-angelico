@@ -7,6 +7,7 @@ import * as THREE from '../vendor/three.module.js';
 import { ink } from './press.js';
 import { sculpt, blend, sphere, ellipsoid, cone, rbox } from './sdf.js';
 import { eye, mouthSet, sph, limb, sweep, spiralShell } from './parts.js';
+import { rng } from './rng.js';
 
 const TAU = Math.PI * 2;
 const FEET = -1.05;
@@ -36,9 +37,21 @@ function torso(shape, c, W, H) {
     case 'coin': return [disc(c, W, W * 0.32, W * 0.2)];
     case 'hourglass': return [cone([x, y - H, z], [x, y, z], W, W * 0.22), cone([x, y, z], [x, y + H, z], W * 0.22, W)];
     case 'house': return [rbox([x, y - H * 0.2, z], [W, H * 0.8, D], 0.06), cone([x - W * 1.05, y + H * 0.55, z], [x, y + H * 1.05, z], 0.1), cone([x + W * 1.05, y + H * 0.55, z], [x, y + H * 1.05, z], 0.1), rbox([x, y + H * 0.6, z], [W * 0.7, H * 0.3, D * 0.9], 0.08)];
+    // sea slug: long and low along z, a rounded head end in front, tapering tail behind
+    case 'slug': return [ellipsoid(c, [W * 0.78, H * 0.5, W * 1.6]), sphere([x, y + H * 0.08, z + W * 1.15], W * 0.58), cone([x, y - H * 0.12, z - W * 1.1], [x, y - H * 0.28, z - W * 2.1], W * 0.45, W * 0.08)];
+    // Olympic cyclops / Duke: a tall rounded triangle
+    case 'cone': return [cone([x, y - H * 0.75, z], [x, y + H * 0.85, z], W, W * 0.14), ellipsoid([x, y - H * 0.78, z], [W * 1.02, H * 0.22, W * 0.9])];
+    // sun / star: a round core with rays in the plane of the face
+    case 'star': {
+      const rays = Math.max(5, Math.round(10 * (W / 0.5))), L = H * 0.75, out = [sphere(c, W)];
+      for (let i = 0; i < rays; i++) { const a = i / rays * TAU + Math.PI / 2; out.push(cone([x + Math.cos(a) * W * 0.7, y + Math.sin(a) * W * 0.7, z], [x + Math.cos(a) * (W + L), y + Math.sin(a) * (W + L), z], W * 0.26, 0.015)); }
+      return out;
+    }
     default: return [ellipsoid(c, [W, H, D])]; // egg
   }
 }
+// how far the torso reaches above and below its centre (for stacking head and legs)
+const EXTENT = { slug: (W, H) => H * 0.5, star: (W, H) => W + H * 0.75, cone: (W, H) => H * 0.88 };
 // head as SDF, centred at c with radius R
 function headSDF(shape, c, R) {
   const [x, y, z] = c;
@@ -60,10 +73,11 @@ export function figure(P = {}, ctx) {
 
   const shape = B.shape || 'egg', W = 0.5 * (B.w ?? 1), H = 0.55 * (B.h ?? 1);
   const legKind = L.kind || 'stub', legLen = (LEG[legKind] ?? 0.2) * (L.len ?? 1);
-  const bodyY = FEET + legLen + H * (legKind === 'wisp' ? 0.6 : 0.92);
+  const ext = EXTENT[shape] ? EXTENT[shape](W, H) : H;
+  const bodyY = FEET + legLen + ext * (legKind === 'wisp' ? 0.6 : 0.92);
   const headShape = Hd.shape || 'sphere', hasHead = headShape !== 'none';
   const R = 0.42 * (Hd.size ?? 1);
-  const headY = hasHead ? bodyY + H + R * 0.72 : bodyY + H * 0.3;
+  const headY = hasHead ? bodyY + ext + R * 0.72 : bodyY + ext * 0.3;
 
   const w = new THREE.Group(), ups = [];
   const body = new THREE.Group(); body.userData.sel = 'body'; w.add(body);
@@ -83,7 +97,7 @@ export function figure(P = {}, ctx) {
   // face: where the eyes sit (front surface of the head, or the upper body)
   // where a headless body wears its face: [height, depth of the front surface, face radius]
   const FACE = { drop: [bodyY - H * 0.3, W * 0.92, W * 0.85], hourglass: [bodyY + H * 0.55, W * 0.7, W * 0.6], bell: [bodyY + H * 0.42, W * 0.5, W * 0.45],
-    capsule: [bodyY + H * 0.3, W * 0.85, W * 0.8], coin: [bodyY + W * 0.1, W * 0.32, W * 0.8], box: [bodyY + H * 0.25, W * 0.88, Math.min(W, H) * 0.8], house: [bodyY - H * 0.1, W * 0.88, W * 0.75] };
+    capsule: [bodyY + H * 0.3, W * 0.85, W * 0.8], slug: [bodyY + H * 0.2, W * 1.68, W * 0.5], cone: [bodyY + H * 0.12, W * 0.5, W * 0.42], star: [bodyY, W * 0.92, W * 0.75], coin: [bodyY + W * 0.1, W * 0.32, W * 0.8], box: [bodyY + H * 0.25, W * 0.88, Math.min(W, H) * 0.8], house: [bodyY - H * 0.1, W * 0.88, W * 0.75] };
   const [fy, fz, fr] = FACE[shape] || [bodyY + H * 0.3, W * 0.82, Math.min(W, H) * 0.9];
   const faceR = hasHead ? R : fr;
   const faceY = (hasHead ? headY : fy) + (E.y ?? 0) * faceR, faceZ = hasHead ? (headShape === 'box' ? R * 0.85 : R * 0.9) : fz;
@@ -96,6 +110,15 @@ export function figure(P = {}, ctx) {
     const z = flatFace ? faceZ : Math.sqrt(Math.max(0.01, faceZ * faceZ - x * x * 0.6)) - 0.02;
     if (style === 'button') { face.add(sph(0.075 * es, T, x, y, z + 0.02, 1, 1.25, 0.6)); face.add(sph(0.022 * es, ink('paper', 0, 0), x + 0.025 * es, y + 0.035 * es, z + 0.06, 1, 1, 0.5)); continue; }
     if (style === 'visor') continue;
+    if (style === 'lens') {
+      const r = 0.2 * es, g = new THREE.Group(); g.position.set(x, y, z - r * 0.25);
+      g.add(new THREE.Mesh(new THREE.TorusGeometry(r * 1.05, r * 0.22, 12, 40), ink('toner', 0.45, 0.55)));
+      g.add(sph(r, ink('paper', 0, 0), 0, 0, 0, 1, 1, 0.55, 28));
+      g.add(sph(r * 0.62, ink('blu', 0.5, 0.5), 0, 0, r * 0.32, 1, 1, 0.4, 24));
+      g.add(sph(r * 0.3, T, 0, 0, r * 0.45, 1, 1, 0.4, 16));
+      g.add(sph(r * 0.12, ink('paper', 0, 0), r * 0.25, r * 0.28, r * 0.55, 1, 1, 0.4, 10));
+      face.add(g); continue;
+    }
     const e = eye(0.95 * es, headM, Math.sign(k));
     e.position.set(x, y, z - 0.06 * es);
     if (style === 'void') { // dark sockets with a pin of light: not cute on purpose
@@ -124,16 +147,36 @@ export function figure(P = {}, ctx) {
 
   // ears / horns / antennae
   const ears = new THREE.Group(); ears.userData.sel = 'ears'; (hasHead ? head : body).add(ears);
-  const ek = Ea.kind || 'none', esz = Ea.size ?? 1, topY = hasHead ? headY : bodyY + H * 0.6, topR = hasHead ? R : W * 0.7;
+  // where the top of a headless body is: [height, depth, radius]
+  const TOP = { slug: [bodyY + H * 0.38, W * 1.2, W * 0.42], star: [bodyY + W * 0.62, 0, W * 0.6], cone: [bodyY + ext * 0.82, 0, W * 0.22] };
+  const [ty, tz, tr] = TOP[shape] || [bodyY + ext * 0.6, 0, W * 0.7];
+  const ek = Ea.kind || 'none', esz = Ea.size ?? 1, topY = hasHead ? headY : ty, topR = hasHead ? R : tr, topZ = hasHead ? 0 : tz;
   const earM = Ea.ink ? ink(Ea.ink, 0.36, 0.64) : headM, earPivots = [];
   if (ek !== 'none') [-1, 1].forEach(s => {
-    const piv = new THREE.Group(); piv.position.set(s * topR * 0.55, topY + topR * 0.7, 0); ears.add(piv); earPivots.push({ piv, s });
+    if (ek === 'sprout' && s < 0) return; // one sprout, in the middle
+    const piv = new THREE.Group(); piv.position.set(s * topR * 0.55, topY + topR * 0.7, topZ); ears.add(piv); earPivots.push({ piv, s, base: 0 });
     if (ek === 'cat') piv.add(new THREE.Mesh(new THREE.ConeGeometry(0.13 * esz, 0.32 * esz, 4), earM).translateY(0.1 * esz).rotateZ(-s * 0.3));
     if (ek === 'bunny') piv.add(sph(0.5, earM, s * 0.04, 0.32 * esz, 0, 0.16 * esz, 0.75 * esz, 0.08 * esz, 18));
     if (ek === 'fins') { piv.position.set(s * topR * 0.98, topY, 0); piv.add(sph(0.5, earM, s * 0.12 * esz, 0, 0, 0.36 * esz, 0.42 * esz, 0.06 * esz, 18)); }
     if (ek === 'horns') {
       const pts = []; for (let j = 0; j <= 14; j++) { const u = j / 14; pts.push(new THREE.Vector3(s * (0.05 + u * 0.25 * esz), u * 0.42 * esz, -u * u * 0.18 * esz)); }
       piv.add(sweep(pts, pts.map((_, j) => 0.075 * esz * (1 - j / 15)), ink('toner', 0.4, 0.6), 10));
+    }
+    if (ek === 'floppy') { // long drooping ears (Cinnamoroll, plush rabbits)
+      piv.position.set(s * topR * 0.78, topY + topR * 0.35, topZ);
+      piv.add(sph(0.5, earM, 0, -0.42 * esz, 0, 0.26 * esz, 0.95 * esz, 0.1 * esz, 20));
+      piv.rotation.z = s * 1.15; earPivots.at(-1).base = s * 1.15;
+    }
+    if (ek === 'sprout') { // Pikmin: a stem and a leaf
+      piv.position.set(0, topY + topR * 0.85, topZ);
+      const pts = []; for (let j = 0; j <= 12; j++) { const u = j / 12; pts.push(new THREE.Vector3(Math.sin(u * 2) * 0.05 * esz, u * 0.42 * esz, 0)); }
+      piv.add(sweep(pts, pts.map(() => 0.016), T, 6));
+      const leaf = sph(0.5, ink('fluo', 1, 0), 0.1 * esz, 0.5 * esz, 0, 0.16 * esz, 0.3 * esz, 0.03 * esz, 18); leaf.rotation.z = -0.9; piv.add(leaf);
+    }
+    if (ek === 'feelers') { // sea-slug rhinophores: two soft clubs
+      piv.position.set(s * topR * 0.5, topY + topR * 0.25, topZ);
+      piv.add(new THREE.Mesh(sculpt(`feeler|${r3(esz)}`, () => blend([cone([0, 0, 0], [0.05 * esz, 0.32 * esz, 0], 0.05 * esz, 0.04 * esz), ellipsoid([0.06 * esz, 0.38 * esz, 0], [0.065 * esz, 0.12 * esz, 0.065 * esz])], 0.04), 0.012), earM));
+      piv.rotation.z = -s * 0.25; earPivots.at(-1).base = -s * 0.25;
     }
     if (ek === 'antenna') { piv.position.x = s * topR * 0.35; piv.add(limb([0, 0, 0], [s * 0.12 * esz, 0.42 * esz, 0], 0.016, T)); piv.add(sph(0.065 * esz, ink('fluo', 1, 0), s * 0.12 * esz, 0.45 * esz, 0)); }
   });
@@ -142,7 +185,8 @@ export function figure(P = {}, ctx) {
   const arms = new THREE.Group(); arms.userData.sel = 'arms'; body.add(arms);
   const ak = A.kind || 'stub', al = A.len ?? 1, armPivots = [], hands = {}, mounts = {};
   if (ak !== 'none') [-1, 1].forEach(s => {
-    const sx = s * W * (shape === 'hourglass' ? 0.55 : 0.92), sy = bodyY + H * (shape === 'drop' ? -0.15 : 0.2);
+    const ARM = { hourglass: 0.55, cone: 0.62, slug: 0.72, star: 0.95 };
+    const sx = s * W * (ARM[shape] ?? 0.92), sy = bodyY + H * (shape === 'drop' ? -0.15 : shape === 'cone' ? -0.1 : 0.2);
     const piv = new THREE.Group(); piv.position.set(sx, sy, 0.05); arms.add(piv);
     let tip;
     if (ak === 'stub') { tip = [s * 0.2 * al, -0.12 * al, 0.06]; piv.add(new THREE.Mesh(sculpt(`arm-stub|${s}|${r3(al)}`, () => blend([sphere([0, 0, 0], 0.11), ellipsoid(tip, [0.12, 0.1, 0.1])], 0.08), 0.02), limbM)); }
@@ -162,11 +206,12 @@ export function figure(P = {}, ctx) {
 
   // legs
   const legs = new THREE.Group(); legs.userData.sel = 'legs'; w.add(legs);
-  const legParts = [], hipY = bodyY - H * 0.85;
+  const legParts = [], hipY = bodyY - ext * 0.85, fs = L.foot ?? 1;
   if (legKind === 'stub' || legKind === 'legs' || legKind === 'long') [-1, 1].forEach(s => {
     const hx = s * W * 0.45, piv = new THREE.Group(); piv.position.set(hx, hipY, 0); legs.add(piv);
     const len = hipY - FEET, foot = [s * 0.02, -len + 0.06, 0.08];
-    piv.add(new THREE.Mesh(sculpt(`leg-${legKind}|${s}|${r3(len)}`, () => blend([sphere([0, 0, 0], legKind === 'long' ? 0.08 : 0.12), cone([0, 0, 0], [0, -len + 0.1, 0], legKind === 'long' ? 0.07 : 0.11, legKind === 'long' ? 0.06 : 0.1), ellipsoid(foot, [0.13, 0.07, 0.17])], 0.06), 0.02), legM));
+    const footR = [0.13 * fs, 0.07 * Math.sqrt(fs), 0.17 * fs]; foot[2] += 0.04 * (fs - 1);
+    piv.add(new THREE.Mesh(sculpt(`leg-${legKind}|${s}|${r3(len)}|${r3(fs)}`, () => blend([sphere([0, 0, 0], legKind === 'long' ? 0.08 : 0.12), cone([0, 0, 0], [0, -len + 0.1, 0], legKind === 'long' ? 0.07 : 0.11, legKind === 'long' ? 0.06 : 0.1), ellipsoid(foot, footR)], 0.06), 0.02), legM));
     legParts.push({ piv, s });
   });
   if (legKind === 'tentacles') {
@@ -184,6 +229,66 @@ export function figure(P = {}, ctx) {
     for (let j = 0; j <= 24; j++) { const u = j / 24; pts.push(new THREE.Vector3(Math.sin(u * 3) * 0.18 * u, -u * len, -u * u * 0.35)); }
     piv.add(sweep(pts, pts.map((_, j) => W * 0.75 * (1 - j / 25) ** 1.4 + 0.01), legM, 16)); legParts.push({ piv, wisp: true });
   }
+
+  // body surface approximated as an ellipsoid, for things that grow out of it (frills, spots)
+  const SURF = { slug: [W * 0.78, H * 0.5, W * 1.6], star: [W, W, W], cone: [W * 0.7, ext, W * 0.6] };
+  const [sx0, sy0, sz0] = SURF[shape] || [W, ext, W * 0.85];
+  const onSurface = (u, v) => new THREE.Vector3(Math.cos(v) * Math.sin(u) * sx0, Math.cos(u) * sy0, Math.sin(v) * Math.sin(u) * sz0).add(new THREE.Vector3(0, bodyY, 0));
+  const normalAt = (p) => new THREE.Vector3(p.x / (sx0 * sx0), (p.y - bodyY) / (sy0 * sy0), p.z / (sz0 * sz0)).normalize();
+
+  // back: frills / gills (nudibranch cerata), bat wings, dorsal spines
+  const Bk = o(P.back), backKind = Bk.kind || 'none', bsz = Bk.size ?? 1, backM = ink(Bk.ink || 'fluo', Bk.ink && Bk.ink !== 'fluo' ? 0.36 : 1, Bk.ink && Bk.ink !== 'fluo' ? 0.64 : 0);
+  const backG = new THREE.Group(); backG.userData.sel = 'back'; body.add(backG);
+  const backParts = [];
+  if (backKind === 'frills') {
+    const n = Bk.count ?? 14, R2 = rng(n * 31 + 7);
+    for (let i = 0; i < n; i++) {
+      let at;
+      if (shape === 'slug') { // two rows along the back, like the cerata of a nudibranch
+        const row = i % 2 ? 1 : -1, k = Math.floor(i / 2) / Math.max(1, Math.ceil(n / 2) - 1);
+        const z = sz0 * (0.55 - k * 1.35), x = row * sx0 * 0.5 * Math.sqrt(Math.max(0, 1 - (z / sz0) ** 2));
+        at = new THREE.Vector3(x, bodyY + sy0 * Math.sqrt(Math.max(0.02, 1 - (x / sx0) ** 2 - (z / sz0) ** 2)), z);
+      } else at = onSurface(0.3 + R2.next() * 0.8, -Math.PI / 2 + (R2.next() - 0.5) * 2.2); // a crest on the back half (-z)
+      const out = normalAt(at).add(new THREE.Vector3(0, 0.6, 0)).normalize();
+      const len = (shape === 'slug' ? 0.22 + R2.next() * 0.12 : 0.14 + R2.next() * 0.1) * bsz, g = new THREE.Group(); g.position.copy(at); g.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), out);
+      g.add(new THREE.Mesh(sculpt(`cera|${r3(len)}`, () => blend([cone([0, 0, 0], [0, len, 0], 0.045 * bsz, 0.02 * bsz), sphere([0, len, 0], 0.03 * bsz)], 0.03), 0.01), backM));
+      g.add(sph(0.022 * bsz, ink('paper', 0, 0), 0, len + 0.02 * bsz, 0, 1, 1, 1, 8));
+      backG.add(g); backParts.push({ g, i, q: g.quaternion.clone() });
+    }
+  }
+  if (backKind === 'batwings') [-1, 1].forEach(s => {
+    const sh = new THREE.Shape(); const k = 0.5 * bsz;
+    sh.moveTo(0, 0); sh.quadraticCurveTo(k * 0.6, k * 1.0, k * 1.6, k * 1.1); // leading edge to the tip
+    for (let j = 0; j < 3; j++) { const x0 = k * (1.6 - j * 0.5), x1 = k * (1.1 - j * 0.5); sh.quadraticCurveTo((x0 + x1) / 2, k * (0.45 - j * 0.08), x1, k * (0.75 - j * 0.15)); } // scalloped trailing edge
+    sh.quadraticCurveTo(k * 0.15, k * 0.2, 0, 0);
+    const m = new THREE.Mesh(new THREE.ShapeGeometry(sh, 12), Bk.ink ? backM : ink('toner', 0.3, 0.7)); m.scale.x = s;
+    const piv = new THREE.Group(); piv.position.set(s * W * 0.35, bodyY + ext * 0.25, -sz0 * 0.75); piv.rotation.y = s * 0.35; piv.add(m);
+    backG.add(piv); backParts.push({ piv, s, wing: true });
+  });
+  if (backKind === 'spines') {
+    const n = Bk.count ?? 7;
+    for (let i = 0; i < n; i++) {
+      const u = 0.15 + (i / Math.max(1, n - 1)) * 0.85, at = onSurface(u, -Math.PI / 2 - 0 * u).setZ(-Math.sin(u) * sz0), h = (0.12 + 0.1 * Math.sin(u * Math.PI)) * bsz;
+      const out = at.clone().sub(new THREE.Vector3(0, bodyY, 0)).normalize();
+      const c = new THREE.Mesh(new THREE.ConeGeometry(0.06 * bsz, h, 8), backM); c.position.copy(at).addScaledVector(out, h * 0.35); c.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), out);
+      backG.add(c);
+    }
+  }
+  // tail: devil, curl, puff
+  const Tl = o(P.tail), tailKind = Tl.kind || 'none', tl = Tl.len ?? 1, tailM = Tl.ink ? ink(Tl.ink, 0.36, 0.64) : bodyM;
+  const tailG = new THREE.Group(); tailG.userData.sel = 'tail'; tailG.position.set(0, bodyY - ext * 0.55, -sz0 * 0.92); body.add(tailG);
+  if (tailKind === 'devil' || tailKind === 'curl') {
+    const pts = [];
+    for (let j = 0; j <= 30; j++) {
+      const u = j / 30;
+      pts.push(tailKind === 'devil'
+        ? new THREE.Vector3(Math.sin(u * 2.2) * 0.25 * tl, -0.1 * tl + u * u * 0.75 * tl, -u * 0.55 * tl)
+        : new THREE.Vector3(Math.cos(u * TAU * 1.6) * 0.12 * (1 - u * 0.5) * tl, Math.sin(u * TAU * 1.6) * 0.12 * (1 - u * 0.5) * tl + u * 0.15 * tl, -0.05 - u * 0.25 * tl));
+    }
+    tailG.add(sweep(pts, pts.map((_, j) => (tailKind === 'devil' ? 0.035 : 0.045) * (1 - j / 40)), tailM, 8));
+    if (tailKind === 'devil') { const tip = new THREE.Mesh(new THREE.ConeGeometry(0.09 * tl, 0.16 * tl, 3), tailM); tip.position.copy(pts.at(-1)); tip.lookAt(pts.at(-1).clone().multiplyScalar(2).sub(pts.at(-4))); tip.rotateX(Math.PI / 2); tailG.add(tip); }
+  }
+  if (tailKind === 'puff') tailG.add(sph(0.16 * tl, Tl.ink ? tailM : ink('paper', 0, 0), 0, 0.05, -0.04, 1, 1, 1, 18));
 
   // the borrowed house on the back (optional)
   const house = new THREE.Group(); house.userData.sel = 'house'; w.add(house);
@@ -216,7 +321,9 @@ export function figure(P = {}, ctx) {
   // belly motif: the time bank's marks
   const bk = Be.kind || 'none';
   if (bk !== 'none') {
-    const bz = shape === 'box' || shape === 'house' ? W * 0.85 : shape === 'coin' ? W * 0.3 : W * 0.8, by = bodyY - H * 0.05, bs = Math.min(W, H) * 0.55;
+    // on a star the face is in the middle, so the mark goes below it, smaller
+    const bz = shape === 'box' || shape === 'house' ? W * 0.85 : shape === 'coin' ? W * 0.3 : shape === 'star' ? W * 0.75 : W * 0.8;
+    const by = shape === 'star' ? bodyY - W * 0.58 : bodyY - H * 0.05, bs = shape === 'star' ? W * 0.3 : Math.min(W, H) * 0.55;
     const g = new THREE.Group(); g.position.set(0, by, bz); body.add(g);
     if (bk === 'clock') {
       g.add(sph(bs, ink('paper', 0, 0), 0, 0, 0, 1, 1, 0.08, 32));
@@ -228,6 +335,13 @@ export function figure(P = {}, ctx) {
     }
     if (bk === 'spiral') { const pts = []; for (let j = 0; j <= 60; j++) { const u = j / 60, a = u * TAU * 2.2; pts.push(new THREE.Vector3(Math.cos(a) * bs * u, Math.sin(a) * bs * u, 0.02)); } g.add(sweep(pts, pts.map(() => 0.02), ink('fluo', 1, 0), 6)); }
     if (bk === 'buttons') [0.35, -0.05, -0.45].forEach(y => g.add(sph(0.06, T, 0, y * bs * 1.6, 0.02, 1, 1, 0.5, 12)));
+    if (bk === 'spots') { // dots over the whole body, nudibranch-style
+      body.remove(g); const R3 = rng(97);
+      for (let i = 0; i < 22; i++) {
+        const u = 0.3 + R3.next() * 1.6, v = R3.next() * TAU, at = onSurface(u, v), n = normalAt(at); // the upper body, where they show
+        const d = sph(0.04 + R3.next() * 0.04, ink('rosso', 1, 0), 0, 0, 0, 1, 1, 0.3, 12); d.position.copy(at).addScaledVector(n, 0.004); d.lookAt(at.clone().add(n)); body.add(d);
+      }
+    }
     if (bk === 'heart') { const h = new THREE.Mesh(sculpt(`heart|${r3(bs)}`, () => blend([sphere([-bs * 0.28, bs * 0.15, 0], bs * 0.32), sphere([bs * 0.28, bs * 0.15, 0], bs * 0.32), cone([0, -bs * 0.45, 0], [0, bs * 0.05, 0], 0.03, bs * 0.4)], 0.06), 0.02), ink('rosso', 1, 0)); h.scale.z = 0.35; g.add(h); }
   }
 
@@ -249,12 +363,17 @@ export function figure(P = {}, ctx) {
       if (floats) legs.position.y = bob;
       if (!fused) headPivot.rotation.z = Math.sin(t * 0.9) * 0.06;
       armPivots.forEach(({ piv, s }) => { piv.rotation.z = s * (0.15 + Math.sin(t * 2 + (s > 0 ? 0 : Math.PI)) * 0.18); });
-      earPivots.forEach(({ piv, s }, i) => { piv.rotation.z = Math.sin(t * 3 + i) * 0.08 * s; });
+      earPivots.forEach(({ piv, s, base }, i) => { piv.rotation.z = base + Math.sin(t * 3 + i) * 0.08 * s; });
       legParts.forEach(l => {
         if (l.wisp) { l.piv.rotation.x = Math.sin(t * 1.4) * 0.12; l.piv.rotation.z = Math.sin(t * 1.1) * 0.15; }
         else if (l.tentacle) l.piv.rotation.z = Math.sin(t * 2 + l.i) * 0.12;
         else l.piv.rotation.x = Math.sin(t * 2.6 + (l.s > 0 ? 0 : Math.PI)) * 0.12;
       });
+      backParts.forEach(b => {
+        if (b.wing) b.piv.rotation.y = b.s * (0.35 + Math.sin(t * 5) * 0.35);
+        else b.g.quaternion.copy(b.q).multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(Math.sin(t * 2 + b.i) * 0.12, 0, Math.cos(t * 1.7 + b.i) * 0.12)));
+      });
+      tailG.rotation.y = Math.sin(t * 2.4) * 0.3;
       ups.forEach(f => f(t));
     },
   };

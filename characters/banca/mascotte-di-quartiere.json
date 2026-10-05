@@ -1,0 +1,119 @@
+{
+  "id": "mascotte-di-quartiere",
+  "name": "Mascotte di quartiere",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "broom",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "egg",
+      "w": 1.35,
+      "h": 1.15,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.3,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.2,
+      "gap": 1.1,
+      "y": 0
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1.4
+    },
+    "ears": {
+      "kind": "cat",
+      "size": 0.9,
+      "ink": "blu"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1.05,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.75,
+      "foot": 2,
+      "count": 6,
+      "ink": "blu"
+    },
+    "tail": {
+      "kind": "puff",
+      "len": 1.2,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "concept": "The neighbourhood mascot who turns up to every clean-up morning. A padded suit with enormous feet, a pom-pom tail and a broom.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot abstract-mascots #10 (Youppi!) #40 (Grimace), Gritty, Phillie Phanatic, Kumamon"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#ff7a1a",
+      "finish": "plush",
+      "print": "rosso"
+    },
+    "dark": {
+      "color": "#2b59ff",
+      "finish": "plastic",
+      "print": "blu"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ffe14a",
+      "finish": "plush",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#2b59ff",
+      "finish": "plush",
+      "print": "blu"
+    },
+    "light": {
+      "color": "#ffffff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "costume"
+}

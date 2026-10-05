@@ -8,7 +8,7 @@
 
 export const ROLES = ['primary', 'dark', 'line', 'accent', 'secondary', 'light'];
 export const ROLE_LABEL = { primary: 'Primary · body', dark: 'Shell · metal', line: 'Line · pupils', accent: 'Accent · glow', secondary: 'Secondary', light: 'Light · eye whites' };
-export const FINISHES = ['matte', 'plastic', 'candy', 'chrome', 'metal', 'gel', 'iridescent', 'pearl'];
+export const FINISHES = ['matte', 'plastic', 'candy', 'chrome', 'metal', 'gel', 'iridescent', 'pearl', 'plush'];
 export const PRINT_INKS = ['toner', 'blu', 'fluo', 'rosso', 'paper'];
 export const INK_HEX = { toner: '#141410', blu: '#001ef7', fluo: '#e8ff00', rosso: '#e3211a', paper: '#f4f4f2' };
 

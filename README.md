@@ -8,11 +8,15 @@ uncanny beings and the original hermit crabs, each made a character by its body,
 offers the time bank. Rendered live in 3D as 90s pre-rendered CGI, in four looks, exported as animated `.glb`.
 
 **Two body plans.** `plan: "crab"` is the hermit crab (`engine/parts.js` `host`). `plan: "figure"` is the modular
-body (`engine/figure.js`): body shape (egg, capsule, box, bell, drop, coin, hourglass, house), head (none, sphere,
-egg, box, cat), face (round, button, void or visor eyes; mouth with fangs or none), ears/horns/antennae/fins,
-arms (stub, noodle, long), legs (stub, legs, long, tentacles, wisp), an optional house on the back (shell, clock,
-cottage, lantern) and a belly mark (clock, spiral, buttons, heart). Archetypes (Y2K blob, chibi, spirit, object
-spirit, uncanny, hermit crab) are starting points; Randomize picks one and varies it.
+body (`engine/figure.js`): body shape (egg, capsule, box, bell, drop, coin, hourglass, house, slug, cone, star),
+head (none, sphere, egg, box, cat), face (round, button, void, visor or lens eyes; mouth with fangs or none),
+ears (cat, bunny, floppy, horns, antenna, feelers, sprout, fins), arms (stub, noodle, long), legs (stub, legs, long,
+tentacles, wisp; foot size), back (frills, bat wings, spines), tail (devil, curl, puff), an optional house (shell,
+clock, cottage, lantern) and a pattern (clock, spiral, buttons, heart, spots).
+
+**13 archetypes** are starting points: hermit crab, Y2K blob, chibi, spirit, object spirit, uncanny, and seven
+from the Are.na *Mascot* channel — sea slug, plush, costume mascot, sun, Olympic cyclops, sprout, imp
+([`briefs/mascot-archetypes.md`](briefs/mascot-archetypes.md)). Randomize picks one and varies about half its genes.
 
 One system: every character is a **genome** (a JSON file in `characters/`), and every tool reads and writes that
 same genome through one schema (`engine/schema.js`).
@@ -58,6 +62,7 @@ the brand library (`brand/brand.json`) holds named palettes and the stage of eac
 npm run dev                          # the studio, with saving into characters/ and the Describe endpoint
 npm run generate -- "a sleepy chrome bishop crab with a tower for a shell"   # text → characters/drafts/<id>.json
 npm run new -- --from serafino --seed 302          # a mutated child, next to its parent
+npm run refs -- https://www.are.na/<user>/<channel> # sync an Are.na channel into briefs/references/ (private)
 npm run manifest                     # rebuild characters/index.json
 npm run export                       # every character: plate.png + sheet.png (headless Chrome) → output/renders/
 npm run export -- serafino --loop    # + 4 s turntable loop.mp4 (ffmpeg)
@@ -119,7 +124,7 @@ time-bank-spirit/
 ## The cast
 - **Angeli**: Serafino, Ofanino, Doppia chela, Mandorla, Mandragora, Re Pescatore, Angelo di mare, Reliquiario. Brief: [`briefs/angeli.md`](briefs/angeli.md).
 - **Collettivo** (justice, solidarity, the commons, Soviet constructivism): Torre, Cuneo rosso, Tribuna, Catena di vacanza, Casa comune, Bilancia, Internazionale. Brief: [`briefs/collettivo.md`](briefs/collettivo.md).
-- **Banca del tempo**: Clessidra, Ora d'aria, Rammendo, Custode delle ore, Mutuo, Casa del tempo, Mestolo, Fantasma della biblioteca. Each one offers something (an hour of gardening, mending, cooking, reading aloud) and carries it as a held item.
+- **Banca del tempo**: Clessidra, Ora d'aria, Rammendo, Custode delle ore, Mutuo, Casa del tempo, Mestolo, Fantasma della biblioteca, and from the Mascot archetypes Lumaca del baratto, Pegno, Mascotte di quartiere, Ora solare, Occhio del registro, Germoglio, Debito. Each one offers something (an hour of gardening, mending, cooking, reading aloud) and carries it as a held item.
 - Style: [`briefs/y2k-style.md`](briefs/y2k-style.md), distilled from the *90s CG mascots/avatars* board.
 
 ![Collettivo](docs/images/collettivo.png)

@@ -1,0 +1,123 @@
+{
+  "id": "ora-solare",
+  "name": "Ora solare",
+  "parts": [
+    {
+      "type": "orbit",
+      "item": "clock",
+      "count": 5,
+      "r": 1.45,
+      "speed": 0.4,
+      "tilt": 0.35,
+      "itemSize": 0.55
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "star",
+      "w": 0.85,
+      "h": 0.8,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.1,
+      "gap": 1.2,
+      "y": 0
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1.5
+    },
+    "arms": {
+      "kind": "stub",
+      "len": 0.9,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 0.8,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "belly": {
+      "kind": "none"
+    },
+    "scale": 1,
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "concept": "Daylight saving time: the hour that is given back every autumn. A sun with the clocks of the bank turning around it.",
+  "refs": [
+    "are.na/trust-woznagislw0/mascot chara (sun faces, spiky star mascots)"
+  ],
+  "palette": {
+    "primary": {
+      "color": "#ffb21a",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "dark": {
+      "color": "#c7ccdb",
+      "finish": "chrome",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#3a1d00",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#fff36b",
+      "finish": "gel",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#ff5a2a",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#fffaf0",
+      "finish": "candy",
+      "print": "paper"
+    }
+  },
+  "parent": "paguro",
+  "series": "banca",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "archetype": "sun"
+}

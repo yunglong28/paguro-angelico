@@ -29,7 +29,8 @@ export async function load() {
   data.brand.palettes ||= {}; data.brand.stage ||= {};
   setStage(data.brand.stage);
   data.local = !EXPORT && await fetch(new URL('api/ping', ROOT)).then(r => r.ok).catch(() => false);
-  if (Q.get('spec')) { const d = await getJSON(Q.get('spec')); data.cast[d.id] = d; data.seriesOf[d.id] = 'drafts'; data.order.push(d.id); }
+  // ?spec=path/to.json opens a file that is not in the cast yet (drafts, scripts/turn.mjs)
+  if (Q.get('spec')) { const d = await getJSON(Q.get('spec')); data.cast[d.id] = d; data.seriesOf[d.id] = 'drafts'; if (!data.order.includes(d.id)) data.order.push(d.id); data.specKey = d.id; }
 }
 export const series = () => [...new Set(data.order.map(k => data.seriesOf[k]))];
 export const mainCast = () => data.order.filter(k => !data.cast[k].seed_of || edits[k]);
@@ -55,7 +56,7 @@ export const dirty = new Set();
 
 export function initState() {
   const main = data.order.filter(k => !data.cast[k].seed_of);
-  const want = Q.get('c') || prefs.get('key');
+  const want = data.specKey || Q.get('c') || prefs.get('key');
   state.key = data.cast[want] ? want : main[0];
   state.spec = clone(data.cast[state.key]);
   const m = OLD_MODE[Q.get('mode')] || Q.get('mode') || prefs.get('mode', 'edit');
