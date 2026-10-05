@@ -33,7 +33,7 @@ async function shot(url, file, w, h) {
   await run(CHROME, ['--headless=new', `--user-data-dir=${PROFILE}`, '--no-first-run', '--no-default-browser-check', '--hide-scrollbars', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--force-device-scale-factor=1',
     `--window-size=${w},${h}`, '--virtual-time-budget=4000', `--screenshot=${file}`, url], { timeout: 90000 }).finally(() => fs.rmSync(PROFILE, { recursive: true, force: true }));
 }
-const U = (q) => `http://127.0.0.1:${port}/viewer/?export&${q}`;
+const U = (q) => `http://127.0.0.1:${port}/studio/?export&${q}`;
 
 async function one(id) {
   const dir = path.join(ROOT, 'output', 'renders', id);

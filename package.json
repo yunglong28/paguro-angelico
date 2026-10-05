@@ -2,12 +2,16 @@
   "name": "time-bank-spirit",
   "private": true,
   "type": "module",
-  "description": "Character pipeline for the Spring Draw mascots: brief -> spec -> mutate -> render -> export.",
+  "description": "Time Bank Spirit: character editor and generator. One genome (engine/schema.js), one studio, one pipeline.",
   "scripts": {
     "dev": "node scripts/serve.mjs",
     "manifest": "node scripts/manifest.mjs",
     "new": "node scripts/new.mjs",
+    "generate": "node scripts/generate.mjs",
     "export": "node scripts/export.mjs",
     "glb": "node scripts/glb.mjs"
+  },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.131.0"
   }
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Time Bank Spirit Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./studio.css">
+</head>
+<body>
+<header class="top">
+  <a class="logo" href="./" title="Time Bank Spirit Studio">TBS<span>studio</span></a>
+  <nav class="modes" id="modes" role="tablist" aria-label="Mode"></nav>
+  <div class="spacer"></div>
+  <div class="seg" id="looks" role="group" aria-label="Look"></div>
+  <div class="tools">
+    <button class="icon" id="undo" title="Undo (⌘Z)" aria-label="Undo">↶</button>
+    <button class="icon" id="redo" title="Redo (⇧⌘Z)" aria-label="Redo">↷</button>
+    <button class="btn" id="random" title="A whole new character (locked genes stay)">Randomize</button>
+    <div class="menu-wrap">
+      <button class="btn hot" id="saveBtn" aria-haspopup="menu" aria-expanded="false">Save</button>
+      <div class="menu" id="saveMenu" role="menu" hidden></div>
+    </div>
+  </div>
+</header>
+
+<aside class="left" aria-label="Cast and outliner">
+  <section class="block">
+    <div class="bh"><h2>Cast</h2><button class="mini" id="newChar" title="Start from a random character">+ New</button></div>
+    <div id="cast" class="cast"></div>
+  </section>
+  <section class="block grow">
+    <div class="bh"><h2 id="outTitle">Character</h2></div>
+    <div id="outliner" class="outliner"></div>
+  </section>
+</aside>
+
+<main class="view" id="view">
+  <canvas id="c" aria-label="The character, rendered live. Drag to orbit, click a part to select it."></canvas>
+  <svg id="tree" aria-label="Lineage of the cast" style="display:none"></svg>
+  <div class="hud tl"><b id="hudName"></b><span id="hudId"></span></div>
+  <div class="hud bl" id="hint"></div>
+  <div class="hud br"><button class="mini ghost" id="pause" aria-pressed="false">Pause</button><button class="mini ghost" id="frame">Frame</button></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</main>
+
+<aside class="right" aria-label="Inspector">
+  <div id="inspector"></div>
+</aside>
+<script type="module" src="./app.js"></script>
+</body>
+</html>

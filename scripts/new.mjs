@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ROOT } from './serve.mjs';
 import { manifest, specFile } from './manifest.mjs';
-import { mutate } from '../engine/mutate.js';
+import { mutate } from '../engine/schema.js';
 
 const args = Object.fromEntries(process.argv.slice(2).join(' ').split('--').filter(Boolean).map(s => { const [k, ...v] = s.trim().split(' '); return [k, v.join(' ')]; }));
 if (!args.from || !args.seed) { console.error('usage: npm run new -- --from <id> --seed <n> [--name "..."] [--amount 0.55] [--id new-id]'); process.exit(1); }

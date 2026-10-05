@@ -2,10 +2,11 @@
 import * as THREE from '../vendor/three.module.js';
 import { host, setEye, EXPRESSIONS, PARTS as ANGELI } from './parts.js';
 import { COLLETTIVO } from './collettivo.js';
+import { withPalette } from './palette.js';
 
 const PARTS = { ...ANGELI, ...COLLETTIVO };
 const merge = (a, b) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' ? merge(a[k], v) : v; return o; };
-import { rng } from './mutate.js';
+import { rng } from './rng.js';
 
 const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia', 'banner', 'scales']);
 
@@ -13,6 +14,7 @@ export function build(spec) {
   const R = rng(spec.seed ?? 1);
   const ctx = { rng: R, eyes: [], anchors: {} };
   const root = new THREE.Group();
+  root.userData.palette = withPalette(spec.palette); // setLook(root, look) paints with it
   const stage = new THREE.Group(); root.add(stage);
 
   const hostSpec = spec.host || {};
@@ -26,10 +28,14 @@ export function build(spec) {
   stage.add(hostWrap);
 
   const ups = [h.up];
-  for (const p of spec.parts || []) {
+  (spec.parts || []).forEach((p, n) => {
     const make = PARTS[p.type];
-    if (!make) { console.warn('unknown part', p.type); continue; }
+    if (!make) { console.warn('unknown part', p.type); return; }
     const part = make(p, ctx);
+    part.obj.userData.sel = `part:${n}`;
+    // every part can be moved and resized (Spore-style placement), on top of its own params
+    if (p.move) part.obj.position.add(new THREE.Vector3(...p.move.map(v => v || 0)));
+    if (p.size && p.size !== 1) part.obj.scale.multiplyScalar(p.size);
     if (part.wrapHost) { // the part re-seats the host inside itself (double articulation)
       stage.remove(hostWrap); part.obj.add(hostWrap); hostWrap.position.y = 0;
     }
@@ -40,7 +46,7 @@ export function build(spec) {
     if (part.hostScale) hostWrap.scale.setScalar(part.hostScale);
     if (part.after) part.after(hostWrap, ctx.anchors);
     if (part.up) ups.push(part.up);
-  }
+  });
 
   // frame close-ups on a visible crab: the main host, or the first crab a collective part made
   let faceEyes = hostWrap.visible ? hostEyes : ctx.eyes.slice(hostEyes.length, hostEyes.length + 2);

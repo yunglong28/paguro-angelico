@@ -1,0 +1,272 @@
+{
+  "name": "Time Bank Spirit",
+  "note": "Brand layer of the studio: palettes every character can use, and the stage all looks share. Edited in the studio (Brand tab), saved here.",
+  "stage": {
+    "sky": {
+      "top": "#9fc4ff",
+      "mid": "#eef4ff",
+      "bottom": "#ffffff",
+      "horizon": 0.55
+    },
+    "paper": "#f4f4f2",
+    "gloss": 0.6
+  },
+  "palettes": {
+    "Chrome candy": {
+      "primary": {
+        "color": "#3d5cff",
+        "finish": "candy",
+        "print": "blu"
+      },
+      "dark": {
+        "color": "#c7ccdb",
+        "finish": "chrome",
+        "print": "toner"
+      },
+      "line": {
+        "color": "#141410",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#e8ff00",
+        "finish": "gel",
+        "print": "fluo"
+      },
+      "secondary": {
+        "color": "#e3211a",
+        "finish": "gel",
+        "print": "rosso"
+      },
+      "light": {
+        "color": "#ffffff",
+        "finish": "candy",
+        "print": "paper"
+      }
+    },
+    "Stampa": {
+      "primary": {
+        "color": "#001ef7",
+        "finish": "matte",
+        "print": "blu"
+      },
+      "dark": {
+        "color": "#2a2a26",
+        "finish": "matte",
+        "print": "toner"
+      },
+      "line": {
+        "color": "#141410",
+        "finish": "matte",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#e8ff00",
+        "finish": "matte",
+        "print": "fluo"
+      },
+      "secondary": {
+        "color": "#e3211a",
+        "finish": "matte",
+        "print": "rosso"
+      },
+      "light": {
+        "color": "#f4f4f2",
+        "finish": "matte",
+        "print": "paper"
+      }
+    },
+    "Bubblegum": {
+      "primary": {
+        "color": "#ff6fb5",
+        "finish": "candy",
+        "print": "rosso"
+      },
+      "dark": {
+        "color": "#d9e1f2",
+        "finish": "pearl",
+        "print": "toner"
+      },
+      "line": {
+        "color": "#2b1530",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#44e5ff",
+        "finish": "gel",
+        "print": "blu"
+      },
+      "secondary": {
+        "color": "#ffd23f",
+        "finish": "candy",
+        "print": "fluo"
+      },
+      "light": {
+        "color": "#fff7fb",
+        "finish": "candy",
+        "print": "paper"
+      }
+    },
+    "Wetrix aqua": {
+      "primary": {
+        "color": "#19b8e6",
+        "finish": "iridescent",
+        "print": "blu"
+      },
+      "dark": {
+        "color": "#b9c6d6",
+        "finish": "chrome",
+        "print": "toner"
+      },
+      "line": {
+        "color": "#06222e",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#b6ff3c",
+        "finish": "gel",
+        "print": "fluo"
+      },
+      "secondary": {
+        "color": "#2c5bff",
+        "finish": "candy",
+        "print": "blu"
+      },
+      "light": {
+        "color": "#f2fbff",
+        "finish": "candy",
+        "print": "paper"
+      }
+    },
+    "Constructivist": {
+      "primary": {
+        "color": "#d7261e",
+        "finish": "plastic",
+        "print": "rosso"
+      },
+      "dark": {
+        "color": "#1c1b19",
+        "finish": "metal",
+        "print": "toner"
+      },
+      "line": {
+        "color": "#111110",
+        "finish": "matte",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#f2c230",
+        "finish": "plastic",
+        "print": "fluo"
+      },
+      "secondary": {
+        "color": "#ece3cf",
+        "finish": "matte",
+        "print": "paper"
+      },
+      "light": {
+        "color": "#f6efe0",
+        "finish": "matte",
+        "print": "paper"
+      }
+    },
+    "Neo-archetype gold": {
+      "primary": {
+        "color": "#1a1a1f",
+        "finish": "candy",
+        "print": "toner"
+      },
+      "dark": {
+        "color": "#e2b649",
+        "finish": "chrome",
+        "print": "fluo"
+      },
+      "line": {
+        "color": "#0b0b0d",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#ff3b30",
+        "finish": "gel",
+        "print": "rosso"
+      },
+      "secondary": {
+        "color": "#f5d77a",
+        "finish": "metal",
+        "print": "fluo"
+      },
+      "light": {
+        "color": "#fffaf0",
+        "finish": "pearl",
+        "print": "paper"
+      }
+    },
+    "Toro white": {
+      "primary": {
+        "color": "#f7f4ee",
+        "finish": "pearl",
+        "print": "paper"
+      },
+      "dark": {
+        "color": "#8a5a3c",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "line": {
+        "color": "#1d1410",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#ff8a3d",
+        "finish": "candy",
+        "print": "rosso"
+      },
+      "secondary": {
+        "color": "#6fb7ff",
+        "finish": "candy",
+        "print": "blu"
+      },
+      "light": {
+        "color": "#ffffff",
+        "finish": "candy",
+        "print": "paper"
+      }
+    },
+    "Vapor": {
+      "primary": {
+        "color": "#7b5cff",
+        "finish": "iridescent",
+        "print": "blu"
+      },
+      "dark": {
+        "color": "#2fd3c4",
+        "finish": "chrome",
+        "print": "blu"
+      },
+      "line": {
+        "color": "#170f2e",
+        "finish": "plastic",
+        "print": "toner"
+      },
+      "accent": {
+        "color": "#ff71ce",
+        "finish": "gel",
+        "print": "rosso"
+      },
+      "secondary": {
+        "color": "#fffb96",
+        "finish": "candy",
+        "print": "fluo"
+      },
+      "light": {
+        "color": "#fdf6ff",
+        "finish": "pearl",
+        "print": "paper"
+      }
+    }
+  }
+}

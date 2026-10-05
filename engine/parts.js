@@ -3,7 +3,7 @@
 import * as THREE from '../vendor/three.module.js';
 import { ink } from './press.js';
 import { sculpt, blend, sphere, ellipsoid, cone, rbox, carve } from './sdf.js';
-import { rng } from './mutate.js';
+import { rng } from './rng.js';
 
 const UP = new THREE.Vector3(0, 1, 0);
 const Z = new THREE.Vector3(0, 0, 1);
@@ -143,7 +143,7 @@ export function host(P = {}, ctx) {
     shellRoot = new THREE.Group();
     shellRoot.position.set(0, sp.y ?? -0.05, sp.z ?? -0.2);
     shellRoot.rotation.set(sp.tilt ?? -0.38, sp.yaw ?? 0.5, sp.roll ?? 0);
-    shellRoot.add(shell.obj); w.add(shellRoot);
+    shellRoot.add(shell.obj); w.add(shellRoot); shellRoot.userData.sel = 'shell';
     if (sp.detached) {
       shellRoot.position.set(sp.detached[0], sp.detached[1], sp.detached[2]);
       ups.push(t => { shellRoot.rotation.y = t * 0.25; shellRoot.position.y = sp.detached[1] + Math.sin(t * 0.8) * 0.12; });
@@ -151,7 +151,7 @@ export function host(P = {}, ctx) {
   }
   // body: one sculpted carapace (blob + rostrum + eye sockets + tubercles + abdomen into the shell)
   const bs = P.body?.size ?? 1;
-  const body = new THREE.Group(); w.add(body);
+  const body = new THREE.Group(); w.add(body); body.userData.sel = 'body';
   const bumps = P.body?.bumps ?? 9;
   body.add(new THREE.Mesh(sculpt(`body|${bs}|${bumps}`, () => {
     const R = rng(7), parts = [
@@ -177,7 +177,7 @@ export function host(P = {}, ctx) {
     const top = [k * 0.1, sl, 0];
     g.add(new THREE.Mesh(sculpt(`stalk|${k}|${sl}`, () => blend([cone([0, -0.02, 0], top, 0.055, 0.032), sphere([0, 0.06, 0], 0.06)], 0.05), 0.012), bodyM));
     const e = eye(1.12 * es, bodyM, Math.sign(k)); e.position.set(top[0], top[1] + 0.12 * es, 0.02);
-    g.add(e); body.add(g); ctx.eyes.push(e); stalks.push(g);
+    g.add(e); body.add(g); ctx.eyes.push(e); stalks.push(g); g.userData.sel = 'eyes';
   }
   // chelipeds: hermit crabs carry one big claw (right) and one small; the finger is hinged
   const claws = [], tips = {};
@@ -197,7 +197,7 @@ export function host(P = {}, ctx) {
     if (k > 0 && (hold === 'seed' || hold === 'rosso')) c.add(sph(0.09, ink(hold === 'rosso' ? 'rosso' : 'fluo', 1, 0), Pm[0] + k * 0.3 * cs, Pm[1] + 0.02, Pm[2] + 0.12));
     if (P.claws?.raise) c.rotation.z = k * P.claws.raise;
     tips[k > 0 ? 'clawR' : 'clawL'] = new THREE.Vector3(Pm[0] + k * 0.32 * cs, Pm[1], Pm[2] + 0.1).applyEuler(c.rotation).add(c.position);
-    body.add(c); claws.push({ c, finger, k });
+    body.add(c); claws.push({ c, finger, k }); c.userData.sel = 'claws';
   });
   // walking legs: coxa, femur, knee, dactyl as one sculpted limb
   const legs = [], nl = P.legs ?? 3;
@@ -208,7 +208,7 @@ export function host(P = {}, ctx) {
       sphere([0, 0, 0], 0.06), cone([0, 0, 0], knee, 0.058, 0.045), sphere(knee, 0.05),
       cone(knee, ankle, 0.045, 0.034), sphere(ankle, 0.036), cone(ankle, foot, 0.032, 0.008),
     ], 0.04), 0.014), T));
-    w.add(g); legs.push({ g, i, k });
+    w.add(g); legs.push({ g, i, k }); g.userData.sel = 'legs';
   });
 
   const anchors = {

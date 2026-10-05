@@ -1,18 +1,34 @@
-// Print stage: the scene is rendered into an offscreen "separation" buffer
-// (R = toner coverage, G = fluo flat ink, B = blu coverage), then a press pass
-// screens it as toner at 15° and blu at 75° slightly off register on cold paper.
+// Materials and stages.
+// Parts paint with ink(name, base, shade): a role (see engine/palette.js) plus how much of it.
+// setLook(obj, look, palette) swaps every ink for a real material of the character's palette:
+//   studio  physical materials with the palette's finishes, paper backdrop
+//   y2k     the same, glossier, on the box-art sky (90s pre-rendered CGI)
+//   toon    cel-shaded, three tones
+//   print   the scene goes to an offscreen separation buffer (R toner, G spot fluo/rosso, B blu)
+//           and a press pass screens toner at 15° and blu at 75°; each role prints with its palette ink
 import * as THREE from '../vendor/three.module.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
-import { DEFAULT_TOKENS, withDefaults } from './style.js';
+import { CLASSIC, withPalette, paletteKey, roleOf, mixHex } from './palette.js';
 
 export const PALETTE = {
   paper: [0.957, 0.957, 0.949],
   toner: [0.078, 0.078, 0.063],
   blu:   [0.0, 0.118, 0.969],
   fluo:  [0.91, 1.0, 0.0],
-  rosso: [0.89, 0.13, 0.1],   // constructivist red, spot ink of the Collettivo series
+  rosso: [0.89, 0.13, 0.1],
 };
+export const LOOKS = ['studio', 'y2k', 'toon', 'print'];
+export const normLook = (l) => (l === 'color' ? 'studio' : LOOKS.includes(l) ? l : 'studio');
 
+// Stage settings shared by every character (brand/brand.json "stage")
+export const DEFAULT_STAGE = { sky: { top: '#9fc4ff', mid: '#eef4ff', bottom: '#ffffff', horizon: 0.55 }, paper: '#f4f4f2', gloss: 0.6 };
+let STAGE = DEFAULT_STAGE, stageRev = 0;
+export function setStage(s = {}) {
+  STAGE = { ...DEFAULT_STAGE, ...s, sky: { ...DEFAULT_STAGE.sky, ...(s.sky || {}) } };
+  stageRev++; matCache.clear();
+}
+
+// ---------- ink: the tag every part paints with (and its print material) ----------
 const VS = `varying vec3 vN;
 void main(){ vN = normalize(normalMatrix*normal); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`;
 const FS = `uniform vec3 ch; uniform float base; uniform float shade; varying vec3 vN;
@@ -23,23 +39,89 @@ void main(){
   float c = clamp(base + shade*(1.-l) + rim*shade, 0., 1.);
   gl_FragColor = vec4(ch*c, 1.);
 }`;
-
 // separation channels: R toner, B blu, G flat spot inks (1 = fluo, 0.5 = rosso)
 const CH = { toner: [1, 0, 0], fluo: [0, 1, 0], rosso: [0, 0.5, 0], blu: [0, 0, 1], paper: [0, 0, 0] };
-const cache = new Map();
+const SPOT = new Set(['fluo', 'rosso']);
+function printMat(inkName, base, shade) {
+  // a spot ink is flat; a screened ink keeps the part's coverage
+  const flat = SPOT.has(inkName);
+  return new THREE.ShaderMaterial({
+    vertexShader: VS, fragmentShader: FS, side: THREE.DoubleSide,
+    uniforms: { ch: { value: new THREE.Vector3(...CH[inkName]) }, base: { value: flat ? 1 : base }, shade: { value: flat ? 0 : shade } },
+  });
+}
+const tagCache = new Map();
 // ink('toner', base, shade): base = minimum coverage, shade = extra coverage in shadow.
 export function ink(name, base = 0.3, shade = 0.7) {
   const key = `${name}|${base}|${shade}`;
-  if (cache.has(key)) return cache.get(key);
-  const m = new THREE.ShaderMaterial({
-    vertexShader: VS, fragmentShader: FS, side: THREE.DoubleSide,
-    uniforms: { ch: { value: new THREE.Vector3(...CH[name]) }, base: { value: base }, shade: { value: shade } },
-  });
-  m.userData.ink = { name, base, shade };
-  cache.set(key, m);
+  if (tagCache.has(key)) return tagCache.get(key);
+  const m = printMat(name, base, shade);
+  m.userData.ink = { name, base, shade, role: roleOf(name, base) };
+  tagCache.set(key, m);
   return m;
 }
 
+// ---------- materials from a palette ----------
+const matCache = new Map();
+const srgb = (hex) => new THREE.Color().setStyle(hex, THREE.SRGBColorSpace);
+let toonRamp = null;
+function ramp() {
+  if (toonRamp) return toonRamp;
+  toonRamp = new THREE.DataTexture(new Uint8Array([90, 90, 90, 255, 175, 175, 175, 255, 255, 255, 255, 255]), 3, 1);
+  toonRamp.minFilter = toonRamp.magFilter = THREE.NearestFilter; toonRamp.needsUpdate = true;
+  return toonRamp;
+}
+// coverage → how much of the role colour (light parts of a role read paler, as on the press)
+function tint(k, P) {
+  const R = P[k.role];
+  if (k.role === 'primary' || k.role === 'dark') {
+    const amt = Math.min(1, (k.role === 'primary' ? 0.6 : 0.35) + k.base + k.shade * 0.35);
+    return mixHex(P.light.color, R.color, amt);
+  }
+  return R.color;
+}
+export function finishMaterial(hex, finish, look = 'studio') {
+  const c = srgb(hex), gl = look === 'y2k' ? 1 - STAGE.gloss * 0.6 : 1; // y2k: glossier
+  const side = THREE.DoubleSide;
+  if (look === 'toon') return new THREE.MeshToonMaterial({ color: c, gradientMap: ramp(), side, emissive: finish === 'gel' ? c.clone().multiplyScalar(0.25) : 0x000000 });
+  const M = (o) => new THREE.MeshPhysicalMaterial({ color: c, side, envMapIntensity: look === 'y2k' ? 1.25 : 0.9, ...o });
+  switch (finish) {
+    case 'matte': return M({ roughness: 0.82 * gl, clearcoat: 0 });
+    case 'chrome': return M({ metalness: 1, roughness: 0.14 * gl, envMapIntensity: 1.3 });
+    case 'metal': return M({ metalness: 1, roughness: 0.42 * gl });
+    case 'candy': return M({ roughness: 0.12 * gl, clearcoat: 1, clearcoatRoughness: 0.05, sheen: 0.5, sheenColor: srgb('#dfe9ff') });
+    case 'gel': return M({ roughness: 0.1 * gl, clearcoat: 1, clearcoatRoughness: 0.05, emissive: c.clone().multiplyScalar(0.22) });
+    case 'iridescent': return M({ roughness: 0.16 * gl, clearcoat: 1, iridescence: 1, iridescenceIOR: 1.6, iridescenceThicknessRange: [200, 600] });
+    case 'pearl': return M({ roughness: 0.3 * gl, clearcoat: 0.7, sheen: 1, sheenColor: srgb('#ffffff'), iridescence: 0.3 });
+    default: return M({ roughness: 0.38 * gl, clearcoat: 0.35, clearcoatRoughness: 0.4 }); // plastic
+  }
+}
+export function materialFor(m, look, palette) {
+  const k = m.userData.ink; if (!k) return m;
+  const P = palette || withPalette(CLASSIC), R = P[k.role];
+  const key = `${look}|${paletteKey(P)}|${k.role}|${k.base}|${k.shade}`;
+  if (matCache.has(key)) return matCache.get(key);
+  const mat = look === 'print' ? printMat(R.print, k.base, k.shade) : finishMaterial(tint(k, P), R.finish, look);
+  mat.name = k.role;
+  matCache.set(key, mat); return mat;
+}
+// kept for older callers
+export const colorOf = (m, look = 'studio', palette) => materialFor(m, normLook(look), palette);
+
+// Swap every ink in a subtree to the look, with the palette stored on the character (or the one given).
+export function setLook(obj, look, palette) {
+  look = normLook(look);
+  const P = withPalette(palette || obj.userData.palette);
+  obj.traverse(o => {
+    if (o.userData.ground) { o.visible = look !== 'print'; return; }
+    if (o.userData.helper || !o.isMesh) return;
+    o.castShadow = o.receiveShadow = look !== 'print';
+    o.userData.inkMat ||= o.material;
+    o.material = materialFor(o.userData.inkMat, look, P);
+  });
+}
+
+// ---------- the stage ----------
 const PRESS_FS = `uniform sampler2D tex; uniform vec2 res; uniform float pitch; uniform vec2 slip;
 uniform vec3 cPaper, cToner, cBlu, cFluo, cRosso;
 float h(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453); }
@@ -63,58 +145,11 @@ void main(){
   gl_FragColor = vec4(col, 1.);
 }`;
 
-// Lit, full-colour stand-in for an ink material: the same coverage, as a real 3D surface colour.
-const colorCache = new Map();
-const srgb = (a) => new THREE.Color().setRGB(a[0], a[1], a[2], THREE.SRGBColorSpace);
-export function colorOf(m, look = 'color') {
-  const k = m.userData.ink; if (!k) return m;
-  const key = `${look}|${k.name}|${k.base}|${k.shade}`;
-  if (look === 'y2k' && !colorCache.has(key)) colorCache.set(key, y2kOf(k));
-  if (colorCache.has(key)) return colorCache.get(key);
-  const paper = srgb(PALETTE.paper);
-  const spot = k.name === 'fluo' || k.name === 'rosso';
-  const c = k.name === 'paper' ? paper : spot ? srgb(PALETTE[k.name])
-    : paper.clone().lerp(srgb(PALETTE[k.name]), Math.min(1, (k.name === 'blu' ? 0.6 : 0.35) + k.base + k.shade * 0.35));
-  const mat = new THREE.MeshPhysicalMaterial({ color: c, roughness: spot ? 0.3 : k.name === 'paper' ? 0.15 : 0.5, metalness: k.name === 'fluo' ? 0.3 : 0,
-    clearcoat: k.name === 'paper' ? 0.6 : 0.25, clearcoatRoughness: 0.4, envMapIntensity: 0.55,
-    emissive: k.name === 'fluo' ? srgb(PALETTE.fluo).multiplyScalar(0.18) : 0x000000, side: THREE.DoubleSide });
-  mat.name = k.name;
-  colorCache.set(key, mat); return mat;
-}
-// Y2K pre-rendered CGI (briefs/y2k-style.md, "90s CG mascots/avatars"): toner turns to chrome,
-// blu to candy plastic, spot inks to glossy translucent-looking gel. Tuned by brand tokens (engine/style.js).
-let Y2K = DEFAULT_TOKENS.y2k, styleRev = 0;
-// setStyle(tokens): later setLook(obj, 'y2k') calls and the backdrop use the new values
-export function setStyle(tokens) {
-  Y2K = withDefaults(tokens).y2k; styleRev++;
-  for (const key of colorCache.keys()) if (key.startsWith('y2k|')) colorCache.delete(key);
-}
-function y2kOf(k) {
-  const spot = k.name === 'fluo' || k.name === 'rosso', { chrome, plastic, gel } = Y2K;
-  if (k.name === 'toner') return new THREE.MeshPhysicalMaterial({ color: srgb([0.78, 0.8, 0.86]), metalness: 1, roughness: chrome.roughness, side: THREE.DoubleSide, envMapIntensity: chrome.env });
-  if (k.name === 'paper') return new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.05, clearcoat: 1, side: THREE.DoubleSide });
-  const c = spot ? srgb(PALETTE[k.name]) : srgb(PALETTE.blu).lerp(srgb([0.35, 0.55, 1]), 0.18);
-  return new THREE.MeshPhysicalMaterial({ color: c, roughness: plastic.roughness, clearcoat: plastic.clearcoat, clearcoatRoughness: 0.05, sheen: plastic.sheen, sheenColor: srgb([0.7, 0.85, 1]),
-    iridescence: spot ? 0 : plastic.iridescence, emissive: spot ? c.clone().multiplyScalar(gel.glow) : 0x000000, side: THREE.DoubleSide, envMapIntensity: 1.1 });
-}
-
-// Swap every ink material in a subtree to colour (or back).
-export function setLook(obj, look) {
-  obj.traverse(o => {
-    if (o.userData.ground) { o.visible = look !== 'print'; return; }
-    if (!o.isMesh) return;
-    o.castShadow = o.receiveShadow = look !== 'print';
-    o.userData.inkMat ||= o.material;
-    o.material = look === 'print' ? o.userData.inkMat : colorOf(o.userData.inkMat, look);
-  });
-}
-
 export function createStage(canvas, opts = {}) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, preserveDrawingBuffer: !!opts.preserve });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: !!opts.antialias, preserveDrawingBuffer: !!opts.preserve });
   renderer.autoClear = false;
   const scene = new THREE.Scene();
-  // lights only affect the colour look; ink shaders compute their own shading
-  renderer.toneMapping = THREE.NoToneMapping; // keep the inks exact (ACES washes blu out)
+  renderer.toneMapping = THREE.NoToneMapping; // keep colours exact
   renderer.shadowMap.enabled = !opts.noShadow; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const pmrem = new THREE.PMREMGenerator(renderer);
   const env = opts.noEnv ? null : pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
@@ -150,32 +185,32 @@ export function createStage(canvas, opts = {}) {
     press.uniforms.slip.value.set(2.5 * dpr / 1.5, -2 * dpr / 1.5);
   }
 
-  // views: [{x,y,w,h (0..1, origin bottom-left), yaw, tilt, dist, before()}]
-  const paperColor = srgb(PALETTE.paper);
-  // Y2K box-art backdrop: a cold vertical gradient, repainted when the style changes
-  const skyCanvas = document.createElement('canvas'); skyCanvas.width = 2; skyCanvas.height = 256;
-  const grad = new THREE.CanvasTexture(skyCanvas); grad.colorSpace = THREE.SRGBColorSpace;
-  let skyRev = -1;
+  // backdrops: paper, or the box-art sky (repainted when the stage settings change)
+  const bgCanvas = document.createElement('canvas'); bgCanvas.width = 2; bgCanvas.height = 256;
+  const bgTex = new THREE.CanvasTexture(bgCanvas); bgTex.colorSpace = THREE.SRGBColorSpace;
+  let bgRev = -1;
   function paintSky() {
-    const g = skyCanvas.getContext('2d'), L = g.createLinearGradient(0, 0, 0, 256), k = Y2K.sky;
+    const g = bgCanvas.getContext('2d'), L = g.createLinearGradient(0, 0, 0, 256), k = STAGE.sky;
     L.addColorStop(0, k.top); L.addColorStop(k.horizon, k.mid); L.addColorStop(1, k.bottom); g.fillStyle = L; g.fillRect(0, 0, 2, 256);
-    grad.needsUpdate = true; skyRev = styleRev;
+    bgTex.needsUpdate = true; bgRev = stageRev;
   }
-  const bgQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: grad, depthTest: false, depthWrite: false }));
-  bgQuad.position.z = -0.5; const bgScene = new THREE.Scene(); bgScene.add(bgQuad);
+  const bgQuad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.MeshBasicMaterial({ map: bgTex, depthTest: false, depthWrite: false }));
+  const bgScene = new THREE.Scene(); bgScene.add(bgQuad);
+
+  // views: [{x,y,w,h (0..1, origin bottom-left), yaw, tilt, dist, lift, fit, before()}]
   function place(v, vw, vh) {
     camera.aspect = vw / vh;
     const d = v.dist * (v.fit && camera.aspect < 0.8 ? 0.8 / Math.max(camera.aspect, 0.45) : 1);
     camera.position.set(Math.sin(v.yaw) * Math.cos(v.tilt) * d, Math.sin(v.tilt) * d + (v.lift || 0), Math.cos(v.yaw) * Math.cos(v.tilt) * d);
     camera.lookAt(0, v.lift || 0, 0); camera.updateProjectionMatrix();
   }
-  // look: 'print' (halftone press) or 'color' (lit 3D straight to screen)
-  function render(views, look = 'print') {
+  function render(views, look = 'studio') {
+    look = normLook(look);
     scene.environment = look === 'print' ? null : env;
     if (look !== 'print') {
       renderer.setRenderTarget(null); renderer.setScissorTest(false);
-      renderer.setClearColor(paperColor, 1); renderer.clear();
-      if (look === 'y2k') { if (skyRev !== styleRev) paintSky(); renderer.render(bgScene, quadCam); renderer.clearDepth(); }
+      renderer.setClearColor(srgb(STAGE.paper), 1); renderer.clear();
+      if (look === 'y2k') { if (bgRev !== stageRev) paintSky(); renderer.render(bgScene, quadCam); renderer.clearDepth(); }
       renderer.setScissorTest(true);
       for (const v of views) {
         const vx = v.x * size.w, vy = v.y * size.h, vw = v.w * size.w, vh = v.h * size.h;
@@ -185,9 +220,7 @@ export function createStage(canvas, opts = {}) {
       renderer.setScissorTest(false); renderer.setViewport(0, 0, size.w, size.h);
       return;
     }
-    renderer.setClearColor(0x000000, 1);
     const W = rt.width, H = rt.height;
-    // viewport/scissor live on the target itself so they stay in buffer pixels
     rt.viewport.set(0, 0, W, H); rt.scissorTest = false;
     renderer.setRenderTarget(rt);
     renderer.setClearColor(0x000000, 1); renderer.clear();

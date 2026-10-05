@@ -1,5 +1,5 @@
 // Screenshot any viewer state(s) to PNG; several queries are stacked side by side.
-//   node scripts/shot.mjs output/renders/x.png "c=serafino&look=color" "c=torre&mode=sheet" [--size=600x750]
+//   node scripts/shot.mjs output/renders/x.png "c=serafino&look=studio" "c=torre&mode=sheet" [--size=600x750]
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -19,7 +19,7 @@ export async function shoot(query, file, w, h, port) {
   const P = fs.mkdtempSync(path.join(os.tmpdir(), 'pa-'));
   try {
     await run(CHROME, ['--headless=new', `--user-data-dir=${P}`, '--no-first-run', '--hide-scrollbars', '--use-angle=swiftshader', '--enable-unsafe-swiftshader',
-      `--window-size=${w},${h}`, '--virtual-time-budget=5000', `--screenshot=${file}`, `http://127.0.0.1:${port}/viewer/?export&${query}`], { timeout: 120000 });
+      `--window-size=${w},${h}`, '--virtual-time-budget=5000', `--screenshot=${file}`, `http://127.0.0.1:${port}/studio/?export&${query}`], { timeout: 120000 });
   } finally { fs.rmSync(P, { recursive: true, force: true }); }
 }
 
