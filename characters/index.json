@@ -28,5 +28,15 @@
   "banca/mascotte-di-quartiere",
   "banca/occhio-del-registro",
   "banca/ora-solare",
-  "banca/pegno"
+  "banca/pegno",
+  "maschere/antenato",
+  "maschere/confidente",
+  "maschere/elmo",
+  "maschere/selvatico",
+  "maschere/siepe",
+  "maschere/sonaglio",
+  "maschere/turno-a-tre",
+  "maschere/veglia",
+  "maschere/visore",
+  "maschere/volto-prestato"
 ]

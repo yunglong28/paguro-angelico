@@ -1,0 +1,129 @@
+{
+  "id": "turno-a-tre",
+  "name": "Turno a tre",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "hourglass",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "cone",
+      "w": 0.75,
+      "h": 1.25,
+      "ink": "rosso"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.05,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1,
+      "gap": 1,
+      "y": 0
+    },
+    "mask": {
+      "kind": "noh",
+      "ink": "auto"
+    },
+    "ears": {
+      "kind": "peak",
+      "size": 0.7,
+      "ink": "blu"
+    },
+    "coat": {
+      "kind": "hoops",
+      "len": 1,
+      "density": 1,
+      "ink": "auto"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1.05,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "long",
+      "len": 0.95,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "Three neighbours sharing one shift, as one body: a Bauhaus stage costume with a cone, hoops and a painted face. The hourglass turns over its head.",
+  "refs": [
+    "are.na/kim-plowright/costumed-bodies #24 #26 #27 #28 (Oskar Schlemmer, Das Triadische Ballett)"
+  ],
+  "series": "maschere",
+  "archetype": "triadic",
+  "palette": {
+    "primary": {
+      "color": "#1c4fd8",
+      "finish": "plastic",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#141410",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ffd21f",
+      "finish": "plastic",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#e8231a",
+      "finish": "plastic",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#f4f1ea",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  }
+}

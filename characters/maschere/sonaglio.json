@@ -1,0 +1,123 @@
+{
+  "id": "sonaglio",
+  "name": "Sonaglio",
+  "parts": [],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "egg",
+      "w": 1,
+      "h": 1.25,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "egg",
+      "size": 1.1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1,
+      "gap": 1,
+      "y": 0
+    },
+    "mask": {
+      "kind": "veil",
+      "ink": "fluo"
+    },
+    "coat": {
+      "kind": "fur",
+      "len": 1.2,
+      "density": 1.3,
+      "ink": "auto"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.8,
+      "foot": 1.2,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "A suit that rattles when it moves: it walks the street when someone needs help, so everyone hears. No face at all, only fur and fringe.",
+  "refs": [
+    "are.na/kim-plowright/costumed-bodies #121 #122 #123 #124 (Nick Cave, Soundsuits)"
+  ],
+  "series": "maschere",
+  "archetype": "soundsuit",
+  "palette": {
+    "primary": {
+      "color": "#ff3fa4",
+      "finish": "plush",
+      "print": "rosso"
+    },
+    "dark": {
+      "color": "#22222a",
+      "finish": "metal",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ffd400",
+      "finish": "plush",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#19c3ff",
+      "finish": "plush",
+      "print": "blu"
+    },
+    "light": {
+      "color": "#ffffff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  }
+}

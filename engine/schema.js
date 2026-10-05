@@ -7,7 +7,7 @@ import { ROLES, FINISHES, PRINT_INKS, CLASSIC, harmony, mixHex, labDist, SCHEMES
 
 // role a part paints with, as an ink name (see engine/palette.js)
 const INKS = ['blu', 'toner', 'fluo', 'rosso', 'paper'];
-export const INK_ROLE = { blu: 'Primary', toner: 'Shell', fluo: 'Accent', rosso: 'Secondary', paper: 'Light' };
+export const INK_ROLE = { auto: 'Automatic', blu: 'Primary', toner: 'Shell', fluo: 'Accent', rosso: 'Secondary', paper: 'Light' };
 export const EXPRESSIONS = ['quiete', 'estasi', 'stupore', 'ira', 'pieta', 'sonno'];
 
 const f = (key, label, min, max, def, extra = {}) => ({ key, label, type: 'float', min, max, def, ...extra });
@@ -77,7 +77,7 @@ export const FIGURE = [
     e('figure.mouth.style', 'Mouth', ['normal', 'fangs', 'none'], 'normal'), f('figure.mouth.size', 'Mouth size', 0.4, 1.8, 1),
   ] },
   { id: 'ears', label: 'Ears & horns', genes: [
-    e('figure.ears.kind', 'Kind', ['none', 'cat', 'bunny', 'floppy', 'horns', 'antenna', 'feelers', 'sprout', 'fins'], 'none'),
+    e('figure.ears.kind', 'Kind', ['none', 'cat', 'bunny', 'floppy', 'horns', 'antlers', 'peak', 'antenna', 'feelers', 'sprout', 'fins'], 'none'),
     f('figure.ears.size', 'Size', 0.5, 1.8, 1), e('figure.ears.ink', 'Colour role', INKS, 'blu', { bias: 0.6 }),
   ] },
   { id: 'arms', label: 'Arms', genes: [
@@ -88,6 +88,15 @@ export const FIGURE = [
     e('figure.legs.kind', 'Kind', ['none', 'stub', 'legs', 'long', 'tentacles', 'wisp'], 'stub'),
     f('figure.legs.len', 'Length', 0.5, 1.6, 1), f('figure.legs.foot', 'Feet', 0.6, 2.2, 1), i('figure.legs.count', 'Tentacles', 3, 9, 6),
     e('figure.legs.ink', 'Colour role', INKS, 'blu', { bias: 0.8 }),
+  ] },
+  { id: 'mask', label: 'Mask', genes: [
+    e('figure.mask.kind', 'Kind', ['none', 'noh', 'longface', 'helmet', 'goggles', 'veil'], 'none'),
+    e('figure.mask.ink', 'Colour role', ['auto', ...INKS], 'auto', { bias: 0.7 }), // auto: each mask's natural material
+  ] },
+  { id: 'coat', label: 'Coat', genes: [
+    e('figure.coat.kind', 'Kind', ['none', 'fur', 'straw', 'leaves', 'cloak', 'hoops'], 'none'),
+    f('figure.coat.len', 'Length', 0.5, 1.8, 1), f('figure.coat.density', 'Density', 0.4, 1.8, 1),
+    e('figure.coat.ink', 'Colour role', ['auto', ...INKS], 'auto', { bias: 0.6 }),
   ] },
   { id: 'back', label: 'Back', genes: [
     e('figure.back.kind', 'Kind', ['none', 'frills', 'batwings', 'spines'], 'none'),
@@ -122,12 +131,25 @@ export const ARCHETYPES = {
   cyclops: { label: 'Olympic cyclops', note: 'An abstract geometric body and one camera eye (Wenlock, Izzy, Duke)', spec: { plan: 'figure', figure: { body: { shape: 'cone', w: 0.95, h: 1.5 }, head: { shape: 'none' }, eyes: { style: 'lens', count: 1, size: 2.1, y: 0.15 }, mouth: { style: 'none' }, ears: { kind: 'antenna', size: 0.9 }, arms: { kind: 'noodle', len: 1 }, legs: { kind: 'long', len: 0.8, foot: 1.3 } } } },
   sprout: { label: 'Sprout', note: 'A head that grows a leaf (Pikmin, mandrakes)', spec: { plan: 'figure', figure: { body: { shape: 'capsule', w: 0.55, h: 0.75 }, head: { shape: 'egg', size: 1.15 }, eyes: { style: 'button', count: 2, size: 1.2, gap: 1, y: 0.05 }, mouth: { style: 'none' }, ears: { kind: 'sprout', size: 1.3 }, arms: { kind: 'noodle', len: 0.9 }, legs: { kind: 'long', len: 0.9 } } } },
   imp: { label: 'Imp', note: 'Darkness complemented by cuteness: bat wings, horns, fangs, a devil tail', spec: { plan: 'figure', figure: { body: { shape: 'egg', w: 0.95, h: 0.85 }, head: { shape: 'sphere', size: 1.35 }, eyes: { style: 'round', count: 2, size: 1.15, gap: 1.05 }, mouth: { style: 'fangs', size: 1.1 }, ears: { kind: 'horns', size: 0.8 }, arms: { kind: 'stub' }, legs: { kind: 'stub', len: 0.8 }, back: { kind: 'batwings', size: 1.1, ink: 'toner' }, tail: { kind: 'devil', len: 1.1 } } } },
+  masked: { label: 'Masked', note: 'A person behind a mask: Noh plate, carved long face, helm, goggles or a veil', spec: { plan: 'figure', figure: { body: { shape: 'capsule', w: 0.7, h: 0.9 }, head: { shape: 'sphere', size: 1.3 }, eyes: { style: 'round', count: 2 }, mask: { kind: 'noh' }, arms: { kind: 'long', len: 0.95 }, legs: { kind: 'legs', len: 0.95 } } } },
+  soundsuit: { label: 'Soundsuit', note: 'A body hidden under a full suit of fur; no face at all (Nick Cave)', spec: { plan: 'figure', figure: { body: { shape: 'egg', w: 1, h: 1.25 }, head: { shape: 'egg', size: 1.1 }, eyes: { style: 'round', count: 2 }, mask: { kind: 'veil', ink: 'blu' }, coat: { kind: 'fur', len: 1.2, density: 1.3 }, arms: { kind: 'long', len: 1 }, legs: { kind: 'legs', len: 0.8, foot: 1.2 } } } },
+  wildman: { label: 'Wild man', note: 'Straw or fur, antlers and a carved face: the European carnival beast (Fréger, Wilder Mann)', spec: { plan: 'figure', figure: { body: { shape: 'bell', w: 0.95, h: 1.3 }, head: { shape: 'egg', size: 1.05 }, eyes: { style: 'round', count: 2 }, mask: { kind: 'longface' }, ears: { kind: 'antlers', size: 1.1 }, coat: { kind: 'straw', len: 1 }, arms: { kind: 'long', len: 1.05 }, legs: { kind: 'legs', len: 0.8 } } } },
+  greenman: { label: 'Green man', note: 'Covered in leaves to the ground, a pointed hat (Jack-in-the-green, May festivals)', spec: { plan: 'figure', figure: { body: { shape: 'bell', w: 0.9, h: 1.35 }, head: { shape: 'sphere', size: 1 }, eyes: { style: 'void', count: 2, size: 0.9 }, mouth: { style: 'none' }, ears: { kind: 'peak', size: 0.9 }, coat: { kind: 'leaves', len: 1.3, density: 1.4 }, arms: { kind: 'noodle', len: 1 }, legs: { kind: 'stub' } } } },
+  triadic: { label: 'Triadic', note: 'Bauhaus stage costume: a geometric body, hoops, a smooth painted head (Schlemmer)', spec: { plan: 'figure', figure: { body: { shape: 'cone', w: 0.75, h: 1.25 }, head: { shape: 'sphere', size: 1.05 }, eyes: { style: 'round', count: 2 }, mask: { kind: 'noh' }, ears: { kind: 'peak', size: 0.7 }, coat: { kind: 'hoops', len: 1, density: 1 }, arms: { kind: 'long', len: 1.05 }, legs: { kind: 'long', len: 0.95 } } } },
+  hooded: { label: 'Hooded', note: 'A robe to the ground, a hood, and only darkness inside it', spec: { plan: 'figure', figure: { body: { shape: 'capsule', w: 0.8, h: 1.15 }, head: { shape: 'sphere', size: 1.15, ink: 'toner' }, eyes: { style: 'void', count: 2, size: 0.55, y: 0.05 }, mouth: { style: 'none' }, coat: { kind: 'cloak', len: 1.05 }, arms: { kind: 'noodle', len: 0.9 }, legs: { kind: 'stub' } } } },
   uncanny: { label: 'Uncanny', note: 'Not cute: many eyes, horns, tentacles, a long silhouette', spec: { plan: 'figure', figure: { body: { shape: 'bell', w: 0.85, h: 1.45 }, head: { shape: 'egg', size: 0.85 }, eyes: { style: 'void', count: 4, size: 0.75, gap: 0.85 }, mouth: { style: 'fangs' }, ears: { kind: 'horns', size: 1.2 }, arms: { kind: 'long', len: 1.4 }, legs: { kind: 'tentacles', count: 7, len: 1.2 } } } },
 };
 // the archetype a genome is closest to (for labels and the species picker)
 export function speciesOf(spec) {
   if (spec?.plan !== 'figure') return 'crab';
   const F = spec.figure || {}, legs = F.legs?.kind, body = F.body?.shape, head = F.head?.shape;
+  const coat = F.coat?.kind, mask = F.mask?.kind;
+  if (coat === 'straw' || (coat === 'fur' && (F.ears?.kind === 'antlers' || mask === 'longface'))) return 'wildman';
+  if (coat === 'fur') return 'soundsuit';
+  if (coat === 'leaves') return 'greenman';
+  if (coat === 'hoops') return 'triadic';
+  if (coat === 'cloak') return 'hooded';
+  if (mask && mask !== 'none') return 'masked';
   if (body === 'slug') return 'nudibranch';
   if (body === 'star') return 'sun';
   if (body === 'cone' || F.eyes?.style === 'lens') return 'cyclops';

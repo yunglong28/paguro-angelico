@@ -1,0 +1,130 @@
+{
+  "id": "veglia",
+  "name": "Veglia",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "lantern",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "capsule",
+      "w": 0.8,
+      "h": 1.15,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.15,
+      "ink": "toner"
+    },
+    "eyes": {
+      "style": "void",
+      "count": 2,
+      "size": 0.55,
+      "y": 0.05,
+      "gap": 1
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "coat": {
+      "kind": "cloak",
+      "len": 1.05,
+      "ink": "blu",
+      "density": 1
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 0.9,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 1,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "mask": {
+      "kind": "none",
+      "ink": "auto"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "The night watch: it sits with whoever cannot sleep. A robe to the ground, a deep hood, two small lights inside it and a lantern.",
+  "refs": [
+    "are.na/kim-plowright/costumed-bodies #74 #75 #76 (Zanele Muholi, Somnyama Ngonyama)",
+    "are.na/kim-plowright/costumed-bodies hooded robes"
+  ],
+  "series": "maschere",
+  "archetype": "hooded",
+  "palette": {
+    "primary": {
+      "color": "#232651",
+      "finish": "plush",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#0c0c14",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#0c0c14",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ffcf4a",
+      "finish": "gel",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#7a2b3a",
+      "finish": "matte",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#f2efe6",
+      "finish": "matte",
+      "print": "paper"
+    }
+  }
+}

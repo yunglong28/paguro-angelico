@@ -14,6 +14,26 @@ const FEET = -1.05;
 const o = (x) => (x && typeof x === 'object' ? x : {});
 const r3 = (v) => Math.round(v * 1000) / 1000;
 
+// merge many small transformed copies of one geometry into a single mesh (fur, straw, leaves)
+function merged(base, matrices) {
+  const b = base.index ? base.toNonIndexed() : base, pos = b.attributes.position.array, nor = b.attributes.normal.array;
+  const P = new Float32Array(pos.length * matrices.length), N = new Float32Array(nor.length * matrices.length);
+  const v = new THREE.Vector3(), nm = new THREE.Matrix3();
+  matrices.forEach((m, k) => {
+    nm.getNormalMatrix(m);
+    for (let i = 0; i < pos.length; i += 3) {
+      v.set(pos[i], pos[i + 1], pos[i + 2]).applyMatrix4(m); P.set([v.x, v.y, v.z], k * pos.length + i);
+      v.set(nor[i], nor[i + 1], nor[i + 2]).applyMatrix3(nm).normalize(); N.set([v.x, v.y, v.z], k * nor.length + i);
+    }
+  });
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(P, 3)); g.setAttribute('normal', new THREE.BufferAttribute(N, 3));
+  return g;
+}
+// matrix that puts a +y-pointing piece at `at`, pointing along `dir`, scaled
+const UPV = new THREE.Vector3(0, 1, 0);
+const place = (at, dir, sx = 1, sy = 1, sz = 1, spin = 0) => new THREE.Matrix4().compose(at, new THREE.Quaternion().setFromUnitVectors(UPV, dir.clone().normalize()).multiply(new THREE.Quaternion().setFromAxisAngle(UPV, spin)), new THREE.Vector3(sx, sy, sz));
+
 // leg length (hip height above the ground) per kind
 const LEG = { none: 0, stub: 0.2, legs: 0.5, long: 0.95, tentacles: 0.32, wisp: 0.75 };
 
@@ -103,9 +123,11 @@ export function figure(P = {}, ctx) {
   const faceY = (hasHead ? headY : fy) + (E.y ?? 0) * faceR, faceZ = hasHead ? (headShape === 'box' ? R * 0.85 : R * 0.9) : fz;
   const flatFace = !hasHead && ['box', 'house', 'coin'].includes(shape) || headShape === 'box';
   const face = new THREE.Group(); face.userData.sel = 'face'; (hasHead ? head : body).add(face);
+  const Mk = o(P.mask), mk = Mk.kind || 'none';
+  const covers = ['noh', 'longface', 'helmet', 'veil'].includes(mk); // masks that hide the face (with their own features, or none)
   const n = E.count ?? 2, es = (E.size ?? 1) * faceR / 0.42, gap = (E.gap ?? 1) * Math.max(faceR * 0.42, 0.24 * es);
   const style = E.style || 'round';
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < (covers || mk === 'goggles' ? 0 : n); i++) {
     const k = n === 1 ? 0 : (i - (n - 1) / 2), x = k * gap * (n > 3 ? 0.8 : 1), y = faceY + (n > 2 ? (i % 2 ? -0.22 : 0.12) * Math.min(faceR, 0.3 * es) : 0);
     const z = flatFace ? faceZ : Math.sqrt(Math.max(0.01, faceZ * faceZ - x * x * 0.6)) - 0.02;
     if (style === 'button') { face.add(sph(0.075 * es, T, x, y, z + 0.02, 1, 1.25, 0.6)); face.add(sph(0.022 * es, ink('paper', 0, 0), x + 0.025 * es, y + 0.035 * es, z + 0.06, 1, 1, 0.5)); continue; }
@@ -138,11 +160,63 @@ export function figure(P = {}, ctx) {
   // mouth
   let mouth = () => {};
   const ms = M.size ?? 1, mstyle = M.style || 'normal';
-  if (mstyle !== 'none') {
+  if (mstyle !== 'none' && !covers) {
     const my = faceY - faceR * (style === 'visor' ? 0.5 : 0.42), mz = Math.sqrt(Math.max(0.01, faceZ * faceZ - (my - faceY) ** 2 * 0.5)) + 0.005;
     mouth = mouthSet(face, 0, my, mz, 0.8 * ms * faceR / 0.42, T);
     const fs = ms * faceR / 0.42;
     if (mstyle === 'fangs') [-1, 1].forEach(s => { const c = new THREE.Mesh(new THREE.ConeGeometry(0.03 * fs, 0.09 * fs, 6), ink('paper', 0, 0)); c.rotation.x = Math.PI; c.position.set(s * 0.05 * fs, my - 0.06 * fs, mz); face.add(c); });
+  }
+
+  // mask: Noh plate, long carved face, great helm, VR goggles, a veil of fringe (briefs/costume-archetypes.md)
+  const maskG = new THREE.Group(); maskG.userData.sel = 'mask'; face.add(maskG);
+  if (mk !== 'none') {
+    const r = faceR, cz = faceZ - r * 0.15, mInk = (Mk.ink && Mk.ink !== 'auto' ? Mk.ink : null) || ({ noh: 'paper', longface: 'toner', helmet: 'toner', goggles: 'paper', veil: 'fluo' })[mk];
+    const MM = ink(mInk, mInk === 'paper' ? 0 : 0.3, mInk === 'paper' ? 0 : 0.6), DARK = ink('toner', 0.97, 0.03);
+    // a point on the front of an ellipsoid plate (rx, ry, rz) centred at (0, cy, cz)
+    const front = (x, y, rx, ry, rz, cy) => cz + rz * Math.sqrt(Math.max(0.02, 1 - (x / rx) ** 2 - ((y - cy) / ry) ** 2));
+    if (mk === 'noh') {
+      const rx = r * 0.86, ry = r * 1.08, rz = r * 0.42, cy = faceY - r * 0.05;
+      maskG.add(sph(1, MM, 0, cy, cz, rx, ry, rz, 40));
+      [-1, 1].forEach(s => {
+        const ex = s * r * 0.3, ey = cy + r * 0.12;
+        const eyeSlit = sph(1, DARK, ex, ey, front(ex, ey, rx, ry, rz, cy), r * 0.11, r * 0.035, r * 0.03, 16); eyeSlit.rotation.z = -s * 0.12; maskG.add(eyeSlit);
+        maskG.add(sph(1, DARK, s * r * 0.3, cy + r * 0.48, front(s * r * 0.3, cy + r * 0.48, rx, ry, rz, cy), r * 0.07, r * 0.045, r * 0.03, 12)); // high painted brows
+      });
+      maskG.add(sph(1, ink('rosso', 1, 0), 0, cy - r * 0.52, front(0, cy - r * 0.52, rx, ry, rz, cy), r * 0.07, r * 0.04, r * 0.03, 12));
+    }
+    if (mk === 'longface') {
+      const rx = r * 0.66, ry = r * 1.55, rz = r * 0.38, cy = faceY - r * 0.3;
+      maskG.add(sph(1, MM, 0, cy, cz, rx, ry, rz, 40));
+      [-1, 1].forEach(s => { const ex = s * r * 0.24, ey = cy + r * 0.45; maskG.add(sph(1, DARK, ex, ey, front(ex, ey, rx, ry, rz, cy), r * 0.13, r * 0.025, r * 0.03, 12)); });
+      maskG.add(limb([0, cy + r * 0.38, front(0, cy + r * 0.38, rx, ry, rz, cy)], [0, cy - r * 0.35, front(0, cy - r * 0.35, rx, ry, rz, cy) + r * 0.05], r * 0.05, MM, r * 0.09)); // nose ridge
+      maskG.add(sph(1, DARK, 0, cy - r * 0.85, front(0, cy - r * 0.85, rx, ry, rz, cy), r * 0.1, r * 0.04, r * 0.03, 12));
+      for (let j = 0; j < 5; j++) { const y = cy + r * (1.2 - j * 0.12); maskG.add(sph(1, ink('paper', 0, 0), 0, y, front(0, y, rx, ry, rz, cy) - 0.005, r * 0.42, r * 0.012, r * 0.02, 12)); } // carved forehead bands
+    }
+    if (mk === 'helmet') {
+      const hc = hasHead ? headY : faceY;
+      maskG.add(new THREE.Mesh(sculpt(`helm|${r3(r)}|${r3(hc)}`, () => blend([rbox([0, hc - r * 0.05, 0], [r * 1.02, r * 1.12, r * 1.02], r * 0.45), cone([0, hc + r * 0.4, r * 0.95], [0, hc - r * 0.95, r * 1.08], r * 0.06, r * 0.06)], 0.05), 0.025), MM));
+      maskG.add(new THREE.Mesh(new THREE.BoxGeometry(r * 1.3, r * 0.08, r * 0.2), DARK).translateY(faceY + r * 0.08).translateZ(r * 1.02)); // eye slit
+      for (let j = -3; j <= 3; j++) if (j) maskG.add(sph(r * 0.035, DARK, j * r * 0.14, faceY - r * 0.42, r * 1.05, 1, 1, 0.5, 8)); // breaths
+    }
+    if (mk === 'goggles') {
+      const gy = faceY + r * 0.05, gz = faceZ + r * 0.05;
+      maskG.add(new THREE.Mesh(sculpt(`goggles|${r3(r)}`, () => rbox([0, 0, 0], [r * 0.82, r * 0.34, r * 0.3], r * 0.16), 0.02), MM).translateY(gy).translateZ(gz));
+      maskG.add(new THREE.Mesh(new THREE.BoxGeometry(r * 1.3, r * 0.34, r * 0.03), ink('fluo', 1, 0)).translateY(gy).translateZ(gz + r * 0.3)); // lit front
+      const strap = new THREE.Mesh(new THREE.TorusGeometry(r * 1.02, r * 0.07, 8, 40), DARK); strap.rotation.x = Math.PI / 2; strap.position.y = gy; maskG.add(strap);
+    }
+    if (mk === 'veil') {
+      // a fringe hanging from a band across the brow, long enough to hide the face
+      const ry = hasHead ? headY : faceY, band = faceY + r * 0.6, len = r * 1.9, mats = [];
+      const RV = rng(53);
+      for (let j = 0; j < 70; j++) {
+        const a = (j / 69 - 0.5) * 2.9 + (RV.next() - 0.5) * 0.04, rr = r * (1.06 + RV.next() * 0.05), l = len * (0.8 + RV.next() * 0.4);
+        const at = new THREE.Vector3(Math.sin(a) * rr, band, Math.cos(a) * rr);
+        // each strand falls slightly outward, so the fringe flares instead of making a tube
+        mats.push(place(at.clone().add(new THREE.Vector3(Math.sin(a) * 0.06, -l / 2, Math.cos(a) * 0.06)), new THREE.Vector3(Math.sin(a) * 0.08, 1, Math.cos(a) * 0.08), 1, l, 1));
+      }
+      maskG.add(new THREE.Mesh(merged(new THREE.CylinderGeometry(0.014, 0.014, 1, 5), mats), MM));
+      const b = new THREE.Mesh(new THREE.TorusGeometry(r * 1.05, r * 0.06, 8, 40, Math.PI * 0.85), DARK); b.rotation.set(Math.PI / 2, 0, Math.PI * 0.075); b.position.y = band; maskG.add(b);
+    }
   }
 
   // ears / horns / antennae
@@ -153,7 +227,7 @@ export function figure(P = {}, ctx) {
   const ek = Ea.kind || 'none', esz = Ea.size ?? 1, topY = hasHead ? headY : ty, topR = hasHead ? R : tr, topZ = hasHead ? 0 : tz;
   const earM = Ea.ink ? ink(Ea.ink, 0.36, 0.64) : headM, earPivots = [];
   if (ek !== 'none') [-1, 1].forEach(s => {
-    if (ek === 'sprout' && s < 0) return; // one sprout, in the middle
+    if ((ek === 'sprout' || ek === 'peak') && s < 0) return; // one, in the middle
     const piv = new THREE.Group(); piv.position.set(s * topR * 0.55, topY + topR * 0.7, topZ); ears.add(piv); earPivots.push({ piv, s, base: 0 });
     if (ek === 'cat') piv.add(new THREE.Mesh(new THREE.ConeGeometry(0.13 * esz, 0.32 * esz, 4), earM).translateY(0.1 * esz).rotateZ(-s * 0.3));
     if (ek === 'bunny') piv.add(sph(0.5, earM, s * 0.04, 0.32 * esz, 0, 0.16 * esz, 0.75 * esz, 0.08 * esz, 18));
@@ -177,6 +251,17 @@ export function figure(P = {}, ctx) {
       piv.position.set(s * topR * 0.5, topY + topR * 0.25, topZ);
       piv.add(new THREE.Mesh(sculpt(`feeler|${r3(esz)}`, () => blend([cone([0, 0, 0], [0.05 * esz, 0.32 * esz, 0], 0.05 * esz, 0.04 * esz), ellipsoid([0.06 * esz, 0.38 * esz, 0], [0.065 * esz, 0.12 * esz, 0.065 * esz])], 0.04), 0.012), earM));
       piv.rotation.z = -s * 0.25; earPivots.at(-1).base = -s * 0.25;
+    }
+    if (ek === 'antlers') { // a beam and three tines, like the Wilder Mann
+      piv.position.set(s * topR * 0.5, topY + topR * 0.6, topZ);
+      const beam = []; for (let j = 0; j <= 14; j++) { const u = j / 14; beam.push(new THREE.Vector3(s * u * 0.45 * esz, u * 0.75 * esz, -u * u * 0.15 * esz)); }
+      piv.add(sweep(beam, beam.map((_, j) => 0.05 * esz * (1 - j / 17)), earM, 8));
+      [0.35, 0.6, 0.85].forEach((u, j) => { const b = beam[Math.round(u * 14)]; piv.add(limb([b.x, b.y, b.z], [b.x + s * (0.02 + j * 0.03) * esz, b.y + (0.28 - j * 0.04) * esz, b.z + 0.06 * esz], 0.028 * esz, earM, 0.012 * esz)); });
+    }
+    if (ek === 'peak') { // a tall pointed hat (Schlemmer, the Schellerlaufen, the capirote)
+      piv.position.set(0, topY + topR * 0.55, topZ);
+      piv.add(new THREE.Mesh(new THREE.ConeGeometry(topR * 0.85, 1.1 * esz, 32), earM).translateY(0.55 * esz));
+      piv.add(new THREE.Mesh(new THREE.TorusGeometry(topR * 0.84, 0.03, 8, 32), ink('toner', 0.9, 0.1)).rotateX(Math.PI / 2));
     }
     if (ek === 'antenna') { piv.position.x = s * topR * 0.35; piv.add(limb([0, 0, 0], [s * 0.12 * esz, 0.42 * esz, 0], 0.016, T)); piv.add(sph(0.065 * esz, ink('fluo', 1, 0), s * 0.12 * esz, 0.45 * esz, 0)); }
   });
@@ -290,6 +375,60 @@ export function figure(P = {}, ctx) {
   }
   if (tailKind === 'puff') tailG.add(sph(0.16 * tl, Tl.ink ? tailM : ink('paper', 0, 0), 0, 0.05, -0.04, 1, 1, 1, 18));
 
+  // coat: what covers the whole body (Soundsuits, Wilder Mann, Jack-in-the-green, robes, Schlemmer's hoops)
+  const Cv = o(P.coat), ck = Cv.kind || 'none', cl = Cv.len ?? 1, dens = Cv.density ?? 1;
+  const coatM = ink((Cv.ink && Cv.ink !== 'auto' ? Cv.ink : null) || ({ fur: 'blu', straw: 'rosso', leaves: 'fluo', cloak: 'toner', hoops: 'fluo' })[ck] || 'blu', 0.36, 0.64);
+  const coat = new THREE.Group(); coat.userData.sel = 'coat'; body.add(coat);
+  const R4 = rng(4049);
+  const overHead = (fn) => { if (!hasHead) return; for (let i = 0; i < 60 * dens; i++) { const u = R4.next() * 1.9, v = R4.next() * TAU, n = new THREE.Vector3(Math.cos(v) * Math.sin(u), Math.cos(u), Math.sin(v) * Math.sin(u)); fn(new THREE.Vector3(0, headY, 0).addScaledVector(n, R * 0.98), n); } };
+  if (ck === 'fur' || ck === 'leaves') {
+    const mats = [], leaf = ck === 'leaves';
+    const add = (at, n) => {
+      const droop = leaf ? 0.75 : 0.8, dir = n.clone().multiplyScalar(1 - droop).add(new THREE.Vector3(0, -droop, 0)); // hang under their weight
+      const L = (leaf ? 0.26 : 0.38 + R4.next() * 0.2) * cl;
+      // fur: thick at the root, many and long; leaves: broad and flat, tilted out from the body
+      mats.push(place(at.clone().addScaledVector(dir.clone().normalize(), L * (leaf ? 0.35 : 0.45)), dir, leaf ? L * 0.85 : 1.6, L, leaf ? L * 0.12 : 1.6, leaf ? R4.next() * 0.6 : R4.next() * TAU));
+    };
+    for (let i = 0; i < (leaf ? 220 : 520) * dens; i++) { const u = 0.08 + R4.next() * 2.9, v = R4.next() * TAU, at = onSurface(u, v); add(at, normalAt(at)); }
+    overHead(add);
+    coat.add(new THREE.Mesh(merged(leaf ? new THREE.SphereGeometry(0.5, 10, 6) : new THREE.ConeGeometry(0.035, 1, 5), mats), coatM));
+  }
+  if (ck === 'straw') {
+    // tiers of hanging strands from the shoulders to the ground; each tier overlaps the next
+    const top = hasHead ? neckY + 0.02 : bodyY + ext * 0.85, tiers = 5, mats = [];
+    for (let t = 0; t < tiers; t++) {
+      const y = top - (top - FEET) * (t / tiers), rad = Math.max(W, sx0) * (0.75 + t * 0.12) + 0.04, len = (top - FEET) / tiers * 1.55 * cl;
+      for (let j = 0; j < 54 * dens; j++) {
+        const a = (j + R4.next() * 0.6) / (54 * dens) * TAU, out = new THREE.Vector3(Math.cos(a), 0, Math.sin(a));
+        const dir = new THREE.Vector3(0, -1, 0).addScaledVector(out, 0.18);
+        mats.push(place(new THREE.Vector3(Math.cos(a) * rad, y, Math.sin(a) * rad).addScaledVector(dir.clone().normalize(), len * 0.5), dir.negate(), 1, len, 1, R4.next()));
+      }
+    }
+    coat.add(new THREE.Mesh(merged(new THREE.ConeGeometry(0.03, 1, 4), mats), coatM));
+  }
+  if (ck === 'cloak') {
+    // a robe flaring to the ground and, on a head, a hood open at the front
+    const top = hasHead ? neckY + 0.04 : bodyY + ext * 0.7, prof = [];
+    for (let j = 0; j <= 12; j++) { const u = j / 12; prof.push(new THREE.Vector2(Math.max(W, sx0) * (0.85 + Math.sqrt(u) * 0.6 * cl), top - (top - FEET - 0.02) * u)); } // shoulders, then the fall
+    const robe = new THREE.Mesh(new THREE.LatheGeometry(prof, 40), coatM); coat.add(robe);
+    if (hasHead) {
+      // a deep hood, open at the front, peaked at the back; the face sits back inside it
+      const hood = new THREE.Group(); hood.position.y = headY; hood.userData.sel = 'coat'; head.add(hood);
+      // a cowl: wider than the head, falling to the shoulders, open only at the front
+      hood.add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.34, 40, 24, Math.PI * 0.78, Math.PI * 1.44, 0, Math.PI * 0.93), coatM));
+      const tip = new THREE.Mesh(new THREE.ConeGeometry(R * 0.6, R * 1.25, 24), coatM); tip.position.set(0, R * 1.1, -R * 0.55); tip.rotation.x = -0.6; hood.add(tip);
+    }
+  }
+  if (ck === 'hoops') {
+    // Schlemmer: rings around the body, widest at the hips, with a disc skirt
+    const n = Math.round(4 * dens) + 1;
+    for (let j = 0; j < n; j++) {
+      const u = j / Math.max(1, n - 1), y = bodyY - ext * 0.7 + u * ext * 1.3, rad = Math.max(W, sx0) * (1.55 - u * 0.5) * cl;
+      const t = new THREE.Mesh(new THREE.TorusGeometry(rad, 0.035, 8, 56), j % 2 ? coatM : ink('toner', 0.9, 0.1)); t.rotation.x = Math.PI / 2; t.position.y = y; coat.add(t);
+    }
+    const skirt = new THREE.Mesh(new THREE.CylinderGeometry(Math.max(W, sx0) * 1.6 * cl, Math.max(W, sx0) * 1.6 * cl, 0.03, 48), coatM); skirt.position.y = bodyY - ext * 0.8; coat.add(skirt);
+  }
+
   // the borrowed house on the back (optional)
   const house = new THREE.Group(); house.userData.sel = 'house'; w.add(house);
   const hk = Ho.kind || 'none', hs = Ho.size ?? 1, houseY = bodyY + H * 0.2;
@@ -346,6 +485,7 @@ export function figure(P = {}, ctx) {
   }
 
   const anchors = {
+    face: new THREE.Vector3(0, faceY, faceZ),
     head: new THREE.Vector3(0, hasHead ? headY + R : bodyY + H, 0.1),
     back: new THREE.Vector3(0, bodyY, -W * 0.9),
     feet: new THREE.Vector3(0, FEET, 0.05),

@@ -6,12 +6,13 @@ import { selLabel } from '../core/viewport.js';
 import { fill } from '../core/thumbs.js';
 import { $, $$, esc, icon, fmtNum, toast } from './dom.js';
 
-const ROLE_OF_INK = { blu: 'primary', toner: 'dark', fluo: 'accent', rosso: 'secondary', paper: 'light' };
-const GROUP_ICON = { species: 'species', body: 'body', head: 'head', face: 'face', ears: 'ears', arms: 'arms', legs: 'legs', house: 'house', back: 'back', tail: 'tail', pose: 'pose', shell: 'shell', eyes: 'face', claws: 'claws' };
+const ROLE_OF_INK = { auto: null, blu: 'primary', toner: 'dark', fluo: 'accent', rosso: 'secondary', paper: 'light' };
+const GROUP_ICON = { species: 'species', body: 'body', head: 'head', face: 'face', ears: 'ears', arms: 'arms', legs: 'legs', house: 'house', mask: 'mask', coat: 'coat', back: 'back', tail: 'tail', pose: 'pose', shell: 'shell', eyes: 'face', claws: 'claws' };
 const GROUP_NOTE = {
   body: 'Shape and size of the torso. Everything else attaches to it.', head: 'Choose none to wear the face on the body (blobs, spirits).',
   face: 'Eyes are the logo: style, count, size and spacing.', ears: 'Ears, horns, antennae or fins.', arms: 'Arms and hands; held items ride on the hands.',
   legs: 'Legs, tentacles, or a wisp that makes it float.', house: 'Something on its back it did not build (optional).', pose: 'Expression, scale and idle motion.',
+  mask: 'A face over the face: Noh, a carved long face, a helm, goggles or a veil of fringe.', coat: 'What covers the whole body: fur, straw, leaves, a hooded robe, hoops.',
   back: 'What grows from the back: gills and frills (sea slugs), bat wings, spines.', tail: 'Devil, curl or pom-pom.',
   shell: 'The borrowed shell of the hermit crab.', eyes: 'Eyes on stalks.', claws: 'One big claw, one small.',
 };
@@ -22,7 +23,7 @@ const segOK = (g) => g.type === 'enum' && g.options.length <= 4 && g.options.eve
 function control(id, g, v) {
   const P = withPalette(state.spec.palette);
   if (g.type === 'bool') return `<button class="switch" role="switch" data-g="${id}" aria-checked="${!!v}" aria-label="${esc(g.label)}"><span></span></button>`;
-  if (g.type === 'enum' && isRole(g)) return `<div class="roles" role="radiogroup" aria-label="${esc(g.label)}">${g.options.map(o => `<button role="radio" data-g="${id}" data-v="${o}" aria-checked="${o === v}" title="${esc(S.INK_ROLE[o])}" style="--c:${P[ROLE_OF_INK[o]].color}"><span class="sr">${esc(S.INK_ROLE[o])}</span></button>`).join('')}<em>${esc(S.INK_ROLE[v] || v)}</em></div>`;
+  if (g.type === 'enum' && isRole(g)) return `<div class="roles" role="radiogroup" aria-label="${esc(g.label)}">${g.options.map(o => `<button role="radio" data-g="${id}" data-v="${o}" aria-checked="${o === v}" title="${esc(S.INK_ROLE[o])}" style="--c:${ROLE_OF_INK[o] ? P[ROLE_OF_INK[o]].color : 'repeating-linear-gradient(45deg,#555 0 3px,#999 3px 6px)'}"><span class="sr">${esc(S.INK_ROLE[o])}</span></button>`).join('')}<em>${esc(S.INK_ROLE[v] || v)}</em></div>`;
   if (segOK(g)) return `<div class="seg sm" role="radiogroup" aria-label="${esc(g.label)}">${g.options.map(o => `<button role="radio" data-g="${id}" data-v="${o}" aria-checked="${o === v}">${esc(o)}</button>`).join('')}</div>`;
   if (g.type === 'enum') return `<div class="select"><select data-g="${id}" aria-label="${esc(g.label)}">${g.options.map(o => `<option ${o === v ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>${icon('down', 14)}</div>`;
   const step = g.type === 'int' ? 1 : (g.max - g.min) / 200, p = ((v - g.min) / (g.max - g.min)) * 100;

@@ -71,6 +71,8 @@ export function build(spec) {
     face() {
       root.updateMatrixWorld(true);
       const c = new THREE.Vector3(), v = new THREE.Vector3();
+      // no rigged eyes (masks, button or lens eyes): the body's face anchor
+      if (!faceEyes.length && ctx.anchors.face) return hostWrap.localToWorld(ctx.anchors.face.clone());
       faceEyes.forEach(e => c.add(e.getWorldPosition(v)));
       return c.divideScalar(Math.max(1, faceEyes.length));
     },

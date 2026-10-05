@@ -1,0 +1,130 @@
+{
+  "id": "siepe",
+  "name": "Siepe",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "can",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "bell",
+      "w": 0.9,
+      "h": 1.35,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "void",
+      "count": 2,
+      "size": 0.9,
+      "gap": 1,
+      "y": 0
+    },
+    "mouth": {
+      "style": "none",
+      "size": 1
+    },
+    "ears": {
+      "kind": "peak",
+      "size": 0.9,
+      "ink": "rosso"
+    },
+    "coat": {
+      "kind": "leaves",
+      "len": 1.3,
+      "density": 1.4,
+      "ink": "auto"
+    },
+    "arms": {
+      "kind": "noodle",
+      "len": 1,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 1,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mask": {
+      "kind": "none",
+      "ink": "auto"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "The shared hedge come alive: it waters every garden on the street, one hour each. Leaves to the ground and a red pointed hat.",
+  "refs": [
+    "are.na/kim-plowright/costumed-bodies #150 (The Green Man of Bankside)",
+    "are.na/kim-plowright/costumed-bodies Charles Fréger, leaf costumes"
+  ],
+  "series": "maschere",
+  "archetype": "greenman",
+  "palette": {
+    "primary": {
+      "color": "#2f6b3a",
+      "finish": "matte",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#3b2a1d",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#5fb33a",
+      "finish": "plush",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#c83a2e",
+      "finish": "plastic",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#f2f6e8",
+      "finish": "matte",
+      "print": "paper"
+    }
+  }
+}

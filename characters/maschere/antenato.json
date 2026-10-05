@@ -1,0 +1,130 @@
+{
+  "id": "antenato",
+  "name": "Antenato",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "hourglass",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "capsule",
+      "w": 0.85,
+      "h": 1.15,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "egg",
+      "size": 1.05,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1,
+      "gap": 1,
+      "y": 0
+    },
+    "mask": {
+      "kind": "longface",
+      "ink": "auto"
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1.1,
+      "ink": "blu"
+    },
+    "coat": {
+      "kind": "fur",
+      "len": 0.75,
+      "density": 0.8,
+      "ink": "rosso"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1.05,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.8,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "Keeps the memory of the neighbourhood and tells it to whoever has an hour. A long carved face over a body of raffia.",
+  "refs": [
+    "are.na/laure-michelon/masks-zlx5wjjoszs #90 #91 #92 (Chokwe, Punu, Lega masks)",
+    "are.na/kim-plowright/costumed-bodies #169 (Chokwe), #141 (Maïmouna Guerresi)"
+  ],
+  "series": "maschere",
+  "archetype": "wildman",
+  "palette": {
+    "primary": {
+      "color": "#5a3b2a",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "dark": {
+      "color": "#2a1a12",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#e8c45a",
+      "finish": "plastic",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#c9a35a",
+      "finish": "matte",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#f4ead2",
+      "finish": "matte",
+      "print": "paper"
+    }
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "id": "selvatico",
+  "name": "Selvatico",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "lantern",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "bell",
+      "w": 0.95,
+      "h": 1.3,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "egg",
+      "size": 1.05,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1,
+      "gap": 1,
+      "y": 0
+    },
+    "mask": {
+      "kind": "longface",
+      "ink": "auto"
+    },
+    "ears": {
+      "kind": "antlers",
+      "size": 1.15,
+      "ink": "toner"
+    },
+    "coat": {
+      "kind": "straw",
+      "len": 1,
+      "density": 1,
+      "ink": "auto"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1.05,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.8,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "Brings firewood to whoever is cold, in exchange for nothing but an hour of company. Straw to the ground, antlers, a carved wooden face.",
+  "refs": [
+    "are.na/kim-plowright/costumed-bodies #83 #84 #87 (Charles Fréger, Wilder Mann)",
+    "are.na/laure-michelon/masks-zlx5wjjoszs #92 (Lega mask)"
+  ],
+  "series": "maschere",
+  "archetype": "wildman",
+  "palette": {
+    "primary": {
+      "color": "#6b4a2b",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "dark": {
+      "color": "#3b2a1d",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "matte",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#e8d27a",
+      "finish": "plastic",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#d6b25a",
+      "finish": "matte",
+      "print": "fluo"
+    },
+    "light": {
+      "color": "#f4ead2",
+      "finish": "matte",
+      "print": "paper"
+    }
+  }
+}

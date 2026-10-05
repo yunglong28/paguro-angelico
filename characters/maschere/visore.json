@@ -1,0 +1,130 @@
+{
+  "id": "visore",
+  "name": "Visore",
+  "parts": [
+    {
+      "type": "prop",
+      "item": "book",
+      "at": "clawR"
+    }
+  ],
+  "plan": "figure",
+  "figure": {
+    "body": {
+      "shape": "capsule",
+      "w": 0.7,
+      "h": 0.9,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "sphere",
+      "size": 1.3,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1,
+      "gap": 1,
+      "y": 0
+    },
+    "mask": {
+      "kind": "goggles",
+      "ink": "auto"
+    },
+    "arms": {
+      "kind": "long",
+      "len": 0.95,
+      "ink": "blu"
+    },
+    "legs": {
+      "kind": "legs",
+      "len": 0.95,
+      "foot": 1,
+      "count": 6,
+      "ink": "blu"
+    },
+    "scale": 1,
+    "belly": {
+      "kind": "none"
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1
+    },
+    "ears": {
+      "kind": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "coat": {
+      "kind": "none",
+      "len": 1,
+      "density": 1,
+      "ink": "auto"
+    },
+    "back": {
+      "kind": "none",
+      "count": 14,
+      "size": 1,
+      "ink": "fluo"
+    },
+    "tail": {
+      "kind": "none",
+      "len": 1,
+      "ink": "blu"
+    },
+    "house": {
+      "kind": "none",
+      "size": 1,
+      "ink": "toner"
+    }
+  },
+  "expression": "quiete",
+  "parent": "paguro",
+  "pose": {
+    "scale": 1,
+    "lift": 0,
+    "float": 0,
+    "sway": 0.3
+  },
+  "concept": "Teaches whoever asks how to use their phone, an hour at a time. Its eyes are a lit visor; it carries the manual.",
+  "refs": [
+    "are.na/laure-michelon/masks-zlx5wjjoszs #139 (headsets)",
+    "are.na/laure-michelon/masks-zlx5wjjoszs tech masks and visors"
+  ],
+  "series": "maschere",
+  "archetype": "masked",
+  "palette": {
+    "primary": {
+      "color": "#e9edf2",
+      "finish": "plastic",
+      "print": "paper"
+    },
+    "dark": {
+      "color": "#9aa3ad",
+      "finish": "chrome",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141410",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#3ff2ff",
+      "finish": "gel",
+      "print": "blu"
+    },
+    "secondary": {
+      "color": "#ff6b3d",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#ffffff",
+      "finish": "candy",
+      "print": "paper"
+    }
+  }
+}

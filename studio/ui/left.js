@@ -56,7 +56,7 @@ export function newMenu(anchor) {
 }
 
 // ---------- Layers ----------
-const GROUP_ICON = { body: 'body', head: 'head', face: 'face', ears: 'ears', arms: 'arms', legs: 'legs', house: 'house', back: 'back', tail: 'tail', pose: 'pose', shell: 'shell', eyes: 'face', claws: 'claws' };
+const GROUP_ICON = { body: 'body', head: 'head', face: 'face', ears: 'ears', arms: 'arms', legs: 'legs', house: 'house', mask: 'mask', coat: 'coat', back: 'back', tail: 'tail', pose: 'pose', shell: 'shell', eyes: 'face', claws: 'claws' };
 function layers() {
   const s = state.spec, P = withPalette(s.palette);
   const row = (sel, ic, label, extra = '', level = 1) => `<div class="lrow" data-sel="${sel}" aria-current="${state.sel === sel}" role="treeitem" tabindex="0" style="--lv:${level}">${icon(ic, 16)}<span class="lt">${label}</span>${extra}</div>`;
