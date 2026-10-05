@@ -3,7 +3,7 @@
 // validation, and the text → character generator. A character file (characters/**.json) IS a genome.
 // Pure JS (no three.js).
 import { rng } from './rng.js';
-import { ROLES, FINISHES, PRINT_INKS, CLASSIC, harmony, mixHex, labDist, SCHEMES, STYLES, toOklch, oklch } from './palette.js';
+import { ROLES, FINISHES, PRINT_INKS, CLASSIC, harmony, mixHex, labDist, SCHEMES, STYLES, toOklch, oklch, withPalette, rgbToOklab, hexToRgb } from './palette.js';
 
 // role a part paints with, as an ink name (see engine/palette.js)
 const INKS = ['blu', 'toner', 'fluo', 'rosso', 'paper'];
@@ -108,6 +108,16 @@ export const ARCHETYPES = {
   object: { label: 'Object spirit', note: 'A thing that came alive: an hourglass, a coin, a little house', spec: { plan: 'figure', figure: { body: { shape: 'hourglass', w: 0.9, h: 1.2 }, head: { shape: 'none' }, eyes: { style: 'button', count: 2, size: 1.3, y: 0.35 }, arms: { kind: 'noodle', len: 0.8 }, legs: { kind: 'stub' } } } },
   uncanny: { label: 'Uncanny', note: 'Not cute: many eyes, horns, tentacles, a long silhouette', spec: { plan: 'figure', figure: { body: { shape: 'bell', w: 0.85, h: 1.45 }, head: { shape: 'egg', size: 0.85 }, eyes: { style: 'void', count: 4, size: 0.75, gap: 0.85 }, mouth: { style: 'fangs' }, ears: { kind: 'horns', size: 1.2 }, arms: { kind: 'long', len: 1.4 }, legs: { kind: 'tentacles', count: 7, len: 1.2 } } } },
 };
+// the archetype a genome is closest to (for labels and the species picker)
+export function speciesOf(spec) {
+  if (spec?.plan !== 'figure') return 'crab';
+  const F = spec.figure || {}, legs = F.legs?.kind, body = F.body?.shape, head = F.head?.shape;
+  if (F.eyes?.style === 'void' && (F.ears?.kind === 'horns' || legs === 'tentacles')) return 'uncanny';
+  if (legs === 'wisp' || body === 'drop') return 'spirit';
+  if (['hourglass', 'coin', 'house'].includes(body)) return 'object';
+  if (head && head !== 'none' && (legs === 'legs' || legs === 'long')) return 'chibi';
+  return 'blob';
+}
 export function applyArchetype(spec, key) {
   const out = clone(spec), A = ARCHETYPES[key].spec;
   out.plan = A.plan;
@@ -192,6 +202,7 @@ export function setGene(spec, id, v) {
   if (g) writeGene(spec, g, v); else set(spec, id, v);
   return spec;
 }
+const num = (v, def) => (Number.isFinite(+v) && v !== null && v !== '' ? +v : def);
 const clampGene = (g, v) => {
   if (g.type === 'int') return Math.round(Math.min(g.max, Math.max(g.min, v)));
   if (g.type === 'float') return +Math.min(g.max, Math.max(g.min, v)).toFixed(3);
@@ -249,7 +260,7 @@ export function mutate(spec, seed, amount = 0.5, locks) {
     if (R.next() < amount * 0.45) { const t = R.pick(Object.keys(PARTS).filter(t => !PARTS[t].hides && !PARTS[t].wraps)); if (!out.parts.some(p => p.type === t)) out.parts.push(newPart(t)); }
     if (out.parts.length > 1 && R.next() < amount * 0.25) out.parts.splice(R.int(0, out.parts.length - 1), 1);
   }
-  if (!locked(locks, 'palette') && R.next() < 0.3 + amount * 0.5) out.palette = mutatePalette(withDefaults(spec).palette, R, amount);
+  if (!locked(locks, 'palette') && R.next() < 0.3 + amount * 0.5) out.palette = mutatePalette(withPalette(spec.palette), R, amount);
   out.seed = seed; out.parent = spec.id; out.seed_of = spec.id;
   out.id = `${spec.id}-s${seed}`; out.name = `${spec.name} · ${seed}`;
   return out;
@@ -306,7 +317,7 @@ export function blend(specs, weights) {
     }
     return q;
   });
-  const P = specs.map(s => withDefaults(s).palette);
+  const P = specs.map(s => withPalette(s.palette));
   out.palette = clone(P[top]);
   for (const r of ROLES) {
     let c = P[0][r].color, acc = w[0];
@@ -319,31 +330,42 @@ export function blend(specs, weights) {
   return out;
 }
 
-// distance between two genomes (for spreading out a gallery of candidates)
-export function distance(a, b) {
-  let d = 0, n = 0;
-  if ((a.plan || 'crab') !== (b.plan || 'crab')) { d += 8; n += 8; }
-  else for (const grp of anatomyOf(a)) for (const g of grp.genes) {
-    const x = readGene(a, g), y = readGene(b, g);
-    d += g.type === 'float' || g.type === 'int' ? Math.abs(x - y) / (g.max - g.min) : x === y ? 0 : 1; n++;
+// A genome as a point in "design space": body genes normalised to 0..1, the set of part types, and the
+// palette in OKLab. Computed once per genome, so comparing many candidates stays cheap.
+function features(spec) {
+  const body = [];
+  for (const grp of anatomyOf(spec)) for (const g of grp.genes) {
+    const v = readGene(spec, g);
+    body.push(g.type === 'float' || g.type === 'int' ? (v - g.min) / (g.max - g.min) : `${v}`);
   }
-  const ta = new Set((a.parts || []).map(p => p.type)), tb = new Set((b.parts || []).map(p => p.type));
-  const uni = new Set([...ta, ...tb]).size || 1, inter = [...ta].filter(t => tb.has(t)).length;
-  d += (1 - inter / uni) * 4; n += 4;
-  const Pa = withDefaults(a).palette, Pb = withDefaults(b).palette;
-  d += ROLES.reduce((s, r) => s + labDist(Pa[r].color, Pb[r].color), 0) * 2; n += 2;
+  const P = withPalette(spec.palette);
+  return { plan: spec.plan || 'crab', body, parts: new Set((spec.parts || []).map(p => p.type)), lab: ROLES.map(r => rgbToOklab(hexToRgb(P[r].color))) };
+}
+function featureDistance(a, b) {
+  let d = 0, n = 0;
+  if (a.plan !== b.plan) { d += 8; n += 8; }
+  else a.body.forEach((x, i) => { const y = b.body[i]; d += typeof x === 'number' ? Math.abs(x - y) : x === y ? 0 : 1; n++; });
+  const uni = new Set([...a.parts, ...b.parts]).size, inter = [...a.parts].filter(t => b.parts.has(t)).length;
+  d += uni ? (1 - inter / uni) * 4 : 0; n += 4; // two genomes with no parts agree on parts
+  d += a.lab.reduce((s, A, i) => s + Math.hypot(A[0] - b.lab[i][0], A[1] - b.lab[i][1], A[2] - b.lab[i][2]), 0) * 2; n += 2;
   return d / n;
 }
+// distance between two genomes, 0 (same) .. ~1
+export const distance = (a, b) => featureDistance(features(a), features(b));
 
 // breed(spec, seed, count, amount, locks): many mutants, then the `count` most spread out
-// (farthest-point sampling: a local design gallery around the current character)
+// (greedy farthest-point sampling: a local design gallery around the current character)
 export function breed(spec, seed, count = 8, amount = 0.5, locks) {
   const pool = Array.from({ length: count * 5 }, (_, k) => mutate(spec, seed * 100 + k, amount, locks));
+  const F = pool.map(features), parent = features(spec);
+  // each candidate's distance to the nearest already-picked genome (the parent counts as picked)
+  const near = F.map(f => featureDistance(parent, f));
   const picked = [];
-  let best = pool.reduce((m, c) => (distance(spec, c) > distance(spec, m) ? c : m), pool[0]);
-  while (picked.length < count && pool.length) {
-    picked.push(best); pool.splice(pool.indexOf(best), 1);
-    best = pool.reduce((m, c) => { const dc = Math.min(...picked.map(p => distance(p, c))), dm = Math.min(...picked.map(p => distance(p, m))); return dc > dm ? c : m; }, pool[0]);
+  while (picked.length < Math.min(count, pool.length)) {
+    let best = -1;
+    near.forEach((d, i) => { if (d >= 0 && (best < 0 || d > near[best])) best = i; });
+    picked.push(pool[best]); near[best] = -1;
+    near.forEach((d, i) => { if (d >= 0) near[i] = Math.min(d, featureDistance(F[best], F[i])); });
   }
   return picked;
 }
@@ -363,14 +385,14 @@ export function validate(spec) {
   out.plan = out.plan === 'figure' ? 'figure' : 'crab';
   for (const grp of anatomyOf(out)) for (const g of grp.genes) {
     const v = readGene(out, g);
-    writeGene(out, g, g.type === 'enum' ? (g.options.includes(v) ? v : g.def) : g.type === 'bool' ? !!v : clampGene(g, +v || g.def));
+    writeGene(out, g, g.type === 'enum' ? (g.options.includes(v) ? v : g.def) : g.type === 'bool' ? !!v : clampGene(g, num(v, g.def)));
   }
   out.parts = (out.parts || []).filter(p => PARTS[p?.type]).map(p => {
     const q = { type: p.type };
     for (const g of partGenes(p.type)) {
       const v = readPart(p, g);
       if (g.common && v === g.def) continue;
-      set(q, g.key, g.type === 'enum' ? (g.options.includes(v) ? v : g.def) : g.type === 'bool' ? !!v : clampGene(g, +v));
+      set(q, g.key, g.type === 'enum' ? (g.options.includes(v) ? v : g.def) : g.type === 'bool' ? !!v : clampGene(g, num(v, g.def)));
     }
     return q;
   });

@@ -68,7 +68,6 @@ export function withPalette(p) {
   for (const r of ROLES) out[r] = { ...CLASSIC[r], ...(p?.[r] || {}) };
   return out;
 }
-export const paletteKey = (p) => ROLES.map(r => `${p[r].color}${p[r].finish}${p[r].print}`).join('|');
 
 // Harmony schemes: hue offsets (degrees) for primary, secondary, accent.
 export const SCHEMES = {

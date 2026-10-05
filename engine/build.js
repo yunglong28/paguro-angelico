@@ -9,7 +9,7 @@ const PARTS = { ...ANGELI, ...COLLETTIVO, ...TIME_PARTS };
 const merge = (a, b) => { const o = { ...a }; for (const [k, v] of Object.entries(b)) o[k] = v && typeof v === 'object' && !Array.isArray(v) && a[k] && typeof a[k] === 'object' ? merge(a[k], v) : v; return o; };
 import { rng } from './rng.js';
 
-const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia', 'banner', 'scales', 'prop']);
+const ANCHORED = new Set(['crown', 'mandrake', 'plinth', 'roots', 'parapodia', 'banner', 'scales', 'prop', 'orbit']);
 
 export function build(spec) {
   const R = rng(spec.seed ?? 1);
@@ -26,6 +26,7 @@ export function build(spec) {
   const h = isFigure ? figure(hostSpec, ctx) : host(hostSpec, ctx);
   const hostEyes = ctx.eyes.slice();
   ctx.anchors = h.anchors;
+  ctx.mounts = h.mounts || {}; // moving attachment points (a figure's hands)
   const hostWrap = new THREE.Group(); hostWrap.add(h.obj);
   hostWrap.scale.setScalar(hostSpec.scale ?? 1);
   stage.add(hostWrap);
@@ -43,7 +44,7 @@ export function build(spec) {
       stage.remove(hostWrap); part.obj.add(hostWrap); hostWrap.position.y = 0;
     }
     // parts placed from host anchors live in host space so they follow its scale
-    (ANCHORED.has(p.type) || p.attach === 'host' ? hostWrap : stage).add(part.obj);
+    (part.mount ? ctx.mounts[part.mount] : ANCHORED.has(p.type) || p.attach === 'host' ? hostWrap : stage).add(part.obj);
     if (part.hideHost) hostWrap.visible = false;
     if (part.hostAt) hostWrap.position.copy(part.hostAt);
     if (part.hostScale) hostWrap.scale.setScalar(part.hostScale);

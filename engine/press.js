@@ -8,7 +8,7 @@
 //           and a press pass screens toner at 15° and blu at 75°; each role prints with its palette ink
 import * as THREE from '../vendor/three.module.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
-import { CLASSIC, withPalette, paletteKey, roleOf, mixHex } from './palette.js';
+import { CLASSIC, withPalette, roleOf, mixHex } from './palette.js';
 
 export const PALETTE = {
   paper: [0.957, 0.957, 0.949],
@@ -25,7 +25,7 @@ export const DEFAULT_STAGE = { sky: { top: '#9fc4ff', mid: '#eef4ff', bottom: '#
 let STAGE = DEFAULT_STAGE, stageRev = 0;
 export function setStage(s = {}) {
   STAGE = { ...DEFAULT_STAGE, ...s, sky: { ...DEFAULT_STAGE.sky, ...(s.sky || {}) } };
-  stageRev++; matCache.clear();
+  stageRev++; matCache.forEach(m => m.dispose()); matCache.clear();
 }
 
 // ---------- ink: the tag every part paints with (and its print material) ----------
@@ -96,14 +96,21 @@ export function finishMaterial(hex, finish, look = 'studio') {
     default: return M({ roughness: 0.38 * gl, clearcoat: 0.35, clearcoatRoughness: 0.4 }); // plastic
   }
 }
+// Cached by what the material actually is (look + finish + final colour, or print ink + coverage),
+// least-recently-used and capped, because live colour editing creates a new colour every frame.
+const MAT_CAP = 600;
 export function materialFor(m, look, palette) {
   const k = m.userData.ink; if (!k) return m;
   const P = palette || withPalette(CLASSIC), R = P[k.role];
-  const key = `${look}|${paletteKey(P)}|${k.role}|${k.base}|${k.shade}`;
-  if (matCache.has(key)) return matCache.get(key);
-  const mat = look === 'print' ? printMat(R.print, k.base, k.shade) : finishMaterial(tint(k, P), R.finish, look);
+  const hex = look === 'print' ? '' : tint(k, P);
+  const key = look === 'print' ? `print|${R.print}|${k.base}|${k.shade}` : `${look}|${R.finish}|${hex}`;
+  let mat = matCache.get(key);
+  if (mat) { matCache.delete(key); matCache.set(key, mat); return mat; }
+  mat = look === 'print' ? printMat(R.print, k.base, k.shade) : finishMaterial(hex, R.finish, look);
   mat.name = k.role;
-  matCache.set(key, mat); return mat;
+  matCache.set(key, mat);
+  if (matCache.size > MAT_CAP) { const [old, om] = matCache.entries().next().value; matCache.delete(old); om.dispose(); }
+  return mat;
 }
 // kept for older callers
 export const colorOf = (m, look = 'studio', palette) => materialFor(m, normLook(look), palette);

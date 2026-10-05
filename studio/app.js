@@ -340,16 +340,7 @@ function renderCast() {
 }
 $('cast').onclick = (e) => { const b = e.target.closest('[data-k]'); if (b) openCharacter(b.dataset.k); };
 
-// which archetype a character is closest to, for labels
-function speciesName(s) {
-  if (s.plan !== 'figure') return 'hermit crab';
-  const F = s.figure || {}, legs = F.legs?.kind, body = F.body?.shape, head = F.head?.shape;
-  if (F.eyes?.style === 'void' && (F.ears?.kind === 'horns' || legs === 'tentacles')) return 'uncanny';
-  if (legs === 'wisp' || body === 'drop') return 'spirit';
-  if (['hourglass', 'coin', 'house'].includes(body)) return 'object spirit';
-  if (head && head !== 'none' && (legs === 'legs' || legs === 'long')) return 'chibi';
-  return 'blob';
-}
+const speciesName = (s) => S.ARCHETYPES[S.speciesOf(s)].label;
 function renderOutliner() {
   const s = state.spec, P = withPalette(s.palette);
   const row = (sel, label, extra = '', dot = '') => `<button class="row" data-sel="${sel}" aria-selected="${state.sel === sel && ['edit', 'sheet'].includes(state.mode)}">${dot}<span class="grow">${label}</span>${extra}</button>`;
@@ -480,7 +471,7 @@ function speciesPanel(el) {
   const s = state.spec;
   el.innerHTML = `<div class="ins"><div class="ih"><h1>Species</h1></div>
     <p class="note">The body plan. Pick an archetype as a starting point: it replaces the body and keeps the name, palette and apparatus. Then edit every module (head, face, ears, arms, legs, house) from the outliner.</p>
-    <div class="lib">${Object.entries(S.ARCHETYPES).map(([k, a]) => `<button class="card" data-arch="${k}" ${speciesName(s) === (k === 'crab' ? 'hermit crab' : k === 'object' ? 'object spirit' : k) ? 'style="border-color:var(--accent)"' : ''}><b>${esc(a.label)}</b><small>${esc(a.note)}</small></button>`).join('')}</div>
+    <div class="lib">${Object.entries(S.ARCHETYPES).map(([k, a]) => `<button class="card" data-arch="${k}" ${S.speciesOf(s) === k ? 'style="border-color:var(--accent)"' : ''}><b>${esc(a.label)}</b><small>${esc(a.note)}</small></button>`).join('')}</div>
     <div class="actions"><button class="btn" id="spRand">Random species</button></div></div>`;
   el.querySelectorAll('[data-arch]').forEach(b => b.onclick = () => { change(sp => S.applyArchetype(sp, b.dataset.arch)); state.sel = 'body'; renderPanels(); });
   $('spRand').onclick = () => { const k = Object.keys(S.ARCHETYPES)[Math.floor(Math.random() * 6)]; change(sp => { const r = S.randomize(seed(), new Set(['palette', 'parts.*', 'id']), S.applyArchetype(sp, k)); r.id = sp.id; r.name = sp.name; return r; }); };

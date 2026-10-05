@@ -50,7 +50,8 @@ export function serve(port = 5173) {
     if (p.startsWith('/api/')) { try { await api(req, res, p); } catch (e) { send(res, 500, { error: e.message }); } return; }
     if (p === '/') { res.writeHead(302, { location: '/studio/' }); return res.end(); }
     let f = path.join(ROOT, p);
-    if (!f.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
+    const rel = path.relative(ROOT, f);
+    if (rel.startsWith('..') || path.isAbsolute(rel)) { res.writeHead(403); return res.end(); }
     if (fs.existsSync(f) && fs.statSync(f).isDirectory()) f = path.join(f, 'index.html');
     fs.readFile(f, (err, buf) => {
       if (err) { res.writeHead(404); return res.end('not found'); }

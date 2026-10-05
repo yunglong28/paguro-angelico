@@ -59,7 +59,8 @@ node scripts/shot.mjs output/renders/x.png "c=torre&look=y2k" "c=torre&look=prin
 node scripts/turn.mjs characters/drafts/x.json output/renders/x-turn.png             # 4-angle strip of a draft
 ```
 
-Everything runs on Node built-ins plus a local Chrome (and ffmpeg for loops); three.js is vendored.
+Renders wait for the studio to report that it has drawn (`window.tbs.frames`), never for a fixed time, so slow
+software-rendered frames don't come out blank. Everything runs on Node built-ins (Node 22+) plus a local Chrome (and ffmpeg for loops); three.js is vendored.
 The only dependency is optional: `npm install` adds the Anthropic SDK for **Describe** / `npm run generate`,
 which also need credentials (`ANTHROPIC_API_KEY`, or `ant auth login`). The model is `claude-opus-5-5`.
 
@@ -77,7 +78,7 @@ time-bank-spirit/
 ├── brand/brand.json  palette library + stage settings shared by every character
 ├── briefs/           what each series is about, and the style rules (y2k-style.md)
 │   └── references/   source material (PDFs, not in git)
-├── scripts/          the npm commands + the dev server and its API
+├── scripts/          the npm commands, the dev server and its API, chrome.mjs (one headless Chrome per run)
 ├── vendor/           three.js
 ├── docs/images/      screenshots used in this README
 └── output/           renders and .glb models (generated, not in git)

@@ -102,8 +102,13 @@ export function mesh(f, cell = 0.03) {
 }
 
 // Memoised sculpt: same recipe key -> same geometry (characters share limbs and bodies).
-const cache = new Map();
+// Least-recently-used, capped: dragging a slider in the studio makes a new recipe on every step.
+const cache = new Map(), CAP = 400;
 export function sculpt(key, make, cell) {
-  if (!cache.has(key)) cache.set(key, mesh(make(), cell));
-  return cache.get(key);
+  let g = cache.get(key);
+  if (g) { cache.delete(key); cache.set(key, g); return g; } // mark as recently used
+  g = mesh(make(), cell);
+  cache.set(key, g);
+  if (cache.size > CAP) { const [old, og] = cache.entries().next().value; cache.delete(old); og.dispose(); }
+  return g;
 }

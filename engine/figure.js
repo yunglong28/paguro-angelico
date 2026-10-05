@@ -1,5 +1,6 @@
 // The modular body plan: spirits, Y2K blobs, chibi humanoids, object-spirits.
-// figure(P, ctx) -> { obj, anchors, mouth, up } (same contract as the hermit crab's host()).
+// figure(P, ctx) -> { obj, anchors, mounts, mouth, up }: the host() contract, plus `mounts`, the moving hand
+// nodes that held items attach to (so they follow the arm's swing).
 // P = spec.figure: body, head, eyes, mouth, ears, arms, legs, house, belly. Every module is optional
 // and sculpted as SDF, so any combination stays one coherent, smooth object.
 import * as THREE from '../vendor/three.module.js';
@@ -73,7 +74,10 @@ export function figure(P = {}, ctx) {
   const fused = hasHead && headM === bodyM;
   body.add(new THREE.Mesh(sculpt(fused ? `${bodyKey}|head|${headShape}|${r3(R)}|${r3(headY)}` : bodyKey,
     () => blend(fused ? [...torso(shape, [0, bodyY, 0], W, H), ...headParts()] : torso(shape, [0, bodyY, 0], W, H), 0.14), 0.03), bodyM));
-  const head = new THREE.Group(); head.userData.sel = 'head'; w.add(head);
+  // the head turns about the neck: pivot group at the neck, contents in figure space
+  const neckY = hasHead ? headY - R * 0.8 : bodyY + H * 0.3;
+  const headPivot = new THREE.Group(); headPivot.position.y = neckY; w.add(headPivot);
+  const head = new THREE.Group(); head.userData.sel = 'head'; head.position.y = -neckY; headPivot.add(head);
   if (hasHead && !fused) head.add(new THREE.Mesh(sculpt(`fig-head|${headShape}|${r3(R)}|${r3(headY)}`, () => blend(headParts(), 0.08), 0.025), headM));
 
   // face: where the eyes sit (front surface of the head, or the upper body)
@@ -114,7 +118,8 @@ export function figure(P = {}, ctx) {
   if (mstyle !== 'none') {
     const my = faceY - faceR * (style === 'visor' ? 0.5 : 0.42), mz = Math.sqrt(Math.max(0.01, faceZ * faceZ - (my - faceY) ** 2 * 0.5)) + 0.005;
     mouth = mouthSet(face, 0, my, mz, 0.8 * ms * faceR / 0.42, T);
-    if (mstyle === 'fangs') [-1, 1].forEach(s => { const c = new THREE.Mesh(new THREE.ConeGeometry(0.03 * ms, 0.09 * ms, 6), ink('paper', 0, 0)); c.rotation.x = Math.PI; c.position.set(s * 0.05 * ms, my - 0.06 * ms, mz); face.add(c); });
+    const fs = ms * faceR / 0.42;
+    if (mstyle === 'fangs') [-1, 1].forEach(s => { const c = new THREE.Mesh(new THREE.ConeGeometry(0.03 * fs, 0.09 * fs, 6), ink('paper', 0, 0)); c.rotation.x = Math.PI; c.position.set(s * 0.05 * fs, my - 0.06 * fs, mz); face.add(c); });
   }
 
   // ears / horns / antennae
@@ -135,7 +140,7 @@ export function figure(P = {}, ctx) {
 
   // arms
   const arms = new THREE.Group(); arms.userData.sel = 'arms'; body.add(arms);
-  const ak = A.kind || 'stub', al = A.len ?? 1, armPivots = [], hands = {};
+  const ak = A.kind || 'stub', al = A.len ?? 1, armPivots = [], hands = {}, mounts = {};
   if (ak !== 'none') [-1, 1].forEach(s => {
     const sx = s * W * (shape === 'hourglass' ? 0.55 : 0.92), sy = bodyY + H * (shape === 'drop' ? -0.15 : 0.2);
     const piv = new THREE.Group(); piv.position.set(sx, sy, 0.05); arms.add(piv);
@@ -150,7 +155,9 @@ export function figure(P = {}, ctx) {
       piv.add(new THREE.Mesh(sculpt(`arm-long|${s}|${r3(al)}`, () => blend([sphere([0, 0, 0], 0.08), cone([0, 0, 0], el, 0.075, 0.06), cone(el, tip, 0.06, 0.05), ellipsoid(tip, [0.085, 0.1, 0.07])], 0.05), 0.018), limbM));
     }
     armPivots.push({ piv, s });
-    hands[s > 0 ? 'clawR' : 'clawL'] = new THREE.Vector3(sx + tip[0], sy + tip[1], 0.05 + tip[2]);
+    const side = s > 0 ? 'clawR' : 'clawL', hand = new THREE.Object3D();
+    hand.position.set(...tip); piv.add(hand); mounts[side] = hand;
+    hands[side] = new THREE.Vector3(sx + tip[0], sy + tip[1], 0.05 + tip[2]);
   });
 
   // legs
@@ -234,13 +241,13 @@ export function figure(P = {}, ctx) {
   };
   const floats = legKind === 'wisp' || legKind === 'none' && shape === 'drop';
   return {
-    obj: w, anchors, mouth,
+    obj: w, anchors, mounts, mouth,
     up(t) {
       const bob = floats ? Math.sin(t * 1.4) * 0.08 : Math.abs(Math.sin(t * 2.6)) * 0.035;
-      body.position.y = head.position.y = bob;
+      body.position.y = bob; headPivot.position.y = neckY + bob;
       if (hk !== 'none') house.position.y = houseY + bob;
       if (floats) legs.position.y = bob;
-      head.rotation.z = Math.sin(t * 0.9) * 0.05;
+      if (!fused) headPivot.rotation.z = Math.sin(t * 0.9) * 0.06;
       armPivots.forEach(({ piv, s }) => { piv.rotation.z = s * (0.15 + Math.sin(t * 2 + (s > 0 ? 0 : Math.PI)) * 0.18); });
       earPivots.forEach(({ piv, s }, i) => { piv.rotation.z = Math.sin(t * 3 + i) * 0.08 * s; });
       legParts.forEach(l => {
@@ -280,13 +287,15 @@ export function propMesh(item, s = 1) {
   return g;
 }
 // part: an item held in a hand (or claw), floating over the head, or carried on the back
+// (overall size is the common `size` gene, applied by build.js)
 export function prop(p, ctx) {
-  const { item = 'hourglass', at = 'clawR' } = p, size = 1; // overall size: the common `size` gene (build.js)
-  const m = propMesh(item, 1.25);
-  const w = new THREE.Group(); w.add(m);
-  const a = ctx.anchors[at] || ctx.anchors.clawR || ctx.anchors.head;
-  w.position.copy(a); if (at === 'head') w.position.y += 0.35 * size;
-  return { obj: w, up: (t) => { m.rotation.y = at === 'head' ? t * 0.8 : Math.sin(t * 1.3) * 0.25; if (at === 'head') m.position.y = Math.sin(t * 1.6) * 0.06; } };
+  const { item = 'hourglass', at = 'clawR' } = p;
+  const m = propMesh(item, 1.25), w = new THREE.Group(); w.add(m);
+  const floating = at === 'head';
+  // in a hand that moves: ride on it; otherwise sit at the static anchor
+  const mount = !floating && ctx.mounts?.[at] ? at : null;
+  if (!mount) { w.position.copy(ctx.anchors[at] || ctx.anchors.clawR || ctx.anchors.head); if (floating) w.position.y += 0.35; }
+  return { obj: w, mount, up: (t) => { m.rotation.y = floating ? t * 0.8 : Math.sin(t * 1.3) * 0.25; if (floating) m.position.y = Math.sin(t * 1.6) * 0.06; } };
 }
 // part: items orbiting the figure (hours, coins, keys): the economy of time made visible
 export function orbit(p, ctx) {
