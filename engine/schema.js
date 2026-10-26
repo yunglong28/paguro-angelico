@@ -111,6 +111,9 @@ export const FIGURE = [
     e('figure.house.kind', 'Kind', ['none', 'shell', 'clock', 'cottage', 'lantern'], 'none'),
     f('figure.house.size', 'Size', 0.5, 1.6, 1), e('figure.house.ink', 'Colour role', INKS, 'toner', { bias: 0.7 }),
   ] },
+  { id: 'gesture', label: 'Gesture', genes: [
+    e('figure.gesture.kind', 'Signature', ['none', 'flip', 'ring', 'stamp'], 'none', { bias: 0.8 }),
+  ] },
   POSE,
 ];
 export const SPECIES = { id: 'species', label: 'Species', genes: [e('plan', 'Body plan', ['crab', 'figure'], 'crab', { fixed: true })] };

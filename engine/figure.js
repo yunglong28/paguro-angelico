@@ -10,6 +10,8 @@ import { eye, mouthSet, sph, limb, sweep, spiralShell } from './parts.js';
 import { rng } from './rng.js';
 
 const TAU = Math.PI * 2;
+const GESTURE = 4; // seconds between two signature gestures (the loop export is 4 s long)
+const ease = k => k * k * (3 - 2 * k);
 const FEET = -1.05;
 const o = (x) => (x && typeof x === 'object' ? x : {});
 const r3 = (v) => Math.round(v * 1000) / 1000;
@@ -84,7 +86,7 @@ function headSDF(shape, c, R) {
 }
 
 export function figure(P = {}, ctx) {
-  const B = o(P.body), Hd = o(P.head), E = o(P.eyes), M = o(P.mouth), Ea = o(P.ears), A = o(P.arms), L = o(P.legs), Ho = o(P.house), Be = o(P.belly);
+  const B = o(P.body), Hd = o(P.head), E = o(P.eyes), M = o(P.mouth), Ea = o(P.ears), A = o(P.arms), L = o(P.legs), Ho = o(P.house), Be = o(P.belly), Gs = o(P.gesture);
   const bodyM = ink(B.ink || 'blu', 0.36, 0.64);
   const headM = Hd.ink && Hd.ink !== (B.ink || 'blu') ? ink(Hd.ink, 0.36, 0.64) : bodyM;
   const limbM = A.ink ? ink(A.ink, 0.36, 0.64) : bodyM;
@@ -441,7 +443,7 @@ export function figure(P = {}, ctx) {
       const c = new THREE.Mesh(new THREE.CylinderGeometry(0.55 * hs, 0.55 * hs, 0.22 * hs, 48), HM); c.rotation.x = Math.PI / 2; house.add(c);
       house.add(sph(0.5 * hs, ink('paper', 0, 0), 0, 0, -0.1 * hs, 1, 1, 0.05, 40));
       const hand = (len, a) => { const g = new THREE.Group(); g.position.z = -0.14 * hs; g.add(limb([0, 0, 0], [0, len * hs, 0], 0.02, T)); g.rotation.z = a; house.add(g); return g; };
-      const hh = hand(0.25, 1), mh = hand(0.4, -0.5); ups.push(t => { mh.rotation.z = -t * 0.6; hh.rotation.z = -t * 0.05; });
+      const hh = hand(0.25, 1), mh = hand(0.4, -0.5); ups.push(t => { mh.rotation.z = -t * 0.6 - spun(t); hh.rotation.z = -t * 0.05 - spun(t) / 12; });
       house.rotation.y = Math.PI; apex = new THREE.Vector3(0, hy + 0.55 * hs, back);
     }
     if (hk === 'cottage') {
@@ -470,7 +472,7 @@ export function figure(P = {}, ctx) {
       for (let i = 0; i < 12; i++) { const a = i / 12 * TAU; g.add(sph(0.018, T, Math.cos(a) * bs * 0.82, Math.sin(a) * bs * 0.82, 0.03, 1, 1, 1, 6)); }
       const mh = new THREE.Group(); mh.position.z = 0.04; mh.add(limb([0, 0, 0], [0, bs * 0.7, 0], 0.016, T)); g.add(mh);
       g.add(limb([0, 0, 0.04], [bs * 0.4, bs * 0.15, 0.04], 0.018, T));
-      ups.push(t => { mh.rotation.z = -t * 0.8; });
+      ups.push(t => { mh.rotation.z = -t * 0.8 - spun(t); });
     }
     if (bk === 'spiral') { const pts = []; for (let j = 0; j <= 60; j++) { const u = j / 60, a = u * TAU * 2.2; pts.push(new THREE.Vector3(Math.cos(a) * bs * u, Math.sin(a) * bs * u, 0.02)); } g.add(sweep(pts, pts.map(() => 0.02), ink('fluo', 1, 0), 6)); }
     if (bk === 'buttons') [0.35, -0.05, -0.45].forEach(y => g.add(sph(0.06, T, 0, y * bs * 1.6, 0.02, 1, 1, 0.5, 12)));
@@ -482,6 +484,31 @@ export function figure(P = {}, ctx) {
       }
     }
     if (bk === 'heart') { const h = new THREE.Mesh(sculpt(`heart|${r3(bs)}`, () => blend([sphere([-bs * 0.28, bs * 0.15, 0], bs * 0.32), sphere([bs * 0.28, bs * 0.15, 0], bs * 0.32), cone([0, -bs * 0.45, 0], [0, bs * 0.05, 0], 0.03, bs * 0.4)], 0.06), 0.02), ink('rosso', 1, 0)); h.scale.z = 0.35; g.add(h); }
+  }
+
+  // signature gesture, once every GESTURE seconds: flip (an hourglass turning over), ring (an alarm clock
+  // going off: shake, hop, the hands spin), stamp (a seal pressed down: rise, slam, squash)
+  const gk = Gs.kind || 'none', pivotY = bodyY;
+  function phase(t, a, b) { const u = t % GESTURE; return u < a ? 0 : u >= b ? 1 : (u - a) / (b - a); }
+  function spun(t) { return gk === 'ring' ? (Math.floor(t / GESTURE) + ease(phase(t, 2.8, 3.6))) * TAU * 2 : 0; }
+  function gesture(t) {
+    w.position.set(0, 0, 0); w.rotation.z = 0; w.scale.set(1, 1, 1);
+    if (gk === 'flip') {
+      const pre = phase(t, 2.5, 2.8), k = phase(t, 2.8, 3.6);
+      if (pre > 0 && k === 0) w.scale.set(1 + 0.06 * Math.sin(pre * Math.PI), 1 - 0.1 * Math.sin(pre * Math.PI), 1);
+      if (k > 0 && k < 1) {
+        const a = ease(k) * TAU; w.rotation.z = a;
+        w.position.set(pivotY * Math.sin(a), pivotY * (1 - Math.cos(a)) + Math.sin(k * Math.PI) * 0.45, 0);
+      }
+    } else if (gk === 'ring') {
+      const k = phase(t, 2.8, 3.6);
+      if (k > 0 && k < 1) { w.rotation.z = Math.sin(k * Math.PI * 14) * 0.09 * (1 - k); w.position.y = Math.abs(Math.sin(k * Math.PI * 3)) * 0.1; }
+    } else if (gk === 'stamp') {
+      const up = phase(t, 2.5, 3.0), down = phase(t, 3.0, 3.1), sq = phase(t, 3.1, 3.5);
+      if (up > 0 && down === 0) { w.position.y = ease(up) * 0.4; w.scale.set(0.97, 1.05, 0.97); }
+      else if (down > 0 && down < 1) w.position.y = (1 - down * down) * 0.4;
+      else if (sq > 0 && sq < 1) { const q = Math.sin(sq * Math.PI) * (1 - sq * 0.5); w.scale.set(1 + 0.12 * q, 1 - 0.15 * q, 1 + 0.12 * q); }
+    }
   }
 
   const anchors = {
@@ -515,6 +542,7 @@ export function figure(P = {}, ctx) {
       });
       tailG.rotation.y = Math.sin(t * 2.4) * 0.3;
       ups.forEach(f => f(t));
+      gesture(t);
     },
   };
 }

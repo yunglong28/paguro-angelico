@@ -1,0 +1,117 @@
+{
+  "id": "socio-ago",
+  "name": "Ago",
+  "concept": "Un socio della banca del tempo, della famiglia dell’Orologio Liberato: rammenda un cappotto, riceve un’ora di lezione d’italiano.",
+  "refs": [
+    "rotta-b-orologio-liberato",
+    "solidarity-economies-lab #13 #15-#19 #20"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "coin",
+      "w": 1,
+      "h": 1.2,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.35,
+      "gap": 1.15,
+      "y": 0.25
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 1.3
+    },
+    "arms": {
+      "kind": "long",
+      "len": 1.05,
+      "ink": "toner"
+    },
+    "legs": {
+      "kind": "long",
+      "len": 0.8,
+      "foot": 1.6,
+      "ink": "toner"
+    },
+    "ears": {
+      "kind": "bunny",
+      "size": 1.1,
+      "ink": "blu"
+    },
+    "belly": {
+      "kind": "clock"
+    },
+    "house": {
+      "kind": "none"
+    },
+    "scale": 1,
+    "gesture": {
+      "kind": "ring"
+    }
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "scissors",
+      "at": "clawR"
+    },
+    {
+      "type": "orbit",
+      "item": "clock",
+      "count": 3,
+      "r": 1.7,
+      "speed": 0.5,
+      "tilt": -0.3,
+      "itemSize": 0.45
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#ff5fa2",
+      "finish": "candy",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#d8b24a",
+      "finish": "metal",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#160b2e",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ffcf2e",
+      "finish": "chrome",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#2bd4c0",
+      "finish": "gel",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#fff4fb",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "series": "proposta",
+  "pose": {
+    "float": 0.04,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  },
+  "parent": "rotta-b-orologio-liberato"
+}

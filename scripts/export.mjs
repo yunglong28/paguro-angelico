@@ -1,6 +1,6 @@
 // Render plates, model sheets and variant grids to PNG with headless Chrome (+ optional mp4 loop).
 //   npm run export                      all characters, plate + sheet
-//   npm run export -- serafino --loop   one character, plus a 4s turntable mp4
+//   npm run export -- serafino --loop   one character, plus a 4s turntable mp4 (--front: camera still, to read the gesture)
 //   npm run export -- --variants        also the 3x3 variant grid
 //   npm run export -- --plate           plates only (fast)
 import fs from 'node:fs';
@@ -31,7 +31,7 @@ async function one(id) {
   if (flags.has('--loop')) {
     const tmp = path.join(dir, 'frames'); fs.mkdirSync(tmp, { recursive: true });
     const N = 48;
-    for (let i = 0; i < N; i++) await shot(U(`c=${id}&mode=plate&t=${(i / N * 4).toFixed(3)}&yaw=${(i / N * Math.PI * 2).toFixed(4)}`), path.join(tmp, `f${String(i).padStart(3, '0')}.png`), 800, 1000);
+    for (let i = 0; i < N; i++) await shot(U(`c=${id}&mode=plate&t=${(i / N * 4).toFixed(3)}&yaw=${flags.has('--front') ? 0 : (i / N * Math.PI * 2).toFixed(4)}`), path.join(tmp, `f${String(i).padStart(3, '0')}.png`), 800, 1000);
     await run('ffmpeg', ['-y', '-loglevel', 'error', '-framerate', '12', '-i', path.join(tmp, 'f%03d.png'), '-pix_fmt', 'yuv420p', '-vf', 'scale=800:-2', path.join(dir, 'loop.mp4')]);
     fs.rmSync(tmp, { recursive: true });
   }

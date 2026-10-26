@@ -12,7 +12,7 @@ body (`engine/figure.js`): body shape (egg, capsule, box, bell, drop, coin, hour
 head (none, sphere, egg, box, cat), face (round, button, void, visor or lens eyes; mouth with fangs or none),
 ears (cat, bunny, floppy, horns, antlers, peak hat, antenna, feelers, sprout, fins), mask (Noh, long carved face, helm,
 goggles, veil), coat (fur, straw, leaves, hooded cloak, hoops), arms (stub, noodle, long), legs (stub, legs, long,
-tentacles, wisp; foot size), back (frills, bat wings, spines), tail (devil, curl, puff), an optional house (shell,
+tentacles, wisp; foot size), back (frills, bat wings, spines), tail (devil, curl, puff), a signature gesture every 4 s (flip, ring, stamp), an optional house (shell,
 clock, cottage, lantern) and a pattern (clock, spiral, buttons, heart, spots).
 
 **19 archetypes** are starting points: hermit crab, Y2K blob, chibi, spirit, object spirit, uncanny; seven from the

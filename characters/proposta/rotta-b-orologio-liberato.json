@@ -51,7 +51,10 @@
     "house": {
       "kind": "none"
     },
-    "scale": 1
+    "scale": 1,
+    "gesture": {
+      "kind": "ring"
+    }
   },
   "parts": [
     {
