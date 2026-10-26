@@ -9,7 +9,7 @@ import { CAMERAS, camera, frameAll } from '../core/viewport.js';
 import { $, $$, esc, icon, toast, menu } from './dom.js';
 
 export const LOOKS = [{ k: 'studio', t: 'Studio' }, { k: 'y2k', t: 'Y2K' }, { k: 'toon', t: 'Toon' }, { k: 'print', t: 'Print' }];
-const SERIES_LABEL = { angeli: 'Angeli', collettivo: 'Collettivo', banca: 'Banca del tempo' };
+const SERIES_LABEL = { angeli: 'Angeli', collettivo: 'Collettivo', banca: 'Banca del tempo', maschere: 'Maschere', proposta: 'Proposta · Solidarity Lab' };
 
 export function initTopbar() {
   $('#modes').innerHTML = MODES.map(m => `<button role="tab" data-m="${m.k}" title="${esc(m.note)} (${m.key})">${icon(m.icon, 16)}<span>${m.t}</span></button>`).join('');

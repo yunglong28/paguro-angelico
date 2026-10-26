@@ -10,7 +10,7 @@ import { removePart } from './inspector.js';
 import { $, $$, esc, icon, toast, menu } from './dom.js';
 
 const TABS = [{ k: 'cast', t: 'Cast', icon: 'users', key: 'C' }, { k: 'layers', t: 'Layers', icon: 'layers', key: 'L' }, { k: 'brand', t: 'Brand', icon: 'brand', key: 'B' }];
-const SERIES_LABEL = { angeli: 'Angeli', collettivo: 'Collettivo', banca: 'Banca del tempo', drafts: 'Drafts' };
+const SERIES_LABEL = { angeli: 'Angeli', collettivo: 'Collettivo', banca: 'Banca del tempo', maschere: 'Maschere', proposta: 'Proposta · Solidarity Lab', drafts: 'Drafts' };
 let rail, panel, tab = prefs.get('tab', 'layers'), query = '', filter = 'all';
 
 export function initLeft(railEl, panelEl) {

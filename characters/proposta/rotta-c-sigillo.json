@@ -1,0 +1,103 @@
+{
+  "id": "rotta-c-sigillo",
+  "name": "Rotta C — Il Sigillo",
+  "concept": "From Cyclocosmia, the spider whose abdomen is an engraved disc: half animal, half banknote, guardian of the ledger. Trust as something old and notarial. Short chibi legs to soften it.",
+  "refs": [
+    "solidarity-economies-lab #5 #6 #44"
+  ],
+  "expression": "pieta",
+  "figure": {
+    "body": {
+      "shape": "coin",
+      "w": 1.2,
+      "h": 1.05,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "void",
+      "count": 6,
+      "size": 0.45,
+      "gap": 0.7,
+      "y": 0.5
+    },
+    "mouth": {
+      "style": "fangs",
+      "size": 0.6
+    },
+    "arms": {
+      "kind": "none"
+    },
+    "legs": {
+      "kind": "tentacles",
+      "count": 8,
+      "len": 0.85,
+      "ink": "toner"
+    },
+    "ears": {
+      "kind": "none"
+    },
+    "belly": {
+      "kind": "spiral"
+    },
+    "house": {
+      "kind": "none"
+    },
+    "scale": 1
+  },
+  "parts": [
+    {
+      "type": "orbit",
+      "item": "coin",
+      "count": 4,
+      "r": 1.7,
+      "speed": 0.2,
+      "tilt": 0.15,
+      "itemSize": 0.6
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#5d7a5a",
+      "finish": "metal",
+      "print": "blu"
+    },
+    "dark": {
+      "color": "#2a2620",
+      "finish": "metal",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#141210",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#c9a54a",
+      "finish": "chrome",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#9c2a1e",
+      "finish": "plastic",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#ece6d2",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "series": "proposta",
+  "pose": {
+    "float": 0.04,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}

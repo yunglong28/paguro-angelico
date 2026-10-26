@@ -38,5 +38,8 @@
   "maschere/turno-a-tre",
   "maschere/veglia",
   "maschere/visore",
-  "maschere/volto-prestato"
+  "maschere/volto-prestato",
+  "proposta/rotta-a-clessidra",
+  "proposta/rotta-b-orologio-liberato",
+  "proposta/rotta-c-sigillo"
 ]

@@ -1,0 +1,110 @@
+{
+  "id": "rotta-a-clessidra",
+  "name": "Rotta A — La Clessidra",
+  "concept": "An hourglass that turns itself over: sand falling is an hour given, sand rising an hour received. Giving and receiving are one body. The narrow waist is the common protocol.",
+  "refs": [
+    "solidarity-economies-lab #9 #10 #11 #35"
+  ],
+  "expression": "quiete",
+  "figure": {
+    "body": {
+      "shape": "hourglass",
+      "w": 1.05,
+      "h": 1.3,
+      "ink": "blu"
+    },
+    "head": {
+      "shape": "none",
+      "size": 1,
+      "ink": "blu"
+    },
+    "eyes": {
+      "style": "round",
+      "count": 2,
+      "size": 1.25,
+      "gap": 1.1,
+      "y": 0.3
+    },
+    "mouth": {
+      "style": "normal",
+      "size": 0.8
+    },
+    "arms": {
+      "kind": "stub",
+      "len": 1,
+      "ink": "rosso"
+    },
+    "legs": {
+      "kind": "stub",
+      "len": 0.8,
+      "foot": 1.3,
+      "ink": "rosso"
+    },
+    "ears": {
+      "kind": "none"
+    },
+    "belly": {
+      "kind": "none"
+    },
+    "house": {
+      "kind": "none"
+    },
+    "scale": 1
+  },
+  "parts": [
+    {
+      "type": "prop",
+      "item": "coin",
+      "at": "clawR"
+    },
+    {
+      "type": "orbit",
+      "item": "hourglass",
+      "count": 2,
+      "r": 1.6,
+      "speed": 0.3,
+      "tilt": 0.2,
+      "itemSize": 0.6
+    }
+  ],
+  "palette": {
+    "primary": {
+      "color": "#f3e6c4",
+      "finish": "gel",
+      "print": "paper"
+    },
+    "dark": {
+      "color": "#1a1a1a",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "line": {
+      "color": "#1a1a1a",
+      "finish": "plastic",
+      "print": "toner"
+    },
+    "accent": {
+      "color": "#ffe600",
+      "finish": "candy",
+      "print": "fluo"
+    },
+    "secondary": {
+      "color": "#e3211a",
+      "finish": "candy",
+      "print": "rosso"
+    },
+    "light": {
+      "color": "#fffaf0",
+      "finish": "pearl",
+      "print": "paper"
+    }
+  },
+  "plan": "figure",
+  "series": "proposta",
+  "pose": {
+    "float": 0.04,
+    "sway": 0.25,
+    "scale": 1,
+    "lift": 0
+  }
+}
