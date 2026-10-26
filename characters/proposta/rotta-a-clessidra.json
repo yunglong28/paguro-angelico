@@ -30,15 +30,15 @@
       "size": 0.8
     },
     "arms": {
-      "kind": "stub",
-      "len": 1,
-      "ink": "rosso"
+      "kind": "noodle",
+      "len": 0.9,
+      "ink": "toner"
     },
     "legs": {
       "kind": "stub",
       "len": 0.8,
       "foot": 1.3,
-      "ink": "rosso"
+      "ink": "toner"
     },
     "ears": {
       "kind": "none"
@@ -59,22 +59,22 @@
     },
     {
       "type": "orbit",
-      "item": "hourglass",
-      "count": 2,
-      "r": 1.6,
-      "speed": 0.3,
-      "tilt": 0.2,
-      "itemSize": 0.6
+      "item": "coin",
+      "count": 9,
+      "r": 1.5,
+      "speed": 0.35,
+      "tilt": 0.6,
+      "itemSize": 0.4
     }
   ],
   "palette": {
     "primary": {
-      "color": "#f3e6c4",
+      "color": "#f2b84b",
       "finish": "gel",
-      "print": "paper"
+      "print": "fluo"
     },
     "dark": {
-      "color": "#1a1a1a",
+      "color": "#3b2a1e",
       "finish": "plastic",
       "print": "toner"
     },
